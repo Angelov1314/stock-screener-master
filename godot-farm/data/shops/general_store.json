@@ -1,0 +1,66 @@
+{
+  "$schema": "../../data/schemas/shop_schema.json",
+  "id": "general_store",
+  "name": "General Store",
+  "name_key": "SHOP_GENERAL_STORE_NAME",
+  "description_key": "SHOP_GENERAL_STORE_DESC",
+  "owner_npc": "shopkeeper_martha",
+  "inventory": [
+    {
+      "item_id": "wheat_seed",
+      "crop_ref": "wheat",
+      "item_type": "seed",
+      "buy_price": 3,
+      "sell_price": 1,
+      "unlock_level": 1,
+      "stock": "unlimited",
+      "restock_time": 0
+    },
+    {
+      "item_id": "carrot_seed",
+      "crop_ref": "carrot",
+      "item_type": "seed",
+      "buy_price": 5,
+      "sell_price": 2,
+      "unlock_level": 1,
+      "stock": "unlimited",
+      "restock_time": 0
+    },
+    {
+      "item_id": "strawberry_seed",
+      "crop_ref": "strawberry",
+      "item_type": "seed",
+      "buy_price": 10,
+      "sell_price": 4,
+      "unlock_level": 2,
+      "stock": 20,
+      "restock_time": 86400
+    },
+    {
+      "item_id": "tomato_seed",
+      "crop_ref": "tomato",
+      "item_type": "seed",
+      "buy_price": 12,
+      "sell_price": 5,
+      "unlock_level": 3,
+      "stock": 15,
+      "restock_time": 86400
+    },
+    {
+      "item_id": "corn_seed",
+      "crop_ref": "corn",
+      "item_type": "seed",
+      "buy_price": 15,
+      "sell_price": 6,
+      "unlock_level": 4,
+      "stock": 10,
+      "restock_time": 86400
+    }
+  ],
+  "shop_hours": {
+    "open": 6,
+    "close": 20
+  },
+  "location": "town_center",
+  "tags": ["seeds", "basic_supplies", "beginner_friendly"]
+}

@@ -1,0 +1,118 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Crop Definition Schema",
+  "description": "Schema for validating crop definitions in the Godot farm game",
+  "type": "object",
+  "required": ["id", "name", "growth_time", "sell_price", "seed_cost", "stages", "sprite_prefix"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Reference to this schema file"
+    },
+    "id": {
+      "type": "string",
+      "description": "snake_case identifier for the crop",
+      "pattern": "^[a-z][a-z_0-9]*$"
+    },
+    "name": {
+      "type": "string",
+      "description": "Display name for the crop"
+    },
+    "name_key": {
+      "type": "string",
+      "description": "Localization key for the crop name"
+    },
+    "description_key": {
+      "type": "string",
+      "description": "Localization key for the crop description"
+    },
+    "growth_time": {
+      "type": "integer",
+      "description": "Total growth time in seconds",
+      "minimum": 1
+    },
+    "sell_price": {
+      "type": "integer",
+      "description": "Base sell price per harvested unit",
+      "minimum": 1
+    },
+    "seed_cost": {
+      "type": "integer",
+      "description": "Cost to buy one seed",
+      "minimum": 1
+    },
+    "unlock_level": {
+      "type": "integer",
+      "description": "Player level required to unlock",
+      "minimum": 1,
+      "default": 1
+    },
+    "sprite_prefix": {
+      "type": "string",
+      "description": "Prefix for sprite assets (e.g., 'carrot' for carrot_0.png, carrot_1.png)"
+    },
+    "stages": {
+      "type": "array",
+      "description": "Growth stages of the crop",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["stage", "name", "duration"],
+        "properties": {
+          "stage": {
+            "type": "integer",
+            "description": "Stage index (0 = seed, increases by 1)"
+          },
+          "name": {
+            "type": "string",
+            "description": "Stage name (e.g., seed, sprout, growing, mature)"
+          },
+          "duration": {
+            "type": "integer",
+            "description": "Duration of this stage in seconds (0 for instant seed stage)"
+          },
+          "harvestable": {
+            "type": "boolean",
+            "description": "Whether the crop can be harvested at this stage",
+            "default": false
+          }
+        }
+      }
+    },
+    "seasons": {
+      "type": "array",
+      "description": "Seasons when this crop can be planted",
+      "items": {
+        "type": "string",
+        "enum": ["spring", "summer", "autumn", "winter"]
+      }
+    },
+    "water_needs": {
+      "type": "string",
+      "description": "Water requirement level",
+      "enum": ["low", "medium", "high"],
+      "default": "medium"
+    },
+    "quality_factors": {
+      "type": "object",
+      "description": "Multipliers for quality-based pricing",
+      "properties": {
+        "water_bonus": {
+          "type": "number",
+          "description": "Multiplier for well-watered crops"
+        },
+        "fertilizer_bonus": {
+          "type": "number",
+          "description": "Multiplier for fertilized crops"
+        }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "description": "Optional tags for categorization",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

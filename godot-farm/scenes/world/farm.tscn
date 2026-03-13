@@ -1,0 +1,32 @@
+[gd_scene load_steps=4 format=3 uid="uid://farmscene001"]
+
+[ext_resource type="Script" path="res://scripts/ui/farm_controller.gd" id="1_farm01"]
+[ext_resource type="Texture2D" uid="uid://bgfarmnew001" path="res://assets/environment/farm_background.png" id="2_bg"]
+[ext_resource type="Script" path="res://scripts/ui/draggable_camera.gd" id="3_cam"]
+
+[node name="Farm" type="Node2D"]
+script = ExtResource("1_farm01")
+
+[node name="Background" type="Sprite2D" parent="."]
+scale = Vector2(4, 4)
+texture = ExtResource("2_bg")
+centered = false
+
+[node name="PlotsContainer" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="CropsContainer" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="Decorations" type="Node2D" parent="."]
+
+[node name="FarmCamera" type="Camera2D" parent="."]
+unique_name_in_owner = true
+anchor_mode = 0
+limit_left = 0
+limit_top = 0
+limit_right = 6144
+limit_bottom = 11008
+position_smoothing_enabled = true
+position_smoothing_speed = 10.0
+script = ExtResource("3_cam")

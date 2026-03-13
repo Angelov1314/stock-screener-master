@@ -1,0 +1,182 @@
+{
+  "manifest_version": "1.0.0",
+  "generated_at": "2026-03-07T00:49:00+11:00",
+  "asset_type": "crop_sprites",
+  "total_assets": 20,
+  "style_guide": {
+    "art_style": "Hand-drawn storybook illustration like Tsuki Adventure",
+    "outline_color": "#3B2B1A",
+    "palette": ["sage green", "soft orange", "warm brown", "golden yellow", "soft red"],
+    "background": "transparent",
+    "resolution": "256x256px (scaled to 64x64 in-game)"
+  },
+  "crops": {
+    "wheat": {
+      "display_name": "Wheat",
+      "stages": [
+        {
+          "stage": 0,
+          "name": "seed",
+          "file": "assets/crops/wheat/wheat_seed.png",
+          "description": "Brown oval seed on soil"
+        },
+        {
+          "stage": 1,
+          "name": "sprout",
+          "file": "assets/crops/wheat/wheat_sprout.png",
+          "description": "Tiny green blade with two small leaves"
+        },
+        {
+          "stage": 2,
+          "name": "growing",
+          "file": "assets/crops/wheat/wheat_growing.png",
+          "description": "Medium green stalk with multiple leaves"
+        },
+        {
+          "stage": 3,
+          "name": "mature",
+          "file": "assets/crops/wheat/wheat_mature.png",
+          "description": "Tall golden stalks with grain heads"
+        }
+      ]
+    },
+    "carrot": {
+      "display_name": "Carrot",
+      "stages": [
+        {
+          "stage": 0,
+          "name": "seed",
+          "file": "assets/crops/carrot/carrot_seed.png",
+          "description": "Small brown speck on soil"
+        },
+        {
+          "stage": 1,
+          "name": "sprout",
+          "file": "assets/crops/carrot/carrot_sprout.png",
+          "description": "Delicate feathery green leaves"
+        },
+        {
+          "stage": 2,
+          "name": "growing",
+          "file": "assets/crops/carrot/carrot_growing.png",
+          "description": "Leafy green top with small root tip visible"
+        },
+        {
+          "stage": 3,
+          "name": "mature",
+          "file": "assets/crops/carrot/carrot_mature.png",
+          "description": "Plump orange root with leafy top"
+        }
+      ]
+    },
+    "strawberry": {
+      "display_name": "Strawberry",
+      "stages": [
+        {
+          "stage": 0,
+          "name": "seed",
+          "file": "assets/crops/strawberry/strawberry_seed.png",
+          "description": "Tiny brown achene on soil"
+        },
+        {
+          "stage": 1,
+          "name": "sprout",
+          "file": "assets/crops/strawberry/strawberry_sprout.png",
+          "description": "Small green seedling with rounded leaves"
+        },
+        {
+          "stage": 2,
+          "name": "growing",
+          "file": "assets/crops/strawberry/strawberry_growing.png",
+          "description": "Bushy plant with serrated leaves and white flowers"
+        },
+        {
+          "stage": 3,
+          "name": "mature",
+          "file": "assets/crops/strawberry/strawberry_mature.png",
+          "description": "Lush green leaves with plump red strawberries"
+        }
+      ]
+    },
+    "tomato": {
+      "display_name": "Tomato",
+      "stages": [
+        {
+          "stage": 0,
+          "name": "seed",
+          "file": "assets/crops/tomato/tomato_seed.png",
+          "description": "Small flat brown disc on soil"
+        },
+        {
+          "stage": 1,
+          "name": "sprout",
+          "file": "assets/crops/tomato/tomato_sprout.png",
+          "description": "Seedling with two heart-shaped cotyledon leaves"
+        },
+        {
+          "stage": 2,
+          "name": "growing",
+          "file": "assets/crops/tomato/tomato_growing.png",
+          "description": "Medium stalk with lobed leaves and yellow flowers"
+        },
+        {
+          "stage": 3,
+          "name": "mature",
+          "file": "assets/crops/tomato/tomato_mature.png",
+          "description": "Tall vine with clusters of plump red tomatoes"
+        }
+      ]
+    },
+    "corn": {
+      "display_name": "Corn",
+      "stages": [
+        {
+          "stage": 0,
+          "name": "seed",
+          "file": "assets/crops/corn/corn_seed.png",
+          "description": "Large yellow kernel on soil"
+        },
+        {
+          "stage": 1,
+          "name": "sprout",
+          "file": "assets/crops/corn/corn_sprout.png",
+          "description": "Single slender green shoot with pointed leaf"
+        },
+        {
+          "stage": 2,
+          "name": "growing",
+          "file": "assets/crops/corn/corn_growing.png",
+          "description": "Tall stem with long pointed leaves fanning out"
+        },
+        {
+          "stage": 3,
+          "name": "mature",
+          "file": "assets/crops/corn/corn_mature.png",
+          "description": "Very tall stalk with golden corn ears and silk tassels"
+        }
+      ]
+    }
+  },
+  "file_list": [
+    "assets/crops/wheat/wheat_seed.png",
+    "assets/crops/wheat/wheat_sprout.png",
+    "assets/crops/wheat/wheat_growing.png",
+    "assets/crops/wheat/wheat_mature.png",
+    "assets/crops/carrot/carrot_seed.png",
+    "assets/crops/carrot/carrot_sprout.png",
+    "assets/crops/carrot/carrot_growing.png",
+    "assets/crops/carrot/carrot_mature.png",
+    "assets/crops/strawberry/strawberry_seed.png",
+    "assets/crops/strawberry/strawberry_sprout.png",
+    "assets/crops/strawberry/strawberry_growing.png",
+    "assets/crops/strawberry/strawberry_mature.png",
+    "assets/crops/tomato/tomato_seed.png",
+    "assets/crops/tomato/tomato_sprout.png",
+    "assets/crops/tomato/tomato_growing.png",
+    "assets/crops/tomato/tomato_mature.png",
+    "assets/crops/corn/corn_seed.png",
+    "assets/crops/corn/corn_sprout.png",
+    "assets/crops/corn/corn_growing.png",
+    "assets/crops/corn/corn_mature.png"
+  ]
+}

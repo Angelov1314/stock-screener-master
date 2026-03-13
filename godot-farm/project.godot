@@ -1,0 +1,86 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="Cozy Farm"
+config/description="A relaxing ASMR farm simulation game"
+run/main_scene="res://scenes/start_menu.tscn"
+config/features=PackedStringArray("4.6", "Mobile")
+boot_splash/bg_color=Color(0.129412, 0.168627, 0.129412, 1)
+boot_splash/stretch_mode=0
+config/icon="res://assets/ui/icon.png"
+
+[audio]
+
+buses/default_bus_layout="res://assets/audio/default_bus_layout.tres"
+
+[autoload]
+
+StateManager="*res://scripts/core/state/state_manager.gd"
+ActionSystem="*res://scripts/core/state/action_system.gd"
+TimeManager="*res://scripts/simulation/time_manager.gd"
+EconomyManager="*res://scripts/systems/economy_manager.gd"
+InventoryManager="*res://scripts/simulation/inventory_manager.gd"
+CropManager="*res://scripts/simulation/crop_manager.gd"
+AudioManager="*res://scripts/systems/audio_manager.gd"
+SaveManager="*res://scripts/systems/save_manager.gd"
+
+[debug]
+
+gdscript/warnings/unused_variable=0
+gdscript/warnings/unused_parameter=0
+
+[display]
+
+window/size/viewport_width=720
+window/size/viewport_height=1280
+window/size/resizable=false
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/handheld/orientation=1
+
+[filesystem]
+
+import/fallback_sync_import=true
+
+[gui]
+
+theme/custom="res://assets/ui/theme.tres"
+
+[input]
+
+ui_click={
+"deadzone": 0.5,
+"events": [Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":1,"position":Vector2(0, 0),"global_position":Vector2(0, 0),"factor":1.0,"button_index":1,"canceled":false,"pressed":true,"double_click":false,"script":null)
+]
+}
+ui_right_click={
+"deadzone": 0.5,
+"events": [Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":2,"position":Vector2(0, 0),"global_position":Vector2(0, 0),"factor":1.0,"button_index":2,"canceled":false,"pressed":true,"double_click":false,"script":null)
+]
+}
+
+[layer_names]
+
+2d_physics/layer_1="Ground"
+2d_physics/layer_2="Crops"
+2d_physics/layer_3="UI"
+2d_physics/layer_4="Tools"
+
+[mono]
+
+project/assembly_name="Cozy Farm"
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0
+renderer/rendering_method="mobile"
+environment/defaults/default_clear_color=Color(0.529412, 0.72549, 0.486275, 1)

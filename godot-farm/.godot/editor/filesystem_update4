@@ -1,0 +1,12 @@
+res://scripts/systems/audio_manager.gd
+res://scripts/entities/Crop.gd
+res://scripts/ui/seed_toolbar.gd
+res://scenes/ui/hud.tscn
+res://scenes/ui/seed_toolbar.tscn
+res://scripts/ui/farm_controller.gd
+res://scenes/main.tscn
+res://scenes/world/farm.tscn
+res://scripts/simulation/crop_manager.gd
+res://scripts/ui/start_menu.gd
+res://scripts/core/state/action_system.gd
+res://scripts/ui/draggable_camera.gd

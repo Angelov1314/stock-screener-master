@@ -1,0 +1,130 @@
+[gd_scene load_steps=8 format=3 uid="uid://seedtoolbar001"]
+
+[ext_resource type="Script" path="res://scripts/ui/seed_toolbar.gd" id="toolbar_script"]
+[ext_resource type="Texture2D" path="res://assets/crops/carrot/carrot_seed.png" id="carrot_icon"]
+[ext_resource type="Texture2D" path="res://assets/crops/corn/corn_seed.png" id="corn_icon"]
+[ext_resource type="Texture2D" path="res://assets/crops/strawberry/strawberry_seed.png" id="strawberry_icon"]
+[ext_resource type="Texture2D" path="res://assets/crops/tomato/tomato_seed.png" id="tomato_icon"]
+[ext_resource type="Texture2D" path="res://assets/crops/wheat/wheat_seed.png" id="wheat_icon"]
+
+[node name="SeedToolbar" type="CanvasLayer"]
+script = ExtResource("toolbar_script")
+
+[node name="Background" type="ColorRect" parent="."]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -90.0
+grow_horizontal = 2
+grow_vertical = 0
+color = Color(0.2, 0.15, 0.1, 0.95)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -90.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="CarrotButton" type="Button" parent="HBoxContainer"]
+custom_minimum_size = Vector2(70, 70)
+layout_mode = 2
+tooltip_text = "Carrot - 5 gold"
+
+[node name="Icon" type="Sprite2D" parent="HBoxContainer/CarrotButton"]
+position = Vector2(35, 30)
+texture = ExtResource("carrot_icon")
+scale = Vector2(0.05, 0.05)
+
+[node name="Label" type="Label" parent="HBoxContainer/CarrotButton"]
+layout_mode = 0
+offset_top = 52.0
+offset_right = 70.0
+offset_bottom = 70.0
+text = "5G"
+horizontal_alignment = 1
+
+[node name="CornButton" type="Button" parent="HBoxContainer"]
+custom_minimum_size = Vector2(70, 70)
+layout_mode = 2
+tooltip_text = "Corn - 15 gold"
+
+[node name="Icon" type="Sprite2D" parent="HBoxContainer/CornButton"]
+position = Vector2(35, 30)
+texture = ExtResource("corn_icon")
+scale = Vector2(0.05, 0.05)
+
+[node name="Label" type="Label" parent="HBoxContainer/CornButton"]
+layout_mode = 0
+offset_top = 52.0
+offset_right = 70.0
+offset_bottom = 70.0
+text = "15G"
+horizontal_alignment = 1
+
+[node name="StrawberryButton" type="Button" parent="HBoxContainer"]
+custom_minimum_size = Vector2(70, 70)
+layout_mode = 2
+tooltip_text = "Strawberry - 10 gold"
+
+[node name="Icon" type="Sprite2D" parent="HBoxContainer/StrawberryButton"]
+position = Vector2(35, 30)
+texture = ExtResource("strawberry_icon")
+scale = Vector2(0.05, 0.05)
+
+[node name="Label" type="Label" parent="HBoxContainer/StrawberryButton"]
+layout_mode = 0
+offset_top = 52.0
+offset_right = 70.0
+offset_bottom = 70.0
+text = "10G"
+horizontal_alignment = 1
+
+[node name="TomatoButton" type="Button" parent="HBoxContainer"]
+custom_minimum_size = Vector2(70, 70)
+layout_mode = 2
+tooltip_text = "Tomato - 12 gold"
+
+[node name="Icon" type="Sprite2D" parent="HBoxContainer/TomatoButton"]
+position = Vector2(35, 30)
+texture = ExtResource("tomato_icon")
+scale = Vector2(0.05, 0.05)
+
+[node name="Label" type="Label" parent="HBoxContainer/TomatoButton"]
+layout_mode = 0
+offset_top = 52.0
+offset_right = 70.0
+offset_bottom = 70.0
+text = "12G"
+horizontal_alignment = 1
+
+[node name="WheatButton" type="Button" parent="HBoxContainer"]
+custom_minimum_size = Vector2(70, 70)
+layout_mode = 2
+tooltip_text = "Wheat - 3 gold"
+
+[node name="Icon" type="Sprite2D" parent="HBoxContainer/WheatButton"]
+position = Vector2(35, 30)
+texture = ExtResource("wheat_icon")
+scale = Vector2(0.05, 0.05)
+
+[node name="Label" type="Label" parent="HBoxContainer/WheatButton"]
+layout_mode = 0
+offset_top = 52.0
+offset_right = 70.0
+offset_bottom = 70.0
+text = "3G"
+horizontal_alignment = 1
+
+[node name="SelectedIndicator" type="ColorRect" parent="."]
+unique_name_in_owner = true
+offset_left = 140.0
+offset_top = 1190.0
+offset_right = 210.0
+offset_bottom = 1260.0
+color = Color(1, 0.8, 0.2, 0.5)

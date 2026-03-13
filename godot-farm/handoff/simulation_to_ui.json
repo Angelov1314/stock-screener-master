@@ -1,0 +1,282 @@
+{
+  "version": "1.0",
+  "date": "2025-03-07",
+  "from_agent": "simulation",
+  "to_agent": "ui",
+  "description": "Core gameplay simulation systems are now implemented and emitting signals for UI updates",
+  
+  "signals": [
+    {
+      "name": "time_changed",
+      "source": "TimeManager",
+      "parameters": ["hour: int", "minute: int"],
+      "description": "Emitted every game minute or when time advances"
+    },
+    {
+      "name": "day_changed",
+      "source": "TimeManager",
+      "parameters": ["day: int", "season: String"],
+      "description": "Emitted when game day changes (at 00:00)"
+    },
+    {
+      "name": "season_changed",
+      "source": "TimeManager",
+      "parameters": ["season: String"],
+      "description": "Emitted when season changes (every 28 days)"
+    },
+    {
+      "name": "crop_planted",
+      "source": "CropManager",
+      "parameters": ["crop_id: String", "crop_type: String", "position: Vector2"],
+      "description": "Emitted when a new crop is planted"
+    },
+    {
+      "name": "crop_stage_changed",
+      "source": "CropManager",
+      "parameters": ["crop_id: String", "new_stage: int"],
+      "description": "Emitted when a crop advances to next growth stage"
+    },
+    {
+      "name": "crop_harvested",
+      "source": "CropManager",
+      "parameters": ["crop_id: String", "crop_type: String", "quality: int"],
+      "description": "Emitted when a crop is harvested"
+    },
+    {
+      "name": "crop_withered",
+      "source": "CropManager",
+      "parameters": ["crop_id: String"],
+      "description": "Emitted when a crop withers (wrong season too long)"
+    },
+    {
+      "name": "crop_watered",
+      "source": "CropManager",
+      "parameters": ["crop_id: String"],
+      "description": "Emitted when a crop is watered"
+    },
+    {
+      "name": "inventory_changed",
+      "source": "InventoryManager",
+      "parameters": ["item_id: String", "count: int"],
+      "description": "Emitted when inventory changes for any item"
+    },
+    {
+      "name": "item_added",
+      "source": "InventoryManager",
+      "parameters": ["item_id: String", "count: int"],
+      "description": "Emitted when items are added to inventory"
+    },
+    {
+      "name": "item_removed",
+      "source": "InventoryManager",
+      "parameters": ["item_id: String", "count: int"],
+      "description": "Emitted when items are removed from inventory"
+    },
+    {
+      "name": "slot_changed",
+      "source": "InventoryManager",
+      "parameters": ["slot_index: int", "item_id: String", "count: int"],
+      "description": "Emitted when a specific inventory slot changes"
+    },
+    {
+      "name": "inventory_full",
+      "source": "InventoryManager",
+      "parameters": ["item_id: String"],
+      "description": "Emitted when trying to add item but no space"
+    },
+    {
+      "name": "gold_changed",
+      "source": "EconomyManager",
+      "parameters": ["new_amount: int"],
+      "description": "Emitted when gold amount changes"
+    },
+    {
+      "name": "transaction_made",
+      "source": "EconomyManager",
+      "parameters": ["type: String", "amount: int", "balance: int"],
+      "description": "Emitted on any gold transaction"
+    },
+    {
+      "name": "purchase_completed",
+      "source": "EconomyManager",
+      "parameters": ["item_id: String", "price: int"],
+      "description": "Emitted when purchase is successful"
+    },
+    {
+      "name": "sale_completed",
+      "source": "EconomyManager",
+      "parameters": ["item_id: String", "price: int", "quantity: int"],
+      "description": "Emitted when sale is successful"
+    },
+    {
+      "name": "not_enough_gold",
+      "source": "EconomyManager",
+      "parameters": ["needed: int", "available: int"],
+      "description": "Emitted when transaction fails due to insufficient funds"
+    },
+    {
+      "name": "daily_income_calculated",
+      "source": "EconomyManager",
+      "parameters": ["amount: int"],
+      "description": "Emitted at start of new day with yesterday's profit/loss"
+    }
+  ],
+  
+  "ui_updates": [
+    {
+      "signal": "time_changed",
+      "ui_element": "hud_time_label",
+      "action": "update_text",
+      "format": "{hour:02d}:{minute:02d}"
+    },
+    {
+      "signal": "day_changed",
+      "ui_element": "hud_day_label",
+      "action": "update_text",
+      "format": "Day {day}"
+    },
+    {
+      "signal": "season_changed",
+      "ui_element": "hud_season_icon",
+      "action": "update_texture",
+      "mapping": {
+        "spring": "res://assets/ui/season_spring.png",
+        "summer": "res://assets/ui/season_summer.png",
+        "autumn": "res://assets/ui/season_autumn.png",
+        "winter": "res://assets/ui/season_winter.png"
+      }
+    },
+    {
+      "signal": "gold_changed",
+      "ui_element": "hud_gold_label",
+      "action": "update_text",
+      "format": "{new_amount}g"
+    },
+    {
+      "signal": "inventory_changed",
+      "ui_element": "backpack_panel",
+      "action": "refresh_grid"
+    },
+    {
+      "signal": "slot_changed",
+      "ui_element": "backpack_slot_{slot_index}",
+      "action": "update_item"
+    },
+    {
+      "signal": "crop_planted",
+      "ui_element": "farm_grid",
+      "action": "spawn_crop_sprite"
+    },
+    {
+      "signal": "crop_stage_changed",
+      "ui_element": "crop_{crop_id}",
+      "action": "update_stage_visual"
+    },
+    {
+      "signal": "crop_harvested",
+      "ui_element": "harvest_effect_spawner",
+      "action": "play_harvest_animation"
+    },
+    {
+      "signal": "not_enough_gold",
+      "ui_element": "hud_gold_label",
+      "action": "flash_red"
+    },
+    {
+      "signal": "inventory_full",
+      "ui_element": "backpack_panel",
+      "action": "shake_animation"
+    }
+  ],
+  
+  "new_exports": [
+    {
+      "node": "TimeManager",
+      "exports": [
+        {"name": "seconds_per_real_second", "type": "float", "default": 60.0, "description": "Game seconds per real second"},
+        {"name": "time_scale", "type": "float", "default": 1.0, "description": "Speed multiplier for time"}
+      ]
+    },
+    {
+      "node": "CropManager",
+      "exports": [
+        {"name": "growth_speed_multiplier", "type": "float", "default": 1.0, "description": "Global crop growth speed"},
+        {"name": "auto_save_interval", "type": "float", "default": 300.0, "description": "Seconds between auto-saves"}
+      ]
+    },
+    {
+      "node": "InventoryManager",
+      "exports": [
+        {"name": "max_slots", "type": "int", "default": 24, "description": "Number of inventory slots"},
+        {"name": "max_stack_size", "type": "int", "default": 99, "description": "Max items per stack"}
+      ]
+    },
+    {
+      "node": "EconomyManager",
+      "exports": [
+        {"name": "starting_gold", "type": "int", "default": 500, "description": "Initial player gold"},
+        {"name": "sell_price_multiplier", "type": "float", "default": 1.0, "description": "Global sell price modifier"},
+        {"name": "buy_price_multiplier", "type": "float", "default": 1.0, "description": "Global buy price modifier"}
+      ]
+    }
+  ],
+  
+  "crop_data": {
+    "available_crops": ["carrot", "corn", "strawberry", "tomato", "wheat"],
+    "crop_prices": {
+      "carrot": {"seed_cost": 5, "sell_price": 15, "growth_time": 120},
+      "corn": {"seed_cost": 15, "sell_price": 45, "growth_time": 300},
+      "strawberry": {"seed_cost": 10, "sell_price": 25, "growth_time": 150},
+      "tomato": {"seed_cost": 12, "sell_price": 30, "growth_time": 240},
+      "wheat": {"seed_cost": 3, "sell_price": 12, "growth_time": 180}
+    },
+    "seasons": {
+      "spring": ["carrot", "strawberry", "wheat"],
+      "summer": ["corn", "tomato", "wheat"],
+      "autumn": ["carrot", "corn", "wheat"],
+      "winter": []
+    }
+  },
+  
+  "api_references": {
+    "TimeManager": {
+      "methods": [
+        "get_hour() -> int",
+        "get_minute() -> int",
+        "get_formatted_time() -> String",
+        "get_current_season() -> String",
+        "set_paused(paused: bool)",
+        "set_time_scale(scale: float)"
+      ]
+    },
+    "CropManager": {
+      "methods": [
+        "plant_crop(crop_type: String, position: Vector2i, world_pos: Vector2) -> String",
+        "water_crop(crop_id: String) -> bool",
+        "harvest_crop(crop_id: String) -> Dictionary",
+        "get_crop_at(position: Vector2i) -> CropEntity",
+        "get_harvestable_crops() -> Array[String]",
+        "get_available_crops() -> Array[String]"
+      ]
+    },
+    "InventoryManager": {
+      "methods": [
+        "add_item(item_id: String, count: int) -> bool",
+        "remove_item(item_id: String, count: int) -> bool",
+        "has_item(item_id: String, count: int) -> bool",
+        "get_item_count(item_id: String) -> int",
+        "get_slot(index: int) -> Dictionary",
+        "move_item(from_slot: int, to_slot: int) -> bool"
+      ]
+    },
+    "EconomyManager": {
+      "methods": [
+        "get_gold() -> int",
+        "can_afford(amount: int) -> bool",
+        "buy_item(item_id: String, base_price: int, quantity: int) -> bool",
+        "sell_item(item_id: String, base_price: int, quantity: int)",
+        "sell_crop(harvest_result: Dictionary)"
+      ]
+    }
+  }
+}

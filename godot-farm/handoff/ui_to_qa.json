@@ -1,0 +1,175 @@
+{
+  "handoff_type": "ui_to_qa",
+  "version": "1.0",
+  "timestamp": "2026-03-07T00:36:00+11:00",
+  "scenes": [
+    {
+      "path": "scenes/main.tscn",
+      "description": "Main game scene that coordinates Farm, HUD, and InventoryPanel"
+    },
+    {
+      "path": "scenes/world/farm.tscn",
+      "description": "Farm world with 6x8 plantable plots, interactive grid, and crop visualization"
+    },
+    {
+      "path": "scenes/ui/hud.tscn",
+      "description": "HUD with gold display (top-right), day/season display (top-left), and action buttons (bottom)"
+    },
+    {
+      "path": "scenes/ui/inventory_panel.tscn",
+      "description": "Inventory panel with 5-column item grid, item details, use/sell buttons"
+    }
+  ],
+  "scripts": [
+    {
+      "path": "scripts/ui/hud_controller.gd",
+      "description": "HUD controller - connects to ActionSystem signals, handles gold/inventory UI updates"
+    },
+    {
+      "path": "scripts/ui/farm_controller.gd",
+      "description": "Farm controller - handles farm interactions, crop visualization, plot tapping"
+    },
+    {
+      "path": "scripts/ui/inventory_controller.gd",
+      "description": "Inventory controller - manages item grid, item selection, sell/use actions"
+    }
+  ],
+  "signal_connections": [
+    {
+      "signal": "ActionSystem.gold_changed",
+      "handler": "hud_controller.gd:_on_gold_changed",
+      "description": "Updates gold display with count-up animation"
+    },
+    {
+      "signal": "ActionSystem.inventory_changed",
+      "handler": "hud_controller.gd:_on_inventory_changed",
+      "description": "Updates HUD inventory indicators"
+    },
+    {
+      "signal": "ActionSystem.inventory_changed",
+      "handler": "inventory_controller.gd:_on_inventory_changed",
+      "description": "Refreshes inventory grid display"
+    },
+    {
+      "signal": "ActionSystem.crop_planted",
+      "handler": "hud_controller.gd:_on_crop_planted",
+      "description": "Shows toast notification when crop planted"
+    },
+    {
+      "signal": "ActionSystem.crop_planted",
+      "handler": "farm_controller.gd:_on_crop_planted",
+      "description": "Creates visual crop instance on farm"
+    },
+    {
+      "signal": "ActionSystem.crop_watered",
+      "handler": "farm_controller.gd:_on_crop_watered",
+      "description": "Triggers water droplet animation"
+    },
+    {
+      "signal": "ActionSystem.crop_harvested",
+      "handler": "hud_controller.gd:_on_crop_harvested",
+      "description": "Shows toast notification when crop harvested"
+    },
+    {
+      "signal": "ActionSystem.crop_harvested",
+      "handler": "farm_controller.gd:_on_crop_harvested",
+      "description": "Removes crop visual with harvest animation"
+    }
+  ],
+  "interaction_points": [
+    {
+      "element": "plot_tap",
+      "scene": "scenes/world/farm.tscn",
+      "action": "Plant crop (if empty), Harvest (if mature), Water (if growing)",
+      "script": "scripts/ui/farm_controller.gd:_handle_plot_tap"
+    },
+    {
+      "element": "inventory_button",
+      "scene": "scenes/ui/hud.tscn",
+      "action": "Opens inventory panel",
+      "script": "scripts/ui/hud_controller.gd:_on_inventory_button_pressed"
+    },
+    {
+      "element": "inventory_slot",
+      "scene": "scenes/ui/inventory_panel.tscn",
+      "action": "Selects item and shows details",
+      "script": "scripts/ui/inventory_controller.gd:_on_slot_selected"
+    },
+    {
+      "element": "sell_button",
+      "scene": "scenes/ui/inventory_panel.tscn",
+      "action": "Sells selected item via ActionSystem",
+      "script": "scripts/ui/inventory_controller.gd:_on_sell_button_pressed"
+    },
+    {
+      "element": "close_button",
+      "scene": "scenes/ui/inventory_panel.tscn",
+      "action": "Closes inventory panel",
+      "script": "scripts/ui/inventory_controller.gd:_on_close_button_pressed"
+    }
+  ],
+  "crop_data_sources": [
+    {
+      "path": "data/crops/carrot.json",
+      "id": "carrot",
+      "name": "Carrot"
+    },
+    {
+      "path": "data/crops/tomato.json",
+      "id": "tomato",
+      "name": "Tomato"
+    },
+    {
+      "path": "data/crops/corn.json",
+      "id": "corn",
+      "name": "Corn"
+    },
+    {
+      "path": "data/crops/strawberry.json",
+      "id": "strawberry",
+      "name": "Strawberry"
+    },
+    {
+      "path": "data/crops/wheat.json",
+      "id": "wheat",
+      "name": "Wheat"
+    }
+  ],
+  "ui_features": {
+    "mobile_optimized": true,
+    "target_resolution": "720x1280 portrait",
+    "touch_targets": "88x88px buttons",
+    "animations": [
+      "Button press scale (0.95x, 0.1s)",
+      "Gold count-up animation (0.5s)",
+      "Panel slide + fade (0.2s)",
+      "Crop growth bounce (Ease Out Back)",
+      "Harvest fade + bounce",
+      "Water droplet particles"
+    ]
+  },
+  "known_limitations": [
+    "Shop panel not yet implemented (placeholder in HUD)",
+    "Settings panel not yet implemented (placeholder in HUD)",
+    "Crop sprites are colored placeholders (awaiting art assets)",
+    "No save/load UI yet",
+    "Toast notifications need localization strings"
+  ],
+  "testing_checklist": [
+    "Tap empty plot to plant carrot (default crop)",
+    "Tap growing crop to water (visual feedback)",
+    "Tap mature crop (stage 3+) to harvest",
+    "Gold updates in HUD when selling items",
+    "Inventory shows items with correct counts",
+    "Inventory grid scrolls if many items",
+    "Sell button sells item and updates gold",
+    "All buttons have press animations",
+    "Panel open/close animations work",
+    "Mobile touch targets are adequate size"
+  ],
+  "dependencies": [
+    "scripts/core/state/state_manager.gd (StateManager autoload)",
+    "scripts/core/state/action_system.gd (ActionSystem autoload)",
+    "data/crops/*.json (crop data for names/icons)"
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "version": "1.0",
+  "date": "2025-01-15",
+  "new_crops": [
+    {
+      "id": "wheat",
+      "file": "data/crops/wheat.json",
+      "sprite_prefix": "wheat",
+      "notes": "Starter grain crop, low water needs, grows in 3 minutes. 4x profit margin (sell 12, seed 3)."
+    },
+    {
+      "id": "carrot",
+      "file": "data/crops/carrot.json",
+      "sprite_prefix": "carrot",
+      "notes": "Starter root vegetable, quick 2-minute grow time. 3x profit margin (sell 15, seed 5)."
+    },
+    {
+      "id": "strawberry",
+      "file": "data/crops/strawberry.json",
+      "sprite_prefix": "strawberry",
+      "notes": "Spring specialty crop, unlocks at level 2. 2.5x profit margin (sell 25, seed 10). High water needs."
+    },
+    {
+      "id": "tomato",
+      "file": "data/crops/tomato.json",
+      "sprite_prefix": "tomato",
+      "notes": "Summer crop, unlocks at level 3. 2.5x profit margin (sell 30, seed 12). Longer 4-minute grow time."
+    },
+    {
+      "id": "corn",
+      "file": "data/crops/corn.json",
+      "sprite_prefix": "corn",
+      "notes": "Late-game crop, unlocks at level 4. 3x profit margin (sell 45, seed 15). 5-minute grow time."
+    }
+  ],
+  "balance_summary": {
+    "crop_count": 5,
+    "price_range": {
+      "min_seed_cost": 3,
+      "max_seed_cost": 15,
+      "min_sell_price": 12,
+      "max_sell_price": 45
+    },
+    "growth_time_range": {
+      "min_seconds": 120,
+      "max_seconds": 300
+    },
+    "profit_margins": {
+      "wheat": "300%",
+      "carrot": "300%",
+      "strawberry": "250%",
+      "tomato": "250%",
+      "corn": "300%"
+    }
+  },
+  "new_shops": [
+    {
+      "shop_id": "general_store",
+      "file": "data/shops/general_store.json",
+      "notes": "Sells all 5 seed types with unlimited stock for starter crops, limited stock for advanced crops. Restock daily (86400 seconds)."
+    }
+  ],
+  "balance_changes": [],
+  "sprite_requirements": [
+    {"crop": "wheat", "stages": 5, "sprite_prefix": "wheat", "files": ["wheat_0.png", "wheat_1.png", "wheat_2.png", "wheat_3.png", "wheat_4.png"]},
+    {"crop": "carrot", "stages": 4, "sprite_prefix": "carrot", "files": ["carrot_0.png", "carrot_1.png", "carrot_2.png", "carrot_3.png"]},
+    {"crop": "strawberry", "stages": 5, "sprite_prefix": "strawberry", "files": ["strawberry_0.png", "strawberry_1.png", "strawberry_2.png", "strawberry_3.png", "strawberry_4.png"]},
+    {"crop": "tomato", "stages": 6, "sprite_prefix": "tomato", "files": ["tomato_0.png", "tomato_1.png", "tomato_2.png", "tomato_3.png", "tomato_4.png", "tomato_5.png"]},
+    {"crop": "corn", "stages": 7, "sprite_prefix": "corn", "files": ["corn_0.png", "corn_1.png", "corn_2.png", "corn_3.png", "corn_4.png", "corn_5.png", "corn_6.png"]}
+  ],
+  "localization_keys_added": [
+    "CROP_WHEAT_NAME", "CROP_WHEAT_DESC",
+    "CROP_CARROT_NAME", "CROP_CARROT_DESC",
+    "CROP_STRAWBERRY_NAME", "CROP_STRAWBERRY_DESC",
+    "CROP_TOMATO_NAME", "CROP_TOMATO_DESC",
+    "CROP_CORN_NAME", "CROP_CORN_DESC",
+    "SHOP_GENERAL_STORE_NAME", "SHOP_GENERAL_STORE_DESC"
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "assets_ready": [
+    {
+      "type": "crop_sprite",
+      "crop": "wheat",
+      "stages": ["seed", "sprout", "growing", "mature"],
+      "paths": [
+        "assets/crops/wheat/seed.png",
+        "assets/crops/wheat/sprout.png",
+        "assets/crops/wheat/growing.png",
+        "assets/crops/wheat/mature.png"
+      ],
+      "pivot": [32, 56],
+      "size": [64, 64]
+    },
+    {
+      "type": "crop_sprite",
+      "crop": "carrot",
+      "stages": ["seed", "sprout", "growing", "mature"],
+      "paths": [
+        "assets/crops/carrot/seed.png",
+        "assets/crops/carrot/sprout.png",
+        "assets/crops/carrot/growing.png",
+        "assets/crops/carrot/mature.png"
+      ],
+      "pivot": [32, 56],
+      "size": [64, 64]
+    },
+    {
+      "type": "crop_sprite",
+      "crop": "strawberry",
+      "stages": ["seed", "sprout", "growing", "mature"],
+      "paths": [
+        "assets/crops/strawberry/seed.png",
+        "assets/crops/strawberry/sprout.png",
+        "assets/crops/strawberry/growing.png",
+        "assets/crops/strawberry/mature.png"
+      ],
+      "pivot": [32, 56],
+      "size": [64, 64]
+    },
+    {
+      "type": "crop_sprite",
+      "crop": "tomato",
+      "stages": ["seed", "sprout", "growing", "mature"],
+      "paths": [
+        "assets/crops/tomato/seed.png",
+        "assets/crops/tomato/sprout.png",
+        "assets/crops/tomato/growing.png",
+        "assets/crops/tomato/mature.png"
+      ],
+      "pivot": [32, 56],
+      "size": [64, 64]
+    },
+    {
+      "type": "crop_sprite",
+      "crop": "corn",
+      "stages": ["seed", "sprout", "growing", "mature"],
+      "paths": [
+        "assets/crops/corn/seed.png",
+        "assets/crops/corn/sprout.png",
+        "assets/crops/corn/growing.png",
+        "assets/crops/corn/mature.png"
+      ],
+      "pivot": [32, 56],
+      "size": [64, 64]
+    }
+  ],
+  "ui_assets": [],
+  "manifest_location": "data/asset_manifest.json",
+  "import_settings": {
+    "filter": "nearest",
+    "compress": false
+  },
+  "style_notes": {
+    "art_style": "Hand-drawn storybook like Tsuki Adventure",
+    "outline_color": "#3B2B1A",
+    "palette": {
+      "sage_green": "#7A9E7E",
+      "olive_green": "#5A7D3A",
+      "pumpkin_orange": "#FF8C42",
+      "tomato_red": "#E84A3C",
+      "strawberry_red": "#E84A5F",
+      "corn_yellow": "#F5D76E",
+      "wheat_gold": "#E6C875",
+      "warm_brown": "#8B6F47",
+      "soil": "#6B4423"
+    }
+  },
+  "generation_info": {
+    "tool": "Python/Pillow",
+    "total_sprites": 20,
+    "crops": 5,
+    "stages_per_crop": 4,
+    "resolution": "64x64px",
+    "format": "PNG with transparency"
+  }
+}

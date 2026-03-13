@@ -1,0 +1,25 @@
+{
+  "$schema": "../../data/schemas/crop_schema.json",
+  "id": "carrot",
+  "name": "Carrot",
+  "name_key": "CROP_CARROT_NAME",
+  "description_key": "CROP_CARROT_DESC",
+  "growth_time": 120,
+  "sell_price": 15,
+  "seed_cost": 5,
+  "unlock_level": 1,
+  "sprite_prefix": "carrot",
+  "stages": [
+    {"stage": 0, "name": "seed", "duration": 0},
+    {"stage": 1, "name": "sprout", "duration": 30},
+    {"stage": 2, "name": "growing", "duration": 45},
+    {"stage": 3, "name": "mature", "duration": 45, "harvestable": true}
+  ],
+  "seasons": ["spring", "autumn"],
+  "water_needs": "medium",
+  "quality_factors": {
+    "water_bonus": 1.2,
+    "fertilizer_bonus": 1.5
+  },
+  "tags": ["root_vegetable", "beginner_friendly", "quick_grow"]
+}

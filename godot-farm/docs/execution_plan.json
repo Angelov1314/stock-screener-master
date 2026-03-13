@@ -1,0 +1,134 @@
+{
+  "project": "Cozy Farm - Godot Multi-Agent Game",
+  "version": "Sprint 1",
+  "goal": "创建温馨农场游戏，包含胡萝卜、小麦、番茄、草莓、玉米，手绘绘本风格，ASMR氛围，手机优先",
+  "model_strategy": {
+    "tier_1_fast": {
+      "model": "anthropic/claude-sonnet-4-6",
+      "agents": ["orchestrator"],
+      "use_case": "Coordination, planning, routine decisions"
+    },
+    "tier_2_standard": {
+      "model": "moonshot/kimi-k2.5",
+      "agents": ["content_data", "simulation", "world_ui", "state_authority", "qa_debug"],
+      "use_case": "Code generation, standard development tasks"
+    },
+    "tier_3_specialized": {
+      "art": "google/gemini-2.5-flash-image-preview",
+      "music": "lyria-realtime-exp"
+    },
+    "tier_4_premium": {
+      "model": "anthropic/claude-opus-4-6",
+      "reserved_for": ["complex_architecture", "critical_review", "system_design", "refactoring"],
+      "trigger": "Use when: cross-cutting concerns, high-risk changes, performance optimization, security review"
+    }
+  },
+  "agents": [
+    "orchestrator",
+    "content_data",
+    "simulation",
+    "art_pipeline",
+    "music_sound",
+    "world_ui",
+    "state_authority",
+    "qa_debug",
+    "architect"
+  ],
+  "execution_phases": [
+    {
+      "phase": 1,
+      "name": "Foundation",
+      "parallel": true,
+      "agents": ["content_data", "art_pipeline"],
+      "tasks": {
+        "content_data": "Create crop definitions for 5 crops: wheat, carrot, strawberry, tomato, corn with balanced prices",
+        "art_pipeline": "Generate 20 hand-drawn sprites (5 crops × 4 stages) using Gemini API"
+      },
+      "outputs": {
+        "content_data": ["data/crops/*.json", "data/shops/general_store.json"],
+        "art_pipeline": ["assets/crops/*.png", "data/asset_manifest.json"]
+      },
+      "estimated_time": "5-10 minutes"
+    },
+    {
+      "phase": 2,
+      "name": "Core Systems",
+      "parallel": false,
+      "agents": ["simulation"],
+      "tasks": {
+        "simulation": "Implement TimeManager, CropManager, InventoryManager, EconomyManager with signal-based updates"
+      },
+      "outputs": ["scripts/simulation/*.gd", "scripts/systems/*.gd"],
+      "dependencies": ["content_data"],
+      "estimated_time": "3-5 minutes"
+    },
+    {
+      "phase": 3,
+      "name": "Audio",
+      "parallel": true,
+      "agents": ["music_sound"],
+      "tasks": {
+        "music_sound": "Create AudioManager and attempt to generate music/SFX (fallback to placeholders if needed)"
+      },
+      "outputs": ["scripts/audio/audio_manager.gd", "assets/audio/sfx/*.ogg"],
+      "estimated_time": "2-3 minutes"
+    },
+    {
+      "phase": 4,
+      "name": "World Building",
+      "parallel": false,
+      "agents": ["world_ui"],
+      "tasks": {
+        "world_ui": "Create farm scene, HUD, inventory panel, plot interactions, signal connections"
+      },
+      "outputs": ["scenes/world/farm.tscn", "scenes/ui/*.tscn", "scripts/ui/*.gd"],
+      "dependencies": ["simulation", "art_pipeline"],
+      "estimated_time": "3-5 minutes"
+    },
+    {
+      "phase": 5,
+      "name": "Validation",
+      "parallel": false,
+      "agents": ["state_authority"],
+      "tasks": {
+        "state_authority": "Review all code for state consistency, direct modifications, signal usage; write audit report"
+      },
+      "outputs": ["docs/state/audit_report.md"],
+      "dependencies": ["simulation", "world_ui"],
+      "estimated_time": "2-3 minutes"
+    },
+    {
+      "phase": 6,
+      "name": "Quality Assurance",
+      "parallel": false,
+      "agents": ["qa_debug"],
+      "tasks": {
+        "qa_debug": "Run smoke tests, validate scenes, test core loop, write bug reports"
+      },
+      "outputs": ["tests/smoke/*.gd", "docs/qa_reports/*.md", "docs/bugs/*.md"],
+      "dependencies": ["world_ui", "state_authority"],
+      "estimated_time": "2-3 minutes"
+    }
+  ],
+  "handoff_chain": [
+    { "from": "content_data", "to": "simulation", "data": "crop definitions and prices" },
+    { "from": "art_pipeline", "to": "world_ui", "data": "sprite paths and manifest" },
+    { "from": "simulation", "to": "world_ui", "data": "signal definitions and APIs" },
+    { "from": "world_ui", "to": "state_authority", "data": "all scene and script files" },
+    { "from": "state_authority", "to": "qa_debug", "data": "audit approval or blocking issues" }
+  ],
+  "total_estimated_time": "15-25 minutes",
+  "success_criteria": [
+    "Player can plant, water, harvest, and sell all 5 crops",
+    "Inventory and gold persist correctly",
+    "All scenes open without errors",
+    "State Authority approves code patterns",
+    "QA smoke tests pass",
+    "Game runs at 60 FPS on target device"
+  ],
+  "risk_mitigation": {
+    "art_generation_fails": "Use placeholder sprites from free resources",
+    "lyria_unavailable": "Use placeholder audio or free SFX",
+    "state_violations_found": "Fix critical issues, defer minor ones to Sprint 2"
+  }
+}

@@ -1,0 +1,116 @@
+[gd_scene load_steps=3 format=3 uid="uid://hudscene001"]
+
+[ext_resource type="Script" path="res://scripts/ui/hud_controller.gd" id="1_abc12"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_gold"]
+font_size = 24
+font_color = Color(1, 0.85, 0.2, 1)
+outline_size = 2
+outline_color = Color(0.2, 0.15, 0.05, 1)
+
+[node name="HUD" type="CanvasLayer"]
+script = ExtResource("1_abc12")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="TopBar" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LeftSection" type="HBoxContainer" parent="MarginContainer/VBoxContainer/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DayLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/LeftSection"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Day 1"
+label_settings = SubResource("LabelSettings_gold")
+
+[node name="SeasonLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/LeftSection"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Spring"
+label_settings = SubResource("LabelSettings_gold")
+
+[node name="GrowthInfoLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/LeftSection"]
+unique_name_in_owner = true
+layout_mode = 2
+text = ""
+label_settings = SubResource("LabelSettings_gold")
+
+[node name="RightSection" type="HBoxContainer" parent="MarginContainer/VBoxContainer/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 10
+alignment = 2
+
+[node name="GoldIcon" type="TextureRect" parent="MarginContainer/VBoxContainer/TopBar/RightSection"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="GoldLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/RightSection"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "0"
+label_settings = SubResource("LabelSettings_gold")
+
+[node name="Spacer" type="Control" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BottomBar" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+alignment = 0
+
+[node name="InventoryButton" type="Button" parent="MarginContainer/VBoxContainer/BottomBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+tooltip_text = "Inventory"
+text = "🎒"
+
+[node name="ShopButton" type="Button" parent="MarginContainer/VBoxContainer/BottomBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+tooltip_text = "Shop"
+text = "🛒"
+
+[node name="SettingsButton" type="Button" parent="MarginContainer/VBoxContainer/BottomBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+tooltip_text = "Settings"
+text = "⚙️"
+
+[node name="ToastContainer" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -100.0
+offset_right = 150.0
+offset_bottom = 0.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1

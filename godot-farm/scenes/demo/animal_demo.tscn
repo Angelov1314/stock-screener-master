@@ -1,0 +1,185 @@
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/characters/cow/cow_idle.png" id="cow_idle"]
+[ext_resource type="Texture2D" path="res://assets/characters/cow/cow_walk.png" id="cow_walk"]
+[ext_resource type="Texture2D" path="res://assets/characters/cow/cow_happy.png" id="cow_happy"]
+[ext_resource type="Texture2D" path="res://assets/characters/cow/cow_sleep.png" id="cow_sleep"]
+[ext_resource type="Texture2D" path="res://assets/characters/cow/cow_carried.png" id="cow_carried"]
+[ext_resource type="Texture2D" path="res://assets/characters/sheep/sheep_idle.png" id="sheep_idle"]
+[ext_resource type="Texture2D" path="res://assets/characters/sheep/sheep_walk.png" id="sheep_walk"]
+[ext_resource type="Texture2D" path="res://assets/characters/sheep/sheep_happy.png" id="sheep_happy"]
+[ext_resource type="Texture2D" path="res://assets/characters/sheep/sheep_sleep.png" id="sheep_sleep"]
+[ext_resource type="Texture2D" path="res://assets/characters/sheep/sheep_carried.png" id="sheep_carried"]
+[ext_resource type="Script" path="res://scripts/demo/animal_demo.gd" id="demo_script"]
+
+[node name="AnimalDemo" type="Node2D"]
+script = ExtResource("demo_script")
+
+[node name="Background" type="ColorRect" parent="."]
+offset_right = 720.0
+offset_bottom = 1280.0
+color = Color(0.56, 0.74, 0.56, 1)
+
+[node name="Title" type="Label" parent="."]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 700.0
+offset_bottom = 60.0
+text = "🐄 Cow & 🐑 Sheep Animation Demo"
+horizontal_alignment = 1
+
+[node name="CowLabel" type="Label" parent="."]
+offset_left = 20.0
+offset_top = 70.0
+offset_right = 200.0
+offset_bottom = 90.0
+text = "COW"
+
+[node name="CowIdle" type="Sprite2D" parent="."]
+position = Vector2(80, 160)
+texture = ExtResource("cow_idle")
+hframes = 4
+
+[node name="CowWalk" type="Sprite2D" parent="."]
+position = Vector2(240, 160)
+texture = ExtResource("cow_walk")
+hframes = 4
+
+[node name="CowHappy" type="Sprite2D" parent="."]
+position = Vector2(420, 160)
+texture = ExtResource("cow_happy")
+hframes = 4
+
+[node name="CowSleep" type="Sprite2D" parent="."]
+position = Vector2(560, 160)
+texture = ExtResource("cow_sleep")
+hframes = 2
+
+[node name="CowCarried" type="Sprite2D" parent="."]
+position = Vector2(660, 180)
+texture = ExtResource("cow_carried")
+hframes = 2
+
+[node name="CowIdleLabel" type="Label" parent="."]
+offset_left = 40.0
+offset_top = 260.0
+offset_right = 120.0
+offset_bottom = 280.0
+text = "idle"
+horizontal_alignment = 1
+
+[node name="CowWalkLabel" type="Label" parent="."]
+offset_left = 200.0
+offset_top = 260.0
+offset_right = 280.0
+offset_bottom = 280.0
+text = "walk"
+horizontal_alignment = 1
+
+[node name="CowHappyLabel" type="Label" parent="."]
+offset_left = 380.0
+offset_top = 260.0
+offset_right = 460.0
+offset_bottom = 280.0
+text = "happy"
+horizontal_alignment = 1
+
+[node name="CowSleepLabel" type="Label" parent="."]
+offset_left = 520.0
+offset_top = 260.0
+offset_right = 600.0
+offset_bottom = 280.0
+text = "sleep"
+horizontal_alignment = 1
+
+[node name="CowCarriedLabel" type="Label" parent="."]
+offset_left = 620.0
+offset_top = 280.0
+offset_right = 700.0
+offset_bottom = 300.0
+text = "carried"
+horizontal_alignment = 1
+
+[node name="SheepLabel" type="Label" parent="."]
+offset_left = 20.0
+offset_top = 320.0
+offset_right = 200.0
+offset_bottom = 340.0
+text = "SHEEP"
+
+[node name="SheepIdle" type="Sprite2D" parent="."]
+position = Vector2(80, 420)
+texture = ExtResource("sheep_idle")
+hframes = 4
+
+[node name="SheepWalk" type="Sprite2D" parent="."]
+position = Vector2(240, 420)
+texture = ExtResource("sheep_walk")
+hframes = 4
+
+[node name="SheepHappy" type="Sprite2D" parent="."]
+position = Vector2(420, 420)
+texture = ExtResource("sheep_happy")
+hframes = 4
+
+[node name="SheepSleep" type="Sprite2D" parent="."]
+position = Vector2(560, 420)
+texture = ExtResource("sheep_sleep")
+hframes = 2
+
+[node name="SheepCarried" type="Sprite2D" parent="."]
+position = Vector2(660, 440)
+texture = ExtResource("sheep_carried")
+hframes = 2
+
+[node name="SheepIdleLabel" type="Label" parent="."]
+offset_left = 40.0
+offset_top = 510.0
+offset_right = 120.0
+offset_bottom = 530.0
+text = "idle"
+horizontal_alignment = 1
+
+[node name="SheepWalkLabel" type="Label" parent="."]
+offset_left = 200.0
+offset_top = 510.0
+offset_right = 280.0
+offset_bottom = 530.0
+text = "walk"
+horizontal_alignment = 1
+
+[node name="SheepHappyLabel" type="Label" parent="."]
+offset_left = 380.0
+offset_top = 510.0
+offset_right = 460.0
+offset_bottom = 530.0
+text = "happy"
+horizontal_alignment = 1
+
+[node name="SheepSleepLabel" type="Label" parent="."]
+offset_left = 520.0
+offset_top = 510.0
+offset_right = 600.0
+offset_bottom = 530.0
+text = "sleep"
+horizontal_alignment = 1
+
+[node name="SheepCarriedLabel" type="Label" parent="."]
+offset_left = 620.0
+offset_top = 530.0
+offset_right = 700.0
+offset_bottom = 550.0
+text = "carried"
+horizontal_alignment = 1
+
+[node name="Instructions" type="Label" parent="."]
+offset_left = 20.0
+offset_top = 600.0
+offset_right = 700.0
+offset_bottom = 640.0
+text = "Animations play automatically at 8 FPS"
+horizontal_alignment = 1
+
+[node name="AnimTimer" type="Timer" parent="."]
+wait_time = 0.125
+autostart = true
