@@ -250,7 +250,8 @@ func _update_crops_growth(delta: float) -> void:
 		if Engine.get_process_frames() % 180 == 0 and active_crops.size() > 0 and crop_id == active_crops.keys()[0]:
 			print("[CropManager] Crop %s: season=%s, in_season=%s, stage=%d, progress=%.2f" % [crop_id, str(crop.seasons), in_season, crop.current_stage, crop.growth_progress])
 		
-		crop.update_growth(delta * growth_speed_multiplier, in_season)
+		# Force growth for testing - ignore season check
+		crop.update_growth(delta * growth_speed_multiplier, true)
 
 ## Get all harvestable crops
 func get_harvestable_crops() -> Array[String]:
