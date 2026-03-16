@@ -17,10 +17,10 @@ var timer: Timer = null
 # Layout config - 16 crops evenly distributed, slightly larger
 var grid_cols: int = 4
 var grid_rows: int = 4
-var spacing: float = 80.0  # Wider spacing to fill the plot
+var spacing: float = 200.0  # Much wider spacing for large plots
 
 func _ready():
-	z_index = 1000  # High z-index to be on top
+	z_index = 1000
 	
 	# Create container
 	crop_container = Node2D.new()
@@ -29,6 +29,10 @@ func _ready():
 	
 	# Create 16 sprites in a grid
 	_create_sprites()
+	
+	# Hide initially for planting animation
+	for sprite in sprites:
+		sprite.scale = Vector2.ZERO
 	
 	# Create timer
 	timer = Timer.new()
@@ -67,14 +71,43 @@ func initialize(data: Dictionary) -> void:
 
 func start_growth():
 	update_visual()
+	_plant_animation()
 	timer.start()
+
+func _plant_animation():
+	# Pop up animation with stagger
+	for i in range(sprites.size()):
+		var sprite = sprites[i]
+		var target_scale = Vector2(0.35, 0.35)
+		
+		# Random delay for natural look
+		await get_tree().create_timer(randf() * 0.3).timeout
+		
+		# Pop up
+		var tween = create_tween()
+		tween.set_trans(Tween.TRANS_BACK)
+		tween.set_ease(Tween.EASE_OUT)
+		tween.tween_property(sprite, "scale", target_scale, 0.4)
 
 func _on_timer_timeout():
 	if current_stage < 3:
 		current_stage += 1
-		update_visual()
-		if current_stage == 3:
-			became_harvestable.emit()
+		_growth_animation()
+
+func _growth_animation():
+	# Update texture first
+	update_visual()
+	
+	# Bounce animation
+	for sprite in sprites:
+		var tween = create_tween()
+		tween.set_trans(Tween.TRANS_ELASTIC)
+		tween.set_ease(Tween.EASE_OUT)
+		tween.tween_property(sprite, "scale", Vector2(0.4, 0.4), 0.3)
+		tween.tween_property(sprite, "scale", Vector2(0.35, 0.35), 0.2)
+	
+	if current_stage == 3:
+		became_harvestable.emit()
 
 func update_visual():
 	var stage_names = ["seed", "sprout", "growing", "mature"]
@@ -83,10 +116,8 @@ func update_visual():
 	
 	var tex = ResourceLoader.load(path)
 	if tex:
-		for i in range(sprites.size()):
-			var sprite = sprites[i]
+		for sprite in sprites:
 			sprite.texture = tex
-			sprite.scale = Vector2(0.35, 0.35)  # Larger crops
 			sprite.visible = true
 
 func can_harvest() -> bool:
