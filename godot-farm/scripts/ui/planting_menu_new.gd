@@ -29,12 +29,18 @@ func _create_seed_buttons():
 		# Style
 		var normal_style = StyleBoxFlat.new()
 		normal_style.bg_color = Color(0.3, 0.25, 0.2, 0.8)
-		normal_style.corner_radius_all = 8
+		normal_style.corner_radius_top_left = 8
+		normal_style.corner_radius_top_right = 8
+		normal_style.corner_radius_bottom_right = 8
+		normal_style.corner_radius_bottom_left = 8
 		btn.add_theme_stylebox_override("normal", normal_style)
 		
 		var hover_style = StyleBoxFlat.new()
 		hover_style.bg_color = Color(0.4, 0.35, 0.25, 0.9)
-		hover_style.corner_radius_all = 8
+		hover_style.corner_radius_top_left = 8
+		hover_style.corner_radius_top_right = 8
+		hover_style.corner_radius_bottom_right = 8
+		hover_style.corner_radius_bottom_left = 8
 		btn.add_theme_stylebox_override("hover", hover_style)
 		
 		btn.pressed.connect(_on_seed_selected.bind(seed.id))
