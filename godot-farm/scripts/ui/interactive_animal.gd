@@ -142,9 +142,6 @@ func _setup_animation_from_frames(sprite_frames: SpriteFrames, anim_name: String
 		
 		if texture:
 			sprite_frames.add_frame(anim_name, texture)
-				if ResourceLoader.exists(path):
-					var texture = load(path)
-					sprite_frames.add_frame(anim_name, texture)
 
 func _setup_animation_from_spritesheet(sprite_frames: SpriteFrames, anim_name: String, texture: Texture2D, frames: int, speed: int):
 	if not texture:
