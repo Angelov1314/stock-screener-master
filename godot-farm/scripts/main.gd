@@ -20,8 +20,8 @@ func _ready():
 	# Connect HUD signals
 	hud.inventory_requested.connect(_on_inventory_requested)
 	hud.shop_requested.connect(_on_shop_requested)
-	# settings_requested signal not yet implemented in HUD
-	# hud.settings_requested.connect(_on_settings_requested)
+	hud.sickle_mode_toggled.connect(_on_sickle_mode_toggled)
+	hud.water_mode_toggled.connect(_on_water_mode_toggled)
 	
 	# Connect inventory panel close
 	inventory_panel.panel_closed.connect(_on_inventory_closed)
@@ -43,10 +43,17 @@ func _on_inventory_requested():
 	inventory_panel.show_panel()
 
 func _on_shop_requested():
-	print("[Main] Shop requested (not yet implemented)")
+	print("[Main] Shop requested")
 
-func _on_settings_requested():
-	print("[Main] Settings requested (not yet implemented)")
+func _on_sickle_mode_toggled(active: bool):
+	print("[Main] Sickle mode: %s" % active)
+	if farm.has_method("set_sickle_mode"):
+		farm.set_sickle_mode(active)
+
+func _on_water_mode_toggled(active: bool):
+	print("[Main] Water mode: %s" % active)
+	if farm.has_method("set_water_mode"):
+		farm.set_water_mode(active)
 
 func _on_inventory_closed():
 	print("[Main] Inventory closed")
@@ -55,3 +62,5 @@ func _on_seed_selected(crop_id: String):
 	print("[Main] Seed selected: %s" % crop_id)
 	if farm.has_method("set_selected_crop"):
 		farm.set_selected_crop(crop_id)
+	# Deactivate tools when selecting seed
+	hud.deactivate_tools()

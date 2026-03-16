@@ -206,6 +206,12 @@ func _on_plot_input_event(viewport: Node, event: InputEvent, shape_idx: int, plo
 			_handle_plot_secondary(plot_id)
 
 func _handle_plot_tap(plot_id: String):
+	# Check if tool mode is active - if so, let tools handle it
+	if _sickle_tool and _sickle_tool.is_active():
+		return
+	if _water_tool and _water_tool.is_active():
+		return
+	
 	var crop_entity = _get_crop_at_plot(plot_id)
 	
 	if crop_entity == null:
@@ -514,3 +520,47 @@ func get_plot_position_by_coord(coord: Vector2i) -> Vector2:
 		if plot_coord == coord:
 			return Vector2(rect.position.x + rect.size.x/2, rect.position.y + rect.size.y/2)
 	return Vector2.ZERO
+
+## Tool Mode Management
+var _sickle_tool: Node2D = null
+var _water_tool: Node2D = null
+
+func set_sickle_mode(active: bool):
+	if not _sickle_tool:
+		_sickle_tool = get_node_or_null("SickleTool")
+	if _sickle_tool:
+		if active:
+			_sickle_tool.activate()
+		else:
+			_sickle_tool.deactivate()
+
+func set_water_mode(active: bool):
+	if not _water_tool:
+		_water_tool = get_node_or_null("WateringCanTool")
+	if _water_tool:
+		if active:
+			_water_tool.activate()
+		else:
+			_water_tool.deactivate()
+
+## Remove crop visual after harvest
+func _remove_crop_visual(plot_id: String):
+	if _crop_instances.has(plot_id):
+		var crop_node = _crop_instances[plot_id]
+		_crop_instances.erase(plot_id)
+		if is_instance_valid(crop_node):
+			crop_node.queue_free()
+		print("[FarmController] Crop visual removed for plot: %s" % plot_id)
+
+## Updated harvest handler to remove visual
+func _on_crop_harvested(coord: Vector2i, crop_id: String):
+	print("[FarmController] Crop harvested at coord: %s" % str(coord))
+	for plot_id in _plot_rects.keys():
+		var rect = _plot_rects[plot_id]
+		var plot_coord = Vector2i(int(rect.position.x / 100), int(rect.position.y / 100))
+		if plot_coord == coord:
+			_animate_harvest(plot_id)
+			# Remove visual after short delay
+			var timer = get_tree().create_timer(0.5)
+			timer.timeout.connect(func(): _remove_crop_visual(plot_id))
+			return

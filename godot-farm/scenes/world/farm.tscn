@@ -14,6 +14,8 @@
 [ext_resource type="Script" path="res://scripts/ui/interactive_animal.gd" id="12_animal_script"]
 [ext_resource type="Script" path="res://scripts/ui/dynamic_background.gd" id="13_dynamic_bg"]
 [ext_resource type="Script" path="res://scripts/ui/ambient_audio_manager.gd" id="14_ambient_audio"]
+[ext_resource type="Script" path="res://scripts/ui/sickle_harvest_tool.gd" id="15_sickle"]
+[ext_resource type="Script" path="res://scripts/ui/watering_can_tool.gd" id="16_water"]
 
 [node name="Farm" type="Node2D"]
 script = ExtResource("1_farm01")
@@ -89,3 +91,11 @@ script = ExtResource("3_cam")
 
 [node name="AmbientAudioManager" type="Node" parent="."]
 script = ExtResource("14_ambient_audio")
+
+[node name="SickleTool" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("15_sickle")
+
+[node name="WateringCanTool" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("16_water")

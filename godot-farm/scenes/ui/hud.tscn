@@ -1,6 +1,11 @@
-[gd_scene load_steps=3 format=3 uid="uid://hudscene001"]
+[gd_scene load_steps=8 format=3 uid="uid://hudscene001"]
 
 [ext_resource type="Script" path="res://scripts/ui/hud_controller.gd" id="1_abc12"]
+[ext_resource type="Texture2D" path="res://assets/ui/buttons_extracted/row3_seed_bag/row3_seed_bag_0.png" id="2_seedbag"]
+[ext_resource type="Texture2D" path="res://assets/ui/buttons_extracted/row5_tool_watering/row5_tool_watering_0.png" id="3_water"]
+[ext_resource type="Texture2D" path="res://assets/ui/buttons_extracted/row6_tool_trowel/row6_tool_trowel_0.png" id="4_sickle"]
+[ext_resource type="Texture2D" path="res://assets/ui/buttons_extracted/row7_tool_shovel/row7_tool_shovel_0.png" id="5_shovel"]
+[ext_resource type="Texture2D" path="res://assets/ui/buttons_extracted/row9_bottom_toolbar/row9_bottom_toolbar_0.png" id="6_shop"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_gold"]
 font_size = 24
@@ -77,28 +82,44 @@ size_flags_vertical = 3
 [node name="BottomBar" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 8
-alignment = 0
+alignment = 1
+theme_override_constants/separation = 10
 
-[node name="InventoryButton" type="Button" parent="MarginContainer/VBoxContainer/BottomBar"]
+[node name="SickleButton" type="TextureButton" parent="MarginContainer/VBoxContainer/BottomBar"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(60, 60)
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
-tooltip_text = "Inventory"
-text = "🎒"
+tooltip_text = "镰刀模式 - 拖动收割"
+texture_normal = ExtResource("4_sickle")
+ignore_texture_size = true
+stretch_mode = 5
 
-[node name="ShopButton" type="Button" parent="MarginContainer/VBoxContainer/BottomBar"]
+[node name="WaterButton" type="TextureButton" parent="MarginContainer/VBoxContainer/BottomBar"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(60, 60)
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
-tooltip_text = "Shop"
-text = "🛒"
+tooltip_text = "浇水模式"
+texture_normal = ExtResource("3_water")
+ignore_texture_size = true
+stretch_mode = 5
 
-[node name="SettingsButton" type="Button" parent="MarginContainer/VBoxContainer/BottomBar"]
+[node name="InventoryButton" type="TextureButton" parent="MarginContainer/VBoxContainer/BottomBar"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(60, 60)
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
-tooltip_text = "Settings"
-text = "⚙️"
+tooltip_text = "背包"
+texture_normal = ExtResource("2_seedbag")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="ShopButton" type="TextureButton" parent="MarginContainer/VBoxContainer/BottomBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+tooltip_text = "商店"
+texture_normal = ExtResource("6_shop")
+ignore_texture_size = true
+stretch_mode = 5
 
 [node name="ToastContainer" type="VBoxContainer" parent="."]
 unique_name_in_owner = true
