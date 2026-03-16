@@ -662,7 +662,7 @@ func _try_plant_crop(plot_id: String):
 			# Deduct gold
 			var eco_mgr = get_node_or_null("/root/EconomyManager")
 			if eco_mgr:
-				var crop_data = crop_mgr.get_crop_template(_selected_crop_id)
+				var crop_data = crop_mgr.crop_database.get(_selected_crop_id, {})
 				eco_mgr.remove_gold(crop_data.get("seed_cost", 5), "plant")
 	else:
 		print("[FarmController] ERROR: CropManager not found")
