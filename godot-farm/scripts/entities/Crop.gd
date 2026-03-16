@@ -78,13 +78,18 @@ func update_visual():
 	var stage_name = stage_names[current_stage]
 	var path = "res://assets/crops/%s/%s_%s.png" % [crop_id, crop_id, stage_name]
 	
+	print("[Crop] Loading: %s" % path)
 	var tex = ResourceLoader.load(path)
 	if tex:
-		for sprite in sprites:
+		print("[Crop] Texture loaded: %s, size=%s" % [path, str(tex.get_size())])
+		for i in range(sprites.size()):
+			var sprite = sprites[i]
 			sprite.texture = tex
-			sprite.scale = Vector2(0.22, 0.22)  # 56/256
+			sprite.scale = Vector2(0.22, 0.22)
+			sprite.visible = true
+			print("[Crop] Sprite %d: pos=%s, visible=%s" % [i, str(sprite.position), sprite.visible])
 	else:
-		push_error("Failed to load: " + path)
+		print("[Crop] ERROR: Failed to load: " + path)
 
 func can_harvest() -> bool:
 	return current_stage == 3
