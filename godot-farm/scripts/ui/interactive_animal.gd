@@ -117,21 +117,31 @@ func _setup_animation_from_frames(sprite_frames: SpriteFrames, anim_name: String
 	sprite_frames.set_animation_loop(anim_name, true)
 	
 	for i in range(frame_count):
-		# Try 1-based naming first (capybara_idle_01.png)
+		var texture = null
 		var frame_num = i + 1
+		
+		# Try 1-based naming with prefix (capybara_idle_01.png)
 		var path = "res://assets/characters/%s/%s/%s_%s_%02d.png" % [character, folder, character, folder, frame_num]
 		if ResourceLoader.exists(path):
-			var texture = load(path)
-			sprite_frames.add_frame(anim_name, texture)
+			texture = load(path)
 		else:
-			# Fallback to 0-based naming (cow_idle_0.png)
+			# Try 0-based naming with prefix (cow_idle_0.png)
 			path = "res://assets/characters/%s/%s/%s_%s_%d.png" % [character, folder, character, folder, i]
 			if ResourceLoader.exists(path):
-				var texture = load(path)
-				sprite_frames.add_frame(anim_name, texture)
+				texture = load(path)
 			else:
-				# Try simple naming without character prefix
-				path = "res://assets/characters/%s/%s/%s_%d.png" % [character, folder, folder, i]
+				# Try 1-based naming without prefix (idle_01.png)
+				path = "res://assets/characters/%s/%s/%s_%02d.png" % [character, folder, folder, frame_num]
+				if ResourceLoader.exists(path):
+					texture = load(path)
+				else:
+					# Try 0-based naming without prefix (idle_0.png)
+					path = "res://assets/characters/%s/%s/%s_%d.png" % [character, folder, folder, i]
+					if ResourceLoader.exists(path):
+						texture = load(path)
+		
+		if texture:
+			sprite_frames.add_frame(anim_name, texture)
 				if ResourceLoader.exists(path):
 					var texture = load(path)
 					sprite_frames.add_frame(anim_name, texture)
