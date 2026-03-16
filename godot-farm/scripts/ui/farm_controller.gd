@@ -649,7 +649,8 @@ func _try_plant_crop(plot_id: String):
 	var crop_mgr = get_node_or_null("/root/CropManager")
 	if crop_mgr:
 		var world_pos = Vector2(rect.position.x + rect.size.x/2, rect.position.y + rect.size.y/2)
-		var planted_id = crop_mgr.plant_crop(_selected_crop_id, coord, world_pos)
+		# Pass plot size for even crop distribution
+		var planted_id = crop_mgr.plant_crop(_selected_crop_id, coord, world_pos, rect.size.x, rect.size.y)
 		
 		if not planted_id.is_empty():
 			var eco_mgr = get_node_or_null("/root/EconomyManager")

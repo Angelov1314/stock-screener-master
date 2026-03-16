@@ -23,7 +23,7 @@ func load_crop_database():
 				crop_database[id] = json.data
 			file.close()
 
-func plant_crop(crop_type: String, position: Vector2i, world_pos: Vector2 = Vector2.ZERO) -> String:
+func plant_crop(crop_type: String, position: Vector2i, world_pos: Vector2 = Vector2.ZERO, plot_w: float = 600, plot_h: float = 400) -> String:
 	if not crop_database.has(crop_type):
 		return ""
 	
@@ -32,7 +32,7 @@ func plant_crop(crop_type: String, position: Vector2i, world_pos: Vector2 = Vect
 	var crop = CropEntityScript.new()
 	crop.name = crop_id
 	crop.position = world_pos
-	crop.initialize(crop_database[crop_type])
+	crop.initialize(crop_database[crop_type], plot_w, plot_h)
 	
 	add_child(crop)
 	crop.start_growth()

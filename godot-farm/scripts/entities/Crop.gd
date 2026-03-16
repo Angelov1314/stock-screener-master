@@ -14,10 +14,11 @@ var crop_container: Node2D = null
 var sprites: Array[Sprite2D] = []
 var timer: Timer = null
 
-# Layout config - 16 crops evenly distributed, slightly larger
+# Layout config - dynamically set based on plot size
 var grid_cols: int = 4
 var grid_rows: int = 4
-var spacing: float = 200.0  # Much wider spacing for large plots
+var plot_width: float = 600.0   # Will be set on init
+var plot_height: float = 400.0  # Will be set on init
 
 func _ready():
 	z_index = 1000
@@ -43,31 +44,35 @@ func _ready():
 	add_child(timer)
 
 func _create_sprites():
-	# Calculate starting position to center the grid
-	var total_width = (grid_cols - 1) * spacing
-	var total_height = (grid_rows - 1) * spacing
-	var start_x = -total_width / 2
-	var start_y = -total_height / 2
+	# Calculate spacing based on plot size (use 70% of plot for crops, 30% margin)
+	var usable_width = plot_width * 0.7
+	var usable_height = plot_height * 0.7
+	var spacing_x = usable_width / (grid_cols - 1) if grid_cols > 1 else 0
+	var spacing_y = usable_height / (grid_rows - 1) if grid_rows > 1 else 0
+	
+	var start_x = -(grid_cols - 1) * spacing_x / 2
+	var start_y = -(grid_rows - 1) * spacing_y / 2
 	
 	for row in range(grid_rows):
 		for col in range(grid_cols):
 			var sprite = Sprite2D.new()
 			sprite.name = "Crop_%d_%d" % [row, col]
 			sprite.position = Vector2(
-				start_x + col * spacing,
-				start_y + row * spacing
+				start_x + col * spacing_x,
+				start_y + row * spacing_y
 			)
 			sprite.z_index = 1001
 			crop_container.add_child(sprite)
 			sprites.append(sprite)
 
-func initialize(data: Dictionary) -> void:
+func initialize(data: Dictionary, plot_w: float = 600, plot_h: float = 400) -> void:
 	crop_id = data.get("id", "")
 	crop_name = data.get("name", "")
 	sell_price = data.get("sell_price", 10)
 	seed_cost = data.get("seed_cost", 5)
+	plot_width = plot_w
+	plot_height = plot_h
 	current_stage = 0
-	# update_visual will be called after add_child
 
 func start_growth():
 	update_visual()
