@@ -11,7 +11,7 @@ signal animal_purchased(animal_id: String)
 @onready var animals_grid: GridContainer = %AnimalsGrid
 @onready var plants_grid: GridContainer = %PlantsGrid
 @onready var refresh_button: Button = %RefreshButton
-@onready var item_panel: Panel = $ItemPanel
+@onready var item_panel: Panel = $MainContainer/ItemPanel
 @onready var item_icon: TextureRect = %ItemIcon
 @onready var item_name: Label = %ItemName
 @onready var item_desc: Label = %ItemDesc
