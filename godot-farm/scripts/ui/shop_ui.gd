@@ -321,7 +321,11 @@ func _on_buy_pressed():
 		
 		if selected_item.type == "animal":
 			animal_purchased.emit(selected_item.id)
-			_spawn_animal(selected_item.id)
+			# Add animal to inventory instead of spawning
+			var state = get_node_or_null("/root/StateManager")
+			if state:
+				state.apply_action({"type": "add_item", "item_id": selected_item.id, "amount": 1})
+			print("[ShopUI] Added animal to inventory: %s" % selected_item.id)
 		elif selected_item.type == "plant":
 			_give_seed(selected_item.id)
 	

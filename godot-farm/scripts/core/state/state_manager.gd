@@ -29,7 +29,7 @@ var _action_history: Array = []
 func _ready():
     print("[StateManager] Initialized as truth source")
     # Set initial values
-    gold = 100
+    gold = 300
     player_name = "农场主"
     experience = 0
     player_level = 1
