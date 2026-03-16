@@ -53,7 +53,9 @@ func plant_crop(crop_type: String, position: Vector2i, world_pos: Vector2 = Vect
 	crop_positions[position] = crop_id
 	
 	crop_planted.emit(crop_id, crop_type, world_pos)
-	print("[CropManager] Plant success: %s" % crop_id)
+	print("[CropManager] Plant success: %s at world %s" % [crop_id, str(crop.position)])
+	print("[CropManager] Crop global pos: %s" % str(crop.global_position))
+	print("[CropManager] Parent: %s" % str(crop.get_parent().name))
 	return crop_id
 
 func get_crop_at(position: Vector2i) -> Node2D:

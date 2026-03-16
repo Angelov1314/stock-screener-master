@@ -20,6 +20,8 @@ var grid_rows: int = 4
 var spacing: float = 40.0
 
 func _ready():
+	z_index = 1000  # High z-index to be on top
+	
 	# Create container
 	crop_container = Node2D.new()
 	crop_container.name = "CropContainer"
@@ -51,6 +53,7 @@ func _create_sprites():
 				start_x + col * spacing,
 				start_y + row * spacing
 			)
+			sprite.z_index = 1001
 			crop_container.add_child(sprite)
 			sprites.append(sprite)
 
