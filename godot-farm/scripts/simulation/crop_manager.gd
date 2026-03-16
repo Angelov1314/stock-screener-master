@@ -24,24 +24,36 @@ func load_crop_database():
 			file.close()
 
 func plant_crop(crop_type: String, position: Vector2i, world_pos: Vector2 = Vector2.ZERO) -> String:
+	print("[CropManager] plant_crop: type=%s, pos=%s, world=%s" % [crop_type, str(position), str(world_pos)])
+	
 	if not crop_database.has(crop_type):
+		print("[CropManager] ERROR: crop not in database")
 		return ""
 	
 	var crop_id = "%s_%d_%d_%d" % [crop_type, position.x, position.y, Time.get_unix_time_from_system()]
+	print("[CropManager] Creating crop: %s" % crop_id)
+	
 	var crop = CropEntityScript.new()
 	crop.name = crop_id
 	crop.position = world_pos
 	crop.initialize(crop_database[crop_type])
 	
 	add_child(crop)
+	print("[CropManager] Added to tree, child count: %d" % get_child_count())
 	
-	# Now _ready() has been called, start growth
+	# Check if _ready was called
+	if crop.sprites.is_empty():
+		print("[CropManager] ERROR: sprites not created!")
+	else:
+		print("[CropManager] Created %d sprites" % crop.sprites.size())
+	
 	crop.start_growth()
 	
 	active_crops[crop_id] = crop
 	crop_positions[position] = crop_id
 	
 	crop_planted.emit(crop_id, crop_type, world_pos)
+	print("[CropManager] Plant success: %s" % crop_id)
 	return crop_id
 
 func get_crop_at(position: Vector2i) -> Node2D:
