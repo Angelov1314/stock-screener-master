@@ -1,0 +1,14 @@
+# Pitfall Database — append entries as discovered
+# Location: <project_root>/state/pitfalls.yaml
+
+pitfalls: []
+# Example entry:
+# - id: PF-001
+#   title: File handle not closed
+#   symptom: Memory leak
+#   root_cause: Not using context manager
+#   fix: Use `with` statement
+#   keywords: [file, handle, leak]
+#   frequency: 1
+#   last_seen: 2026-02-22
+#   severity: Major

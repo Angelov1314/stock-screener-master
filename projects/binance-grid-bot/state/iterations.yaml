@@ -1,0 +1,53 @@
+# 迭代日志
+# 追踪每次策略更新和工程改进
+
+iterations:
+  - iteration: 1
+    date: 2026-02-20
+    title: V1 初版上线
+    amendments:
+      - 基础网格策略实现
+      - launcher + watchdog 双重守护
+      - AI舆情熔断模块
+    checkpoint_passed: "3/5"
+    debt_remaining: 2
+    new_pitfalls_added: 2
+    blueprint_updated: true
+    retrospective:
+      biggest_risk: 单边行情 - 第一天测试亏损10%
+      least_efficient: 手动监控依赖过重
+      new_commandments:
+        - 网格必须搭配趋势判断，不能纯震荡思维
+        
+  - iteration: 2
+    date: 2026-02-21
+    title: V1.5 结构改进
+    amendments:
+      - 新增结构化中轴锚定（5min/15min BB中轨）
+      - 新增ADX动态"呼吸"护盾
+    checkpoint_passed: "4/5"
+    debt_remaining: 2
+    new_pitfalls_added: 0
+    blueprint_updated: true
+    retrospective:
+      biggest_risk: 深V行情 - 第二天测试亏损7%，但已大幅改善
+      least_efficient: 中轴切换逻辑需要更平滑
+      new_commandments:
+        - 中轴不能跟价格走，必须锚定到技术指标
+        - ADX升高时网格要"吹气"撑大，不能硬扛单边
+        
+  - iteration: 3
+    date: TBD
+    title: V2 规划
+    amendments:
+      - IBKR接入（传统市场交易时段）
+      - 动态平衡策略细化（低波动/不确定/高波动三态）
+      - 智能休眠日历集成
+    checkpoint_passed: "0/5"
+    debt_remaining: 2
+    new_pitfalls_added: 0
+    blueprint_updated: false
+    retrospective:
+      biggest_risk: 待评估
+      least_efficient: 待评估
+      new_commandments: []

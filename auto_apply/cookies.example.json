@@ -1,0 +1,10 @@
+[
+  {
+    "name": "li_at",
+    "value": "PASTE_REAL_VALUE",
+    "domain": ".www.linkedin.com",
+    "path": "/",
+    "httpOnly": true,
+    "secure": true
+  }
+]

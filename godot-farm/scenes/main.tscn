@@ -1,74 +1,19 @@
-[gd_scene format=3 uid="uid://mainscene001"]
+[gd_scene load_steps=5 format=3 uid="uid://mainscene001"]
 
-[ext_resource type="PackedScene" uid="uid://farmscene001" path="res://scenes/world/farm.tscn" id="1_farm"]
-[ext_resource type="PackedScene" uid="uid://hudscene001" path="res://scenes/ui/hud.tscn" id="2_hud"]
-[ext_resource type="PackedScene" uid="uid://invpanel001" path="res://scenes/ui/inventory_panel.tscn" id="3_inventory"]
-[ext_resource type="PackedScene" uid="uid://buigvpf8hmujg" path="res://scenes/ui/seed_toolbar.tscn" id="4_seedtoolbar"]
-
-[sub_resource type="GDScript" id="GDScript_main"]
-script/source = "extends Node
-
-## Main Game Scene - Coordinates all game components
-
-@onready var farm: Node2D = $Farm
-@onready var hud: CanvasLayer = $HUD
-@onready var inventory_panel: CanvasLayer = $InventoryPanel
-@onready var seed_toolbar: CanvasLayer = $SeedToolbar
-
-func _ready():
-	print(\"[Main] Initializing game...\")
-	
-	# Get level config
-	var level_config = StateManager.get_data(\"level_config\", {})
-	print(\"[Main] Level: %s\" % level_config.get(\"name\", \"Unknown\"))
-	
-	# Connect HUD signals
-	hud.inventory_requested.connect(_on_inventory_requested)
-	hud.shop_requested.connect(_on_shop_requested)
-	hud.settings_requested.connect(_on_settings_requested)
-	
-	# Connect inventory panel close
-	inventory_panel.panel_closed.connect(_on_inventory_closed)
-	
-	# Connect seed toolbar
-	seed_toolbar.seed_selected.connect(_on_seed_selected)
-	
-	# Hide panels initially
-	inventory_panel.visible = false
-	
-	# Pass initial seed selection to farm
-	if farm.has_method(\"set_selected_crop\"):
-		farm.set_selected_crop(seed_toolbar.get_selected_crop())
-	
-	print(\"[Main] Game initialized\")
-
-func _on_inventory_requested():
-	print(\"[Main] Opening inventory...\")
-	inventory_panel.show_panel()
-
-func _on_shop_requested():
-	print(\"[Main] Shop requested (not yet implemented)\")
-
-func _on_settings_requested():
-	print(\"[Main] Settings requested (not yet implemented)\")
-
-func _on_inventory_closed():
-	print(\"[Main] Inventory closed\")
-
-func _on_seed_selected(crop_id: String):
-	print(\"[Main] Seed selected: %s\" % crop_id)
-	if farm.has_method(\"set_selected_crop\"):
-		farm.set_selected_crop(crop_id)
-"
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_main_script"]
+[ext_resource type="PackedScene" uid="uid://farmscene001" path="res://scenes/world/farm.tscn" id="2_farm"]
+[ext_resource type="PackedScene" uid="uid://hudscene001" path="res://scenes/ui/hud.tscn" id="3_hud"]
+[ext_resource type="PackedScene" uid="uid://invpanel001" path="res://scenes/ui/inventory_panel.tscn" id="4_inventory"]
+[ext_resource type="PackedScene" uid="uid://buigvpf8hmujg" path="res://scenes/ui/seed_toolbar.tscn" id="5_seedtoolbar"]
 
 [node name="Main" type="Node" unique_id=564349925]
-script = SubResource("GDScript_main")
+script = ExtResource("1_main_script")
 
-[node name="Farm" parent="." unique_id=519743774 instance=ExtResource("1_farm")]
+[node name="Farm" parent="." unique_id=519743774 instance=ExtResource("2_farm")]
 
-[node name="HUD" parent="." unique_id=1762681286 instance=ExtResource("2_hud")]
+[node name="HUD" parent="." unique_id=1762681286 instance=ExtResource("3_hud")]
 
-[node name="InventoryPanel" parent="." unique_id=2124753794 instance=ExtResource("3_inventory")]
-visible = true
+[node name="InventoryPanel" parent="." unique_id=2124753794 instance=ExtResource("4_inventory")]
+visible = false
 
-[node name="SeedToolbar" parent="." unique_id=1056727643 instance=ExtResource("4_seedtoolbar")]
+[node name="SeedToolbar" parent="." unique_id=1056727643 instance=ExtResource("5_seedtoolbar")]

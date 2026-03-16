@@ -1,0 +1,40 @@
+回测报告 - TSLA
+==================================================
+
+总收益率: 9.66%
+年化收益率: 14.47%
+最大回撤: -26.73%
+总交易次数: 5
+胜率: 40.00%
+
+==================================================
+详细统计:
+Start                         2023-01-03 00:00:00
+End                           2023-09-09 00:00:00
+Period                          250 days 00:00:00
+Start Value                               10000.0
+End Value                            10965.941837
+Total Return [%]                         9.659418
+Benchmark Return [%]                   129.861239
+Max Gross Exposure [%]                      100.0
+Total Fees Paid                         96.611102
+Max Drawdown [%]                        26.729942
+Max Drawdown Duration           115 days 00:00:00
+Total Trades                                    5
+Total Closed Trades                             4
+Total Open Trades                               1
+Open Trade PnL                         299.981605
+Win Rate [%]                                 25.0
+Best Trade [%]                          32.635034
+Worst Trade [%]                         -8.998121
+Avg Winning Trade [%]                   32.635034
+Avg Losing Trade [%]                    -6.992132
+Avg Winning Trade Duration       52 days 00:00:00
+Avg Losing Trade Duration        13 days 00:00:00
+Profit Factor                            1.289395
+Expectancy                             166.490058
+Sharpe Ratio                              0.54782
+Calmar Ratio                             0.539126
+Omega Ratio                              1.116544
+Sortino Ratio                            0.810386
+dtype: object

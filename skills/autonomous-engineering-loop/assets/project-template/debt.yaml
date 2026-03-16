@@ -1,0 +1,12 @@
+# Technical Debt Tracker
+# Location: <project_root>/state/debt.yaml
+
+active_debt: []
+# Example entry:
+# - tag: coverage_below_80
+#   description: Test coverage at 72%, target 80%
+#   created_iteration: 2
+#   deadline_iteration: 4
+#   status: open
+
+resolved_debt: []

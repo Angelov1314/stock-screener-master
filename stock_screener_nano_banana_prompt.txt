@@ -1,0 +1,53 @@
+Create a technical infographic of "Stock Screener Master Scoring Model" with a 45-degree isometric 3D perspective showing the scoring system architecture.
+
+Central Element:
+A large circular "Score Gauge" (0-100) in the center showing "84" in bold digital font, with "FLYW" ticker label above and "Strong Buy" rating badge below in green. The gauge has a gradient from red (0) to yellow (50) to green (100).
+
+Six Input Modules flowing into center with color-coded arrows:
+1. "Fundamental Analysis" box (30% weight, BLUE) - showing icons for PE ratio, ROE, profit margins, and revenue growth charts
+2. "Technical Analysis" box (20% weight, ORANGE) - showing RSI indicator, moving average lines, and trend arrows
+3. "News Sentiment" box (15% weight, GREEN) - showing Tavily API logo, positive/negative word clouds, and Fear & Greed meter
+4. "8 Master Investors" box (20% weight, PURPLE) - showing small circular portraits/icons of Warren Buffett, Peter Lynch, Benjamin Graham, Ray Dalio, Charlie Munger, Joel Greenblatt, John Templeton, George Soros with their names
+5. "F-Score" box (5% weight, RED) - showing 9-point financial health checklist with checkmarks
+6. "Growth Metrics" box (10% weight, CYAN) - showing upward trending bar chart for revenue growth
+
+Connecting Elements:
+- Color-coded arrows flowing from each module to center gauge: Blue (Fundamental), Orange (Technical), Green (Sentiment), Purple (Masters), Red (F-Score), Cyan (Growth)
+- Weight percentage labels on each arrow: "30%", "20%", "15%", "20%", "5%", "10%"
+- Formula annotation at bottom: "Score = 0.3×Fundamental + 0.2×Technical + 0.15×Sentiment + 0.2×Masters + 0.05×F-Score + 0.1×Growth"
+
+Title Placement:
+"Stock Screener Master" in large bold font at top inside a hand-drawn technical annotation frame (like engineering blueprints)
+Subtitle: "Multi-Indicator Scoring System"
+
+Style & Layout:
+• Clean white studio background
+• Black ink technical linework (architectural/engineering sketch style)
+• Slightly hand-drawn aesthetic with precise annotations
+• Color-coded elements matching the arrow colors
+• Educational museum-exhibit vibe
+• Balanced composition with clear visual hierarchy
+• Each module clearly labeled with component icons
+
+Visual Style:
+Minimal technical illustration aesthetic combining:
+- Clean 3D isometric perspective
+- Black linework with color accents (70% black, 30% color)
+- Hand-drawn sketch quality but precise
+- Like a professional financial product teardown or engineering manual
+- Modern fintech aesthetic meets educational diagram
+
+Color Palette:
+- White background
+- Black text and linework (dominant)
+- Blue (Fundamental), Orange (Technical), Green (Sentiment), Purple (Masters), Red (F-Score), Cyan (Growth) as accents
+- Green accent for "Strong Buy" badge
+
+Annotations:
+- Small handwritten-style notes explaining each component
+- Measurement-style lines and callout boxes
+- Arrow indicators showing data flow
+- Percentage labels with technical precision
+
+Output:
+16:9 horizontal landscape, 4K resolution, ultra-crisp, professional infographic style, no watermarks, suitable for presentation slide or educational material.

@@ -1,0 +1,36 @@
+{
+  "search_keywords": ["data analyst", "data scientist"],
+  "applications_per_run": 10,
+  "runs_per_day": 3,
+  "location_preference": "Melbourne",
+  "phone_number": "+61 434243454",
+  "min_salary": 80000,
+  "default_salary": 100000,
+  "salary_currency": "AUD",
+  "standard_answers": {
+    "work_authorization": "Yes",
+    "visa_sponsorship": "No",
+    "notice_period": "Immediately",
+    "relocation": "Yes",
+    "work_setting": "Hybrid"
+  },
+  "resume_context_path": "resume_context.md",
+  "cookies_path": "cookies.json",
+  "cv_name_on_linkedin": "Jerry_Yang_CV",
+  "logging_dir": "logs",
+  "max_cover_letter_words": 100,
+  "dry_run": false,
+  "pause_between_actions": {
+    "min_seconds": 3,
+    "max_seconds": 8
+  },
+  "headless": true,
+  "selectors": {
+    "job_list_items": "li.jobs-search-results__list-item",
+    "easy_apply_button": "button.jobs-apply-button",
+    "next_button": "button[aria-label='Continue to next step'], button[aria-label='Next']",
+    "submit_button": "button[aria-label='Submit application']",
+    "review_button": "button[aria-label='Review your application']",
+    "cover_letter_textarea": "textarea[name*='coverLetter']"
+  }
+}

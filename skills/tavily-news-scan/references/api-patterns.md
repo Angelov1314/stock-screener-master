@@ -1,0 +1,12 @@
+请求/响应要点
+- 请求方法与端点：POST https://api.tavily.com/search
+- 请求头：Authorization: Bearer <TAVILY_API_KEY>
+- 请求体示例：
+  - {"query": "<任意查询>", "time_range": "last_24h", "search_depth": <int>}
+- 响应示例简化：
+  - {"results": [{"title": "...", "snippet": "...", "url": "...", "publishedAt": "..."}]}
+- 错误处理：
+  - 429：限流，实现指数退避重试
+  - 4xx/5xx：记录错误，必要时回退到备用数据源
+- 安全性：
+  - API Key 通过环境变量传入，日志中避免输出密钥

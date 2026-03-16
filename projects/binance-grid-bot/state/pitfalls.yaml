@@ -1,0 +1,53 @@
+# Pitfall 数据库
+# 从实战中学到的失败模式
+
+pitfalls:
+  - id: PF-001
+    title: 单边行情无限加仓
+    symptom: 价格单向持续突破网格，仓位越加越重，浮亏扩大
+    root_cause: 网格间距固定，无趋势判断机制
+    fix: 引入ADX动态间距 + 最大仓位限制 + 硬止损
+    keywords: [单边, 加仓, 浮亏, 网格, 趋势]
+    frequency: 2
+    last_seen: 2026-02-20
+    severity: Critical
+    
+  - id: PF-002
+    title: 深V行情左右挨打
+    symptom: 快速下跌触发买单后迅速反弹，或上涨触发卖单后迅速回落，双向亏损
+    root_cause: 中轴跟随价格移动过快，无法锚定合理价值区间
+    fix: 结构化中轴锚定（非交易时段5min BB中轨，交易时段15min BB中轨）
+    keywords: [深V, 插针, 反弹, 卖飞, 中轴]
+    frequency: 2
+    last_seen: 2026-02-21
+    severity: Major
+    
+  - id: PF-003
+    title: API限流导致漏单
+    symptom: 429错误后订单未提交或状态未同步，实际仓位与本地记录不符
+    root_cause: 未处理Binance 1200req/min限制，无退避重试策略
+    fix: 实现令牌桶限流 + 指数退避 + 订单状态主动查询补偿
+    keywords: [429, 限流, 漏单, API, 重试]
+    frequency: 0
+    last_seen: null
+    severity: Major
+    
+  - id: PF-004
+    title: 舆情熔断误判
+    symptom: AI将中性新闻误判为风险，导致不必要的清仓
+    root_cause: Gemini提示词过于敏感，缺乏二次确认机制
+    fix: 仅对特定高置信度关键词触发，或引入人工确认阈值
+    keywords: [熔断, 舆情, 误判, 清仓, Gemini]
+    frequency: 0
+    last_seen: null
+    severity: Minor
+    
+  - id: PF-005
+    title: 运维中断导致持仓暴露
+    symptom: launcher/watchdog失效，脚本停止运行，持仓过夜无保护
+    root_cause: 服务器重启后未自动拉起，或watchdog未覆盖所有失效模式
+    fix: 系统级systemd服务 + 健康检查端点 + 云监控告警
+    keywords: [运维, 中断, 守护, 挂机, 无人值守]
+    frequency: 0
+    last_seen: null
+    severity: Critical

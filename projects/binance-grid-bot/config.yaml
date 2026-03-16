@@ -1,0 +1,160 @@
+# Grid Trading Bot Configuration
+# Binance 网格交易策略配置
+
+# ═══════════════════════════════════════════
+# 交易标的配置
+# ═══════════════════════════════════════════
+trading:
+  symbol: ETH/USDT           # 交易对
+  exchange: binance          # 交易所
+  market_type: spot          # 市场类型: spot(现货) / future(合约)
+  
+# ═══════════════════════════════════════════
+# 网格参数
+# ═══════════════════════════════════════════
+grid:
+  # 基础间距 (0.005 = 0.5%)
+  base_spacing: 0.005
+  
+  # 网格数量 (单边)
+  grid_count: 10
+  
+  # 每格交易金额 (USDT)
+  amount_per_grid: 7.5
+  
+  # 最大网格层数 (防止无限加仓)
+  max_layers: 5
+  
+  # 动态间距调整
+  dynamic_spacing:
+    enabled: true
+    # ADX 动态乘数 (ADX 越高，间距越大)
+    adx_multiplier: 0.5
+    # Bollinger Band 宽度影响
+    bb_width_factor: 0.1
+    # 最小间距限制
+    min_spacing: 0.0005  # 0.05%
+
+# ═══════════════════════════════════════════
+# 中轴锚定
+# ═══════════════════════════════════════════
+anchor:
+  # 中轴计算方式: bb_middle (布林带中轨) / last_price (最新价)
+  method: bb_middle
+  
+  # 布林带周期
+  bb_period: 20
+  bb_std: 2
+  
+  # 时间周期 (5m, 15m, 1h)
+  timeframe: 5m
+  
+  # 中轴更新频率 (秒)
+  update_interval: 300  # 5分钟
+  
+  # 交易时段特殊配置
+  trading_hours:
+    # 非交易时段 ( UTC 时间 )
+    off_hours: "22:00-06:00"
+    off_timeframe: 5m
+    # 交易时段
+    on_hours: "06:00-22:00"
+    on_timeframe: 15m
+
+# ═══════════════════════════════════════════
+# 风控配置
+# ═══════════════════════════════════════════
+risk_management:
+  # 仓位限制
+  position_limits:
+    # 最大仓位 (占总资金比例)
+    max_position_ratio: 0.5  # 50%
+    # 单方向最大层数
+    max_long_layers: 5
+    max_short_layers: 5
+    
+  # 止损配置
+  stop_loss:
+    # 总资金亏损比例触发止损
+    max_drawdown: 0.05  # 5%
+    # 单笔网格止损
+    grid_stop_loss: 0.02  # 2%
+    # 启用追踪止损
+    trailing_stop: true
+    trailing_distance: 0.01  # 1%
+    
+  # 熔断机制
+  circuit_breaker:
+    # 连续错误次数熔断
+    max_consecutive_errors: 5
+    # 冷却时间 (秒)
+    cooldown_seconds: 3600  # 1小时
+    # 价格剧烈波动熔断 (5分钟内波动超过)
+    price_volatility_threshold: 0.05  # 5%
+    
+  # API 限流保护
+  rate_limit:
+    # 每分钟最大请求数
+    max_requests_per_minute: 1200
+    # 遇到 429 后的退避时间 (秒)
+    backoff_seconds: 60
+
+# ═══════════════════════════════════════════
+# 舆情熔断 (Tavily + Gemini)
+# ═══════════════════════════════════════════
+sentiment:
+  enabled: true
+  # 检查间隔 (秒)
+  check_interval: 300  # 5分钟
+  
+  # Tavily 搜索配置
+  tavily:
+    query: "ETH Ethereum news"
+    time_range: "last_hour"
+    max_results: 5
+    
+  # Gemini 风险判定
+  gemini:
+    # 风险阈值 (0-1)
+    risk_threshold: 0.7
+    # 冷却时间 (秒)
+    cooldown_seconds: 3600  # 1小时
+    
+  # 敏感词触发 (直接熔断，不经过 AI 判断)
+  sensitive_keywords:
+    - "hack"
+    - "exploit"
+    - "SEC investigation"
+    - "delist"
+
+# ═══════════════════════════════════════════
+# 运行时配置
+# ═══════════════════════════════════════════
+runtime:
+  # 日志级别: DEBUG / INFO / WARNING / ERROR
+  log_level: INFO
+  
+  # 数据保存
+  save_trades: true
+  save_logs: true
+  
+  # 通知配置
+  notifications:
+    enabled: true
+    # 盈亏超过阈值通知
+    pnl_threshold: 0.01  # 1%
+    # 异常事件通知
+    on_error: true
+    on_circuit_breaker: true
+    
+  # 心跳检测 (秒)
+  heartbeat_interval: 60
+
+# ═══════════════════════════════════════════
+# 回测配置 (可选)
+# ═══════════════════════════════════════════
+backtest:
+  enabled: false
+  start_date: "2024-01-01"
+  end_date: "2024-12-31"
+  initial_balance: 1000

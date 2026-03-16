@@ -1,0 +1,79 @@
+# Binance 全自动高频网格交易系统
+# Version: V1 → V2 迭代中
+# Owner: Jerry
+# Created: 2026-02-22
+
+project_name: binance-grid-bot
+version: "1.0.0"
+created_at: "2026-02-22"
+model_family: "moonshot/kimi-k2.5"
+
+# ═══════════════════════════════════════════
+# SCOPE (Immutable Layer)
+# ═══════════════════════════════════════════
+
+scope:
+  goals:
+    - 全自动高频网格交易（Binance 合约）
+    - 机构级风控体系
+    - 7x24 无人值守运行
+    - 移动端远程监控与控制
+  non_goals:
+    - 微秒级 HFT（co-location）
+    - 多交易所套利（V2 再考虑 IBKR）
+    - 自动策略发现/ML 选币（人工决定标的）
+
+# ═══════════════════════════════════════════
+# DEFINITION OF DONE
+# ═══════════════════════════════════════════
+
+dod:
+  must_pass:
+    - 核心下单/撤单逻辑单元测试通过
+    - 风控熔断在模拟环境中可触发
+    - API key 权限最小化（仅交易，禁提币）
+    - 24h 无人值守不崩溃
+    - 止损逻辑正确（不会无限加仓）
+  should_pass:
+    - 网格间距自适应算法回测盈利
+    - API 限流降级策略生效
+    - 日志覆盖所有交易行为
+    - 延迟 < 200ms（下单到确认）
+  nice_to_pass:
+    - 完整类型注解
+    - 策略参数可配置化（YAML/JSON）
+    - Grafana/Prometheus 监控面板
+    - 移动端推送延迟 < 5s
+
+# ═══════════════════════════════════════════
+# DEPENDENCIES
+# ═══════════════════════════════════════════
+
+dependencies:
+  language: Python
+  version: "3.11+"
+  libraries:
+    - ccxt  # 或 python-binance
+    - pandas
+    - numpy
+    - ta  # 技术分析 (Bollinger, ADX)
+    - tavily-python  # 舆情搜索
+    - google-generativeai  # Gemini 语义分析
+    - websockets  # 实时行情
+    - asyncio
+  apis:
+    - Binance Futures API (REST + WebSocket)
+    - Tavily Search API (舆情)
+    - Gemini API (语义分析/熔断判定)
+  env_vars:
+    - BINANCE_API_KEY
+    - BINANCE_API_SECRET
+    - TAVILY_API_KEY
+    - GEMINI_API_KEY
+  external_services:
+    - Binance (交易所)
+    - Tavily (搜索)
+    - Google Gemini (AI 判断)
+    - OpenClaw (远程控制/通知)
+
+status: Testing

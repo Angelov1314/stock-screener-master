@@ -1,0 +1,38 @@
+# Project Blueprint — copy and fill for each new project
+# Location: <project_root>/state/blueprint.yaml
+
+project_name: ""
+version: "0.1.0"
+created_at: ""
+model_family: ""
+
+scope:
+  goals:
+    - ""
+  non_goals:
+    - ""
+
+dod:
+  must_pass:
+    - Core logic unit tests pass
+    - No high-severity security vulnerabilities
+    - Main flow executes successfully
+  should_pass:
+    - "Coverage >= 80%"
+    - "Response time <= 500ms"
+    - No obvious resource leaks
+  nice_to_pass:
+    - Type annotations complete
+    - Documentation complete
+    - Edge case tests
+
+dependencies:
+  language: ""
+  version: ""
+  libraries: []
+  apis: []
+  env_vars: []
+  external_services: []
+
+status: Draft
+# Draft | Testing | Partial-Promoted | Passed | Rolled-Back

@@ -1,0 +1,18 @@
+# Iteration Log
+# Location: <project_root>/state/iterations.yaml
+
+iterations: []
+# Example entry:
+# - iteration: 1
+#   date: 2026-02-22
+#   amendments:
+#     - Added rate limiting
+#   checkpoint_passed: "4/5"
+#   debt_remaining: 1
+#   new_pitfalls: 0
+#   blueprint_updated: false
+#   retrospective:
+#     biggest_risk: No timeout on external API
+#     least_efficient: Manual test setup
+#     new_commandments:
+#       - Always set HTTP timeouts

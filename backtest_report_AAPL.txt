@@ -1,0 +1,40 @@
+回测报告 - AAPL
+==================================================
+
+总收益率: -3.48%
+年化收益率: -5.06%
+最大回撤: -8.97%
+总交易次数: 3
+胜率: 33.33%
+
+==================================================
+详细统计:
+Start                         2023-01-03 00:00:00
+End                           2023-09-09 00:00:00
+Period                          250 days 00:00:00
+Start Value                               10000.0
+End Value                             9651.672382
+Total Return [%]                        -3.483276
+Benchmark Return [%]                    54.798214
+Max Gross Exposure [%]                      100.0
+Total Fees Paid                         46.901009
+Max Drawdown [%]                         8.972185
+Max Drawdown Duration            83 days 00:00:00
+Total Trades                                    3
+Total Closed Trades                             2
+Total Open Trades                               1
+Open Trade PnL                         530.676198
+Win Rate [%]                                  0.0
+Best Trade [%]                          -2.289386
+Worst Trade [%]                         -6.661804
+Avg Winning Trade [%]                         NaN
+Avg Losing Trade [%]                    -4.475595
+Avg Winning Trade Duration                    NaT
+Avg Losing Trade Duration         3 days 12:00:00
+Profit Factor                                 0.0
+Expectancy                            -439.501908
+Sharpe Ratio                            -0.551941
+Calmar Ratio                            -0.562247
+Omega Ratio                              0.824804
+Sortino Ratio                           -0.707866
+dtype: object

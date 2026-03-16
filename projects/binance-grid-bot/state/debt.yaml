@@ -1,0 +1,17 @@
+# 技术债追踪
+# Location: projects/binance-grid-bot/state/debt.yaml
+
+active_debt:
+  - tag: single_sided_risk
+    description: 单边行情仍是最大风险，ADX护盾+中轴锚定无法完全消除极端行情损失
+    created_iteration: 1
+    deadline_iteration: 3
+    status: open
+    
+  - tag: news_gap_risk
+    description: 智能休眠依赖预设宏观数据日历，无法应对突发黑天鹅
+    created_iteration: 1
+    deadline_iteration: 2
+    status: open
+
+resolved_debt: []
