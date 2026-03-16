@@ -44,7 +44,7 @@ func plant_crop(crop_type: String, position: Vector2i, world_pos: Vector2 = Vect
 	
 	# Play planting sound
 	var audio = AudioStreamPlayer.new()
-	audio.stream = load("res://assets/audio/sfx/plant.ogg")
+	audio.stream = load("res://assets/audio/sfx/planting/Firefly_audio_Create_a_relaxing_sound_for_planting_plants,_for_a_variation2.wav")
 	audio.bus = "SFX"
 	add_child(audio)
 	audio.play()
