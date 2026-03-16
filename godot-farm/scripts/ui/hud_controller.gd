@@ -17,6 +17,7 @@ signal water_mode_toggled(active: bool)
 @onready var growth_info_label: Label = %GrowthInfoLabel
 @onready var sickle_button: TextureButton = %SickleButton
 @onready var water_button: TextureButton = %WaterButton
+@onready var plant_button: TextureButton = %PlantButton
 @onready var inventory_button: TextureButton = %InventoryButton
 @onready var shop_button: TextureButton = %ShopButton
 @onready var toast_container: VBoxContainer = %ToastContainer
@@ -37,6 +38,7 @@ func _ready():
 	# Connect button signals
 	sickle_button.pressed.connect(_on_sickle_pressed)
 	water_button.pressed.connect(_on_water_pressed)
+	plant_button.pressed.connect(_on_plant_pressed)
 	inventory_button.pressed.connect(_on_inventory_pressed)
 	shop_button.pressed.connect(_on_shop_pressed)
 	
@@ -69,6 +71,11 @@ func _on_water_pressed():
 	_update_button_states()
 	water_mode_toggled.emit(_water_active)
 	print("[HUD] Water mode: %s" % _water_active)
+
+func _on_plant_pressed():
+	_animate_button(plant_button)
+	planting_menu_requested.emit()
+	print("[HUD] Plant button pressed")
 
 func _on_inventory_pressed():
 	_animate_button(inventory_button)

@@ -94,9 +94,13 @@ func _on_inventory_requested():
 		inv.panel_closed.connect(func(): inv.queue_free())
 
 func _on_planting_menu_requested():
-	print("[Main] Planting menu disabled")
-	# 种植菜单已禁用
-	pass
+	print("[Main] Opening planting menu...")
+	var plant_scene = load("res://scenes/ui/planting_menu_new.tscn")
+	if plant_scene:
+		var menu = plant_scene.instantiate()
+		add_child(menu)
+		menu.seed_selected.connect(_on_seed_selected)
+		menu.menu_closed.connect(func(): menu.queue_free())
 
 func _on_shop_requested():
 	print("[Main] Opening shop...")
@@ -174,14 +178,14 @@ func _on_water_mode_toggled(active: bool):
 func _on_inventory_closed():
 	print("[Main] Inventory closed")
 
-func _on_seed_selected(crop_id: String):
-	print("[Main] Seed selected: %s" % crop_id)
+func _on_seed_selected(seed_id: String):
+	print("[Main] Seed selected: %s" % seed_id)
 	if farm and farm.has_method("set_selected_crop"):
-		farm.set_selected_crop(crop_id)
+		farm.set_selected_crop(seed_id)
 	# Deactivate tools when selecting seed
 	hud.deactivate_tools()
-	# Close planting menu
-	planting_menu.close()
+	# Show toast notification
+	hud.show_toast("已选择: %s" % seed_id)
 
 func _stop_all_music():
 	print("[Main] Stopping all music and ambient sounds...")

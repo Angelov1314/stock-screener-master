@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scripts/ui/shop_ui.gd" id="1_shop_script"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-bg_color = Color(0.25, 0.2, 0.15, 0.95)
+bg_color = Color(0.25, 0.2, 0.15, 0.75)
 border_width_left = 3
 border_width_top = 3
 border_width_right = 3
@@ -15,7 +15,7 @@ corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_item"]
-bg_color = Color(0.2, 0.15, 0.1, 0.9)
+bg_color = Color(0.2, 0.15, 0.1, 0.7)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -35,7 +35,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.6)
+color = Color(0, 0, 0, 0.4)
 
 [node name="MainContainer" type="Panel" parent="."]
 anchors_preset = 8
