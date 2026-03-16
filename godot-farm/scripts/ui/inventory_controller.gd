@@ -5,7 +5,7 @@ extends CanvasLayer
 ## Connects to ActionSystem signals for inventory updates
 
 # UI References - updated paths for CanvasLayer structure
-@onready var panel: Panel = $Panel
+@onready var main_container: Panel = $MainContainer
 @onready var item_grid: GridContainer = %ItemGrid
 @onready var item_detail_panel: Panel = %ItemDetailPanel
 @onready var item_name_label: Label = %ItemNameLabel
@@ -243,8 +243,8 @@ func _animate_button_press(button: Button):
 ## Public Methods
 func show_panel():
 	visible = true
-	panel.modulate.a = 0
-	panel.scale = Vector2(0.95, 0.95)
+	main_container.modulate.a = 0
+	main_container.scale = Vector2(0.95, 0.95)
 	
 	# Refresh inventory
 	_inventory = StateManager.get_inventory()
@@ -252,8 +252,8 @@ func show_panel():
 	
 	# Animate in
 	var tween = create_tween()
-	tween.tween_property(panel, "modulate:a", 1, 0.2)
-	tween.parallel().tween_property(panel, "scale", Vector2(1, 1), 0.2).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	tween.tween_property(main_container, "modulate:a", 1, 0.2)
+	tween.parallel().tween_property(main_container, "scale", Vector2(1, 1), 0.2).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
 
 func hide_panel():
 	_hide_panel()
@@ -261,8 +261,8 @@ func hide_panel():
 func _hide_panel():
 	# Animate out
 	var tween = create_tween()
-	tween.tween_property(panel, "modulate:a", 0, 0.15)
-	tween.parallel().tween_property(panel, "scale", Vector2(0.95, 0.95), 0.15)
+	tween.tween_property(main_container, "modulate:a", 0, 0.15)
+	tween.parallel().tween_property(main_container, "scale", Vector2(0.95, 0.95), 0.15)
 	await tween.finished
 	
 	visible = false

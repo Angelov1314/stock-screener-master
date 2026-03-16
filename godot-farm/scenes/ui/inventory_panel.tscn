@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://invpanel001"]
+[gd_scene format=3 uid="uid://invpanel001"]
 
 [ext_resource type="Script" path="res://scripts/ui/inventory_controller.gd" id="1_def34"]
 
@@ -26,7 +26,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.5)
 
-[node name="Panel" type="Panel" parent="."]
+[node name="MainContainer" type="Panel" parent="."]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -40,7 +40,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -51,42 +51,38 @@ offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="TitleLabel" type="Label" parent="Panel/VBoxContainer"]
+[node name="TitleLabel" type="Label" parent="MainContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 28
 text = "背包"
 horizontal_alignment = 1
 
-[node name="Spacer" type="Control" parent="Panel/VBoxContainer"]
-custom_minimum_size = Vector2(0, 10)
+[node name="Spacer" type="Control" parent="MainContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Panel/VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ItemGrid" type="GridContainer" parent="Panel/VBoxContainer/ScrollContainer"]
+[node name="ItemGrid" type="GridContainer" parent="MainContainer/VBoxContainer/ScrollContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 columns = 5
 
-[node name="EmptyLabel" type="Label" parent="Panel/VBoxContainer/ScrollContainer/ItemGrid"]
+[node name="EmptyLabel" type="Label" parent="MainContainer/VBoxContainer/ScrollContainer/ItemGrid"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "背包是空的"
 horizontal_alignment = 1
 
-[node name="Spacer2" type="Control" parent="Panel/VBoxContainer"]
-custom_minimum_size = Vector2(0, 10)
-layout_mode = 2
-
-[node name="ItemDetailPanel" type="Panel" parent="Panel/VBoxContainer"]
+[node name="ItemDetailPanel" type="Panel" parent="MainContainer/VBoxContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 120)
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/ItemDetailPanel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/VBoxContainer/ItemDetailPanel"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -97,40 +93,43 @@ offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ItemNameLabel" type="Label" parent="Panel/VBoxContainer/ItemDetailPanel/VBoxContainer"]
+[node name="ItemNameLabel" type="Label" parent="MainContainer/VBoxContainer/ItemDetailPanel/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "物品名称"
+horizontal_alignment = 1
 
-[node name="ItemCountLabel" type="Label" parent="Panel/VBoxContainer/ItemDetailPanel/VBoxContainer"]
+[node name="ItemCountLabel" type="Label" parent="MainContainer/VBoxContainer/ItemDetailPanel/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "数量: 0"
+horizontal_alignment = 1
 
-[node name="ItemDescriptionLabel" type="Label" parent="Panel/VBoxContainer/ItemDetailPanel/VBoxContainer"]
+[node name="ItemDescriptionLabel" type="Label" parent="MainContainer/VBoxContainer/ItemDetailPanel/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "描述"
+horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="ButtonContainer" type="HBoxContainer" parent="Panel/VBoxContainer/ItemDetailPanel/VBoxContainer"]
+[node name="ButtonContainer" type="HBoxContainer" parent="MainContainer/VBoxContainer/ItemDetailPanel/VBoxContainer"]
 layout_mode = 2
 alignment = 1
 
-[node name="UseButton" type="Button" parent="Panel/VBoxContainer/ItemDetailPanel/VBoxContainer/ButtonContainer"]
+[node name="UseButton" type="Button" parent="MainContainer/VBoxContainer/ItemDetailPanel/VBoxContainer/ButtonContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(80, 40)
 layout_mode = 2
 text = "使用"
 
-[node name="SellButton" type="Button" parent="Panel/VBoxContainer/ItemDetailPanel/VBoxContainer/ButtonContainer"]
+[node name="SellButton" type="Button" parent="MainContainer/VBoxContainer/ItemDetailPanel/VBoxContainer/ButtonContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(80, 40)
 layout_mode = 2
 text = "出售"
 
-[node name="CloseButton" type="Button" parent="Panel/VBoxContainer"]
+[node name="CloseButton" type="Button" parent="MainContainer/VBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
