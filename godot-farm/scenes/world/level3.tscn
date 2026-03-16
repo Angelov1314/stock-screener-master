@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://scripts/ui/sickle_harvest_tool.gd" id="6_sickle"]
 [ext_resource type="Script" path="res://scripts/ui/watering_can_tool.gd" id="7_water"]
 [ext_resource type="AudioStream" path="res://assets/audio/music/level3_bgm.mp3" id="8_music"]
+[ext_resource type="Script" path="res://scripts/effects/firefly_effect.gd" id="9_firefly"]
 
 [node name="Level3" type="Node2D"]
 script = ExtResource("1_farm01")
@@ -19,6 +20,10 @@ centered = false
 
 [node name="DynamicBackground" type="Node2D" parent="Background"]
 script = ExtResource("5_dynamic_bg")
+
+[node name="FireflyEffect" type="Node2D" parent="."]
+script = ExtResource("9_firefly")
+firefly_count = 30
 
 [node name="PlotsContainer" type="Node2D" parent="."]
 unique_name_in_owner = true
