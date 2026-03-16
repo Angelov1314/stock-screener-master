@@ -59,7 +59,10 @@ func _ready():
 	_start_idle()
 	
 	# Play initial sound after a short delay
-	await get_tree().create_timer(randf_range(0.5, 2.0)).timeout
+	var timer = get_tree().create_timer(randf_range(0.5, 2.0))
+	timer.timeout.connect(_play_initial_sound)
+
+func _play_initial_sound():
 	_play_animal_sound("idle")
 
 func _setup_click_area():
