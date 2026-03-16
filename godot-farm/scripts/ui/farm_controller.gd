@@ -605,15 +605,10 @@ func _handle_plot_tap(plot_id: String):
 		return
 	
 	var crop_entity = _get_crop_at_plot(plot_id)
-	print("[Farm] Tap plot=%s, crop=%s, selected=%s" % [plot_id, crop_entity, _selected_crop_id])
 	
 	if crop_entity == null:
-		# Empty plot - plant crop
-		print("[Farm] Plot empty, planting...")
 		_try_plant_crop(plot_id)
 	else:
-		# Check if ready to harvest
-		print("[Farm] Has crop, stage=%d, harvestable=%s" % [crop_entity.current_stage, crop_entity.can_harvest()])
 		if crop_entity.can_harvest():
 			_try_harvest_crop(plot_id)
 		else:
@@ -645,30 +640,22 @@ func _get_crop_at_plot(plot_id: String) -> Node:
 
 ## Action Handlers
 func _try_plant_crop(plot_id: String):
-	print("[FarmController] _try_plant_crop: plot_id=%s, crop=%s" % [plot_id, _selected_crop_id])
-	
 	if _selected_crop_id.is_empty():
-		print("[FarmController] ERROR: No crop selected!")
 		return
 	
 	var rect = _plot_rects.get(plot_id, Rect2())
 	var coord = Vector2i(int(rect.position.x / 100), int(rect.position.y / 100))
 	
-	# Direct planting without ActionSystem for testing
 	var crop_mgr = get_node_or_null("/root/CropManager")
 	if crop_mgr:
 		var world_pos = Vector2(rect.position.x + rect.size.x/2, rect.position.y + rect.size.y/2)
 		var planted_id = crop_mgr.plant_crop(_selected_crop_id, coord, world_pos)
-		print("[FarmController] Planted: %s" % planted_id)
 		
 		if not planted_id.is_empty():
-			# Deduct gold
 			var eco_mgr = get_node_or_null("/root/EconomyManager")
 			if eco_mgr:
 				var crop_data = crop_mgr.crop_database.get(_selected_crop_id, {})
 				eco_mgr.remove_gold(crop_data.get("seed_cost", 5), "plant")
-	else:
-		print("[FarmController] ERROR: CropManager not found")
 
 func _try_water_crop(plot_id: String):
 	var rect = _plot_rects.get(plot_id, Rect2())

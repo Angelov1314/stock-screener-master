@@ -14,10 +14,10 @@ var crop_container: Node2D = null
 var sprites: Array[Sprite2D] = []
 var timer: Timer = null
 
-# Layout config
+# Layout config - 16 crops evenly distributed, slightly larger
 var grid_cols: int = 4
 var grid_rows: int = 4
-var spacing: float = 40.0
+var spacing: float = 80.0  # Wider spacing to fill the plot
 
 func _ready():
 	z_index = 1000  # High z-index to be on top
@@ -81,18 +81,13 @@ func update_visual():
 	var stage_name = stage_names[current_stage]
 	var path = "res://assets/crops/%s/%s_%s.png" % [crop_id, crop_id, stage_name]
 	
-	print("[Crop] Loading: %s" % path)
 	var tex = ResourceLoader.load(path)
 	if tex:
-		print("[Crop] Texture loaded: %s, size=%s" % [path, str(tex.get_size())])
 		for i in range(sprites.size()):
 			var sprite = sprites[i]
 			sprite.texture = tex
-			sprite.scale = Vector2(0.22, 0.22)
+			sprite.scale = Vector2(0.35, 0.35)  # Larger crops
 			sprite.visible = true
-			print("[Crop] Sprite %d: pos=%s, visible=%s" % [i, str(sprite.position), sprite.visible])
-	else:
-		print("[Crop] ERROR: Failed to load: " + path)
 
 func can_harvest() -> bool:
 	return current_stage == 3
