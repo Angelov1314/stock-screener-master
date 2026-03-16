@@ -174,14 +174,6 @@ func _create_card(parent: GridContainer, item: Dictionary, item_type: String):
 	parent.add_child(card)
 	print("[ShopUI] Card added to %s" % parent.name)
 
-func _notification(what):
-	if what == NOTIFICATION_VISIBILITY_CHANGED and visible:
-		# Force layout update when shop becomes visible
-		if animals_grid:
-			animals_grid.queue_sort()
-		if plants_grid:
-			plants_grid.queue_sort()
-
 func _get_icon_path(id: String, item_type: String) -> String:
 	if item_type == "animal":
 		# Try multiple naming conventions
