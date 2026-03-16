@@ -78,6 +78,14 @@ scale_factor = 0.6
 use_separate_frames = true
 animal_name = "pig"
 
+[node name="Alpaca1" type="Node2D" parent="Animals"]
+position = Vector2(1500, 2500)
+script = ExtResource("12_animal_script")
+walk_speed = 20.0
+scale_factor = 0.75
+use_separate_frames = true
+animal_name = "alpaca"
+
 [node name="FarmCamera" type="Camera2D" parent="."]
 unique_name_in_owner = true
 anchor_mode = 0
