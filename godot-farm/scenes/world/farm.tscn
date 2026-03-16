@@ -92,6 +92,7 @@ script = ExtResource("3_cam")
 
 [node name="AmbientAudioManager" type="Node" parent="."]
 script = ExtResource("14_ambient_audio")
+groups = ["Music"]
 
 [node name="SickleTool" type="Node2D" parent="."]
 unique_name_in_owner = true

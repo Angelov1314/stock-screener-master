@@ -39,18 +39,135 @@ const GLOBAL_OFFSET_Y := 0.0  # Positive = down, Negative = up
 # - offset_x, offset_y: optional per-plot position fine-tuning
 # - scale_w, scale_h: optional size multipliers (1.0 = default size)
 var PLOT_DEFINITIONS := [
-	{"id": "plot_01", "x": 0,   "y": 736,  "w": 128, "h": 170, "margin": 12},
-	{"id": "plot_02", "x": 275, "y": 650,  "w": 245, "h": 107, "margin": 12},
-	{"id": "plot_03", "x": 655, "y": 652,  "w": 237, "h": 105, "margin": 12},
-	{"id": "plot_04", "x": 286, "y": 796,  "w": 224, "h": 103, "margin": 12},
-	{"id": "plot_05", "x": 657, "y": 798,  "w": 236, "h": 101, "margin": 12},
-	{"id": "plot_06", "x": 305, "y": 1207, "w": 207, "h": 103, "margin": 12},
-	{"id": "plot_07", "x": 655, "y": 1208, "w": 197, "h": 100, "margin": 12},
-	{"id": "plot_08", "x": 669, "y": 1383, "w": 176, "h": 82,  "margin": 10},
-	{"id": "plot_09", "x": 889, "y": 1430, "w": 157, "h": 58,  "margin": 8},
-	{"id": "plot_10", "x": 224, "y": 1642, "w": 283, "h": 126, "margin": 12},
-	{"id": "plot_11", "x": 664, "y": 1560, "w": 211, "h": 210, "margin": 12},
-	{"id": "plot_12", "x": 959, "y": 1570, "w": 184, "h": 198, "margin": 12},
+	{
+		"h": 170,
+		"id": "plot_01",
+		"margin": 12,
+		"offset_x": 365.5,
+		"offset_y": 65.0,
+		"scale_h": 1.195,
+		"scale_w": 1.65499999999999,
+		"w": 128,
+		"x": 0,
+		"y": 736
+	},
+	{
+		"h": 107,
+		"id": "plot_02",
+		"margin": 12,
+		"offset_x": 107.5,
+		"offset_y": -172.0,
+		"scale_h": 1.50999999999999,
+		"w": 245,
+		"x": 275,
+		"y": 650
+	},
+	{
+		"h": 105,
+		"id": "plot_03",
+		"margin": 12,
+		"offset_x": -236.5,
+		"offset_y": -172.0,
+		"scale_h": 1.52499999999999,
+		"scale_w": 1.035,
+		"w": 237,
+		"x": 655,
+		"y": 652
+	},
+	{
+		"h": 103,
+		"id": "plot_04",
+		"margin": 12,
+		"offset_x": 172.0,
+		"offset_y": -64.5,
+		"scale_h": 1.44999999999999,
+		"scale_w": 1.11,
+		"w": 224,
+		"x": 286,
+		"y": 796
+	},
+	{
+		"h": 101,
+		"id": "plot_05",
+		"margin": 12,
+		"offset_x": -236.5,
+		"offset_y": -43.0,
+		"scale_h": 1.49499999999999,
+		"scale_w": 1.015,
+		"w": 236,
+		"x": 657,
+		"y": 798
+	},
+	{
+		"h": 103,
+		"id": "plot_06",
+		"margin": 12,
+		"offset_x": 172.0,
+		"offset_y": -107.5,
+		"scale_h": 1.47999999999999,
+		"scale_w": 1.175,
+		"w": 207,
+		"x": 305,
+		"y": 1207
+	},
+	{
+		"h": 100,
+		"id": "plot_07",
+		"margin": 12,
+		"offset_x": -21.5,
+		"offset_y": -86.0,
+		"scale_h": 1.45499999999999,
+		"scale_w": 1.24499999999999,
+		"w": 197,
+		"x": 655,
+		"y": 1208
+	},
+	{
+		"h": 82,
+		"id": "plot_08",
+		"margin": 10,
+		"offset_x": 43.0,
+		"offset_y": -150.5,
+		"scale_h": 1.58499999999999,
+		"scale_w": 1.41499999999999,
+		"w": 176,
+		"x": 669,
+		"y": 1383
+	},
+	{
+		"h": 58,
+		"id": "plot_09",
+		"margin": 8,
+		"offset_x": -129.0,
+		"offset_y": 43.0,
+		"w": 157,
+		"x": 889,
+		"y": 1430
+	},
+	{
+		"h": 126,
+		"id": "plot_10",
+		"margin": 12,
+		"w": 283,
+		"x": 224,
+		"y": 1642
+	},
+	{
+		"h": 210,
+		"id": "plot_11",
+		"margin": 12,
+		"w": 211,
+		"x": 664,
+		"y": 1560
+	},
+	{
+		"h": 198,
+		"id": "plot_12",
+		"margin": 12,
+		"w": 184,
+		"x": 959,
+		"y": 1570
+	}
 ]
 
 # Crop tracking
@@ -536,6 +653,7 @@ func _try_plant_crop(plot_id: String):
 	var success = ActionSystem.plant(coord, _selected_crop_id)
 	if success:
 		_animate_plot_action(plot_id, "plant")
+		_play_sfx("plant")
 
 func _try_water_crop(plot_id: String):
 	var rect = _plot_rects.get(plot_id, Rect2())
@@ -544,6 +662,7 @@ func _try_water_crop(plot_id: String):
 	var success = ActionSystem.water(coord)
 	if success:
 		_animate_plot_action(plot_id, "water")
+		_play_sfx("water")
 
 func _try_harvest_crop(plot_id: String):
 	var rect = _plot_rects.get(plot_id, Rect2())
@@ -552,6 +671,7 @@ func _try_harvest_crop(plot_id: String):
 	var success = ActionSystem.harvest(coord)
 	if success:
 		_animate_plot_action(plot_id, "harvest")
+		_play_sfx("harvest")
 
 ## Signal Handlers
 func _on_crop_planted(coord: Vector2i, crop_id: String):
@@ -617,45 +737,57 @@ func _create_crop_visual(plot_id: String, crop_id: String):
 	crop_container.name = "Crop_" + plot_id
 	crop_container.position = Vector2(rect.position.x + rect.size.x/2, rect.position.y + rect.size.y/2)
 	
-	# Calculate how many crops fit in this plot based on size
-	# Max 16 crops, evenly distributed
-	var crop_spacing = 200.0  # Larger spacing for better visibility
-	var cols = max(1, int(rect.size.x / crop_spacing))
-	var rows = max(1, int(rect.size.y / crop_spacing))
-	var total_crops = min(16, max(8, cols * rows))  # 8-16 crops depending on plot size
-	
-	# For small plots, use 8 or 12
+	# Calculate how many crops fit in this plot based on ACTUAL size (after adjustments)
+	# Use the actual rect size to determine crop count and spacing
+	var available_w = rect.size.x * 0.8  # Use 80% of width to avoid edge
+	var available_h = rect.size.y * 0.8  # Use 80% of height to avoid edge
 	var plot_area = rect.size.x * rect.size.y
-	if plot_area < 80000:  # Small plot
+	
+	# Determine crop count based on actual plot size
+	var total_crops: int
+	if plot_area < 60000:  # Small plot
 		total_crops = 8
-	elif plot_area < 120000:  # Medium plot
+	elif plot_area < 100000:  # Medium plot
 		total_crops = 12
 	else:  # Large plot
 		total_crops = 16
 	
-	# Calculate even grid distribution
+	# Calculate optimal grid based on aspect ratio
+	var plot_ratio = rect.size.x / rect.size.y
+	var cols: int
+	var rows: int
+	
 	if total_crops == 8:
-		cols = 4
-		rows = 2
+		if plot_ratio > 1.5:
+			cols = 4
+			rows = 2
+		elif plot_ratio < 0.7:
+			cols = 2
+			rows = 4
+		else:
+			cols = 3
+			rows = 3
 	elif total_crops == 12:
-		cols = 4
-		rows = 3
+		if plot_ratio > 1.5:
+			cols = 4
+			rows = 3
+		elif plot_ratio < 0.7:
+			cols = 3
+			rows = 4
+		else:
+			cols = 3
+			rows = 4
 	else:  # 16
 		cols = 4
 		rows = 4
 	
-	# Adjust for aspect ratio if needed
-	var plot_ratio = rect.size.x / rect.size.y
-	if plot_ratio > 1.8 and total_crops == 12:
-		cols = 6
-		rows = 2
-	elif plot_ratio < 0.6 and total_crops == 12:
-		cols = 3
-		rows = 4
+	# Calculate spacing to evenly fill the available space
+	var crop_spacing_x = available_w / max(1, cols - 1) if cols > 1 else 0
+	var crop_spacing_y = available_h / max(1, rows - 1) if rows > 1 else 0
 	
 	# Calculate starting position (centered in plot)
-	var start_x = -(cols - 1) * crop_spacing / 2
-	var start_y = -(rows - 1) * crop_spacing / 2
+	var start_x = -(cols - 1) * crop_spacing_x / 2
+	var start_y = -(rows - 1) * crop_spacing_y / 2
 	
 	# Create individual crops in a grid
 	var crop_count = 0
@@ -666,11 +798,10 @@ func _create_crop_visual(plot_id: String, crop_id: String):
 			
 			var crop = Node2D.new()
 			crop.name = "Crop_%d_%d" % [row, col]
-			crop.position = Vector2(start_x + col * crop_spacing, start_y + row * crop_spacing)
+			crop.position = Vector2(start_x + col * crop_spacing_x, start_y + row * crop_spacing_y)
 			
-			# Even distribution - no random offset for uniform spacing
-			# Optional: tiny variation for natural look (±3 pixels)
-			crop.position += Vector2(randf() * 6 - 3, randf() * 6 - 3)
+			# Even distribution - small random variation for natural look (±5 pixels)
+			crop.position += Vector2(randf() * 10 - 5, randf() * 10 - 5)
 			
 			# Create crop sprite
 			var sprite = Sprite2D.new()
@@ -856,6 +987,27 @@ func _animate_harvest(plot_id: String):
 
 func _show_crop_info(plot_id: String, crop_entity: Node):
 	print("[FarmController] Crop info at %s: %s, stage=%d" % [plot_id, crop_entity.crop_id, crop_entity.current_stage])
+
+## Play sound effect for actions
+func _play_sfx(action: String):
+	var audio_mgr = get_node_or_null("/root/AudioManager")
+	if not audio_mgr:
+		return
+	
+	var sfx_path: String
+	match action:
+		"plant":
+			sfx_path = "res://assets/audio/sfx/planting/Firefly_audio_Create_a_relaxing_sound_for_planting_plants,_for_a_variation2.wav"
+		"water":
+			sfx_path = "res://assets/audio/sfx/watering/Firefly_audio_Create_a_relaxing_sound_for_watering_plants,_for_a_variation4.wav"
+		"harvest":
+			sfx_path = "res://assets/audio/sfx/cropping/Firefly_audio_Create_a_relaxing_sound_for_harvesting_crops,_for__variation4.wav"
+		_:
+			return
+	
+	if ResourceLoader.exists(sfx_path):
+		audio_mgr.play_sfx_path(sfx_path)
+		print("[FarmController] Playing SFX: %s" % action)
 
 ## Public methods
 func set_selected_crop(crop_id: String):

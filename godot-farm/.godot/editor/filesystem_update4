@@ -5,3 +5,5 @@ res://scripts/ui/draggable_camera.gd
 res://scripts/ui/sickle_harvest_tool.gd
 res://scripts/ui/watering_can_tool.gd
 res://scripts/ui/dynamic_background.gd
+res://scripts/level_manager.gd
+res://scripts/ui/hud_controller.gd

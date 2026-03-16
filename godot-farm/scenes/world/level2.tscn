@@ -1,0 +1,111 @@
+[gd_scene format=3 uid="uid://dvdl8udbn73od"]
+
+[ext_resource type="Script" path="res://scripts/ui/farm_controller.gd" id="1_farm01"]
+[ext_resource type="Texture2D" path="res://assets/environment/level2_background.jpg" id="2_bg"]
+[ext_resource type="Script" path="res://scripts/ui/draggable_camera.gd" id="3_cam"]
+[ext_resource type="Texture2D" path="res://assets/characters/cow/cow_idle.png" id="4_cow_idle"]
+[ext_resource type="Texture2D" path="res://assets/characters/cow/cow_walk.png" id="5_cow_walk"]
+[ext_resource type="Texture2D" path="res://assets/characters/sheep/sheep_idle.png" id="6_sheep_idle"]
+[ext_resource type="Texture2D" path="res://assets/characters/sheep/sheep_walk.png" id="7_sheep_walk"]
+[ext_resource type="Texture2D" path="res://assets/characters/zebra/idle/idle_0.png" id="8_zebra_idle"]
+[ext_resource type="Texture2D" path="res://assets/characters/zebra/walk/walk_0.png" id="9_zebra_walk"]
+[ext_resource type="Texture2D" path="res://assets/characters/pig/idle/idle_0.png" id="10_pig_idle"]
+[ext_resource type="Texture2D" path="res://assets/characters/pig/walk/walk_0.png" id="11_pig_walk"]
+[ext_resource type="Script" path="res://scripts/ui/interactive_animal.gd" id="12_animal_script"]
+[ext_resource type="Script" path="res://scripts/ui/dynamic_background.gd" id="13_dynamic_bg"]
+[ext_resource type="Script" path="res://scripts/ui/ambient_audio_manager.gd" id="14_ambient_audio"]
+[ext_resource type="Script" path="res://scripts/ui/sickle_harvest_tool.gd" id="15_sickle"]
+[ext_resource type="Script" path="res://scripts/ui/watering_can_tool.gd" id="16_water"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/level2_bgm.mp3" id="17_bgm"]
+[ext_resource type="Script" path="res://scripts/ui/level2_music.gd" id="18_level2_music"]
+
+[node name="Farm" type="Node2D"]
+script = ExtResource("1_farm01")
+
+[node name="Background" type="Sprite2D" parent="."]
+scale = Vector2(2.69, 2.69)
+texture = ExtResource("2_bg")
+centered = false
+
+[node name="DynamicBackground" type="Node2D" parent="Background"]
+script = ExtResource("13_dynamic_bg")
+
+[node name="PlotsContainer" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="CropsContainer" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="Decorations" type="Node2D" parent="."]
+
+[node name="Animals" type="Node2D" parent="."]
+
+[node name="Cow1" type="Node2D" parent="Animals"]
+position = Vector2(800, 800)
+script = ExtResource("12_animal_script")
+walk_texture = ExtResource("5_cow_walk")
+idle_texture = ExtResource("4_cow_idle")
+walk_speed = 30.0
+scale_factor = 0.8
+use_separate_frames = true
+animal_name = "cow"
+
+[node name="Sheep1" type="Node2D" parent="Animals"]
+position = Vector2(1200, 600)
+script = ExtResource("12_animal_script")
+walk_texture = ExtResource("7_sheep_walk")
+idle_texture = ExtResource("6_sheep_idle")
+walk_speed = 25.0
+scale_factor = 0.7
+use_separate_frames = true
+animal_name = "sheep"
+
+[node name="Zebra1" type="Node2D" parent="Animals"]
+position = Vector2(2000, 1000)
+script = ExtResource("12_animal_script")
+walk_texture = ExtResource("9_zebra_walk")
+idle_texture = ExtResource("8_zebra_idle")
+walk_speed = 40.0
+scale_factor = 0.9
+use_separate_frames = true
+animal_name = "zebra"
+
+[node name="Pig1" type="Node2D" parent="Animals"]
+position = Vector2(3200, 3200)
+script = ExtResource("12_animal_script")
+walk_texture = ExtResource("11_pig_walk")
+idle_texture = ExtResource("10_pig_idle")
+walk_speed = 35.0
+scale_factor = 0.6
+use_separate_frames = true
+animal_name = "pig"
+
+[node name="FarmCamera" type="Camera2D" parent="."]
+unique_name_in_owner = true
+anchor_mode = 0
+limit_left = 0
+limit_top = 0
+limit_right = 6144
+limit_bottom = 11008
+position_smoothing_enabled = true
+position_smoothing_speed = 10.0
+position = Vector2(0, 0)
+script = ExtResource("3_cam")
+
+[node name="AmbientAudioManager" type="Node" parent="."]
+script = ExtResource("14_ambient_audio")
+
+[node name="SickleTool" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("15_sickle")
+
+[node name="WateringCanTool" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("16_water")
+
+[node name="BackgroundMusic" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("17_bgm")
+autoplay = true
+bus = &"Music"
+script = ExtResource("18_level2_music")
+groups = ["Music"]
