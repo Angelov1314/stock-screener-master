@@ -84,9 +84,12 @@ func _load_level(level_id: int):
 		push_error("[Main] Failed to load level %d scene!" % level_id)
 
 func _on_inventory_requested():
-	print("[Main] Inventory disabled")
-	# 背包功能已禁用
-	pass
+	print("[Main] Opening simple inventory...")
+	var inv_scene = load("res://scenes/ui/simple_inventory.tscn")
+	if inv_scene:
+		var inv = inv_scene.instantiate()
+		add_child(inv)
+		inv.panel_closed.connect(func(): inv.queue_free())
 
 func _on_planting_menu_requested():
 	print("[Main] Planting menu disabled")
