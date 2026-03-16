@@ -89,14 +89,9 @@ func _on_inventory_requested():
 	pass
 
 func _on_planting_menu_requested():
-	print("[Main] Toggling planting menu...")
-	if not planting_menu.is_open():
-		# Position menu above the inventory button
-		var inventory_btn = hud.get_node("MarginContainer/VBoxContainer/BottomBar/InventoryButton")
-		if inventory_btn:
-			var btn_pos = inventory_btn.global_position
-			planting_menu.position = Vector2(btn_pos.x - 150, btn_pos.y - 110)
-	planting_menu.toggle()
+	print("[Main] Planting menu disabled")
+	# 种植菜单已禁用
+	pass
 
 func _on_shop_requested():
 	print("[Main] Opening shop...")

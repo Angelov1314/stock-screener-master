@@ -63,7 +63,8 @@ func _on_water_pressed():
 
 func _on_inventory_pressed():
 	_animate_button(inventory_button)
-	planting_menu_requested.emit()
+	# 背包和种植菜单都已禁用
+	pass
 
 func _on_shop_pressed():
 	_animate_button(shop_button)
