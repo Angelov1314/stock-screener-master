@@ -1,2 +1,4 @@
 res://scripts/main.gd
 res://scripts/core/state/action_system.gd
+res://scripts/ui/farm_controller.gd
+res://scripts/ui/draggable_camera.gd

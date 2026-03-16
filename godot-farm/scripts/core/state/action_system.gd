@@ -160,3 +160,13 @@ func harvest(coord: Vector2i) -> bool:
 		execute("harvest_crop", {"coord": coord, "crop_id": result.crop_id})
 		return true
 	return false
+
+## Helper function to load crop data from JSON
+func _get_crop_data(crop_id: String) -> Dictionary:
+	var file_path = "res://data/crops/%s.json" % crop_id
+	if FileAccess.file_exists(file_path):
+		var file = FileAccess.open(file_path, FileAccess.READ)
+		var json = JSON.new()
+		if json.parse(file.get_as_text()) == OK:
+			return json.data
+	return {}

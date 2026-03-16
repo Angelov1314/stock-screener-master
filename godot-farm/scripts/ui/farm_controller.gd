@@ -297,12 +297,15 @@ func _on_crop_watered(coord: Vector2i):
 			return
 
 func _on_crop_harvested(coord: Vector2i, crop_id: String):
+	print("[FarmController] Crop harvested at coord: %s" % str(coord))
 	for plot_id in _plot_rects.keys():
 		var rect = _plot_rects[plot_id]
 		var plot_coord = Vector2i(int(rect.position.x / 100), int(rect.position.y / 100))
 		if plot_coord == coord:
 			_animate_harvest(plot_id)
-			_remove_crop_visual(plot_id)
+			# Remove visual after animation completes
+			var timer = get_tree().create_timer(0.5)
+			timer.timeout.connect(func(): _remove_crop_visual(plot_id))
 			return
 
 func _on_crop_stage_changed(crop_id: String, new_stage: int):
@@ -542,25 +545,3 @@ func set_water_mode(active: bool):
 			_water_tool.activate()
 		else:
 			_water_tool.deactivate()
-
-## Remove crop visual after harvest
-func _remove_crop_visual(plot_id: String):
-	if _crop_instances.has(plot_id):
-		var crop_node = _crop_instances[plot_id]
-		_crop_instances.erase(plot_id)
-		if is_instance_valid(crop_node):
-			crop_node.queue_free()
-		print("[FarmController] Crop visual removed for plot: %s" % plot_id)
-
-## Updated harvest handler to remove visual
-func _on_crop_harvested(coord: Vector2i, crop_id: String):
-	print("[FarmController] Crop harvested at coord: %s" % str(coord))
-	for plot_id in _plot_rects.keys():
-		var rect = _plot_rects[plot_id]
-		var plot_coord = Vector2i(int(rect.position.x / 100), int(rect.position.y / 100))
-		if plot_coord == coord:
-			_animate_harvest(plot_id)
-			# Remove visual after short delay
-			var timer = get_tree().create_timer(0.5)
-			timer.timeout.connect(func(): _remove_crop_visual(plot_id))
-			return

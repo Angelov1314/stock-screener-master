@@ -87,6 +87,7 @@ limit_right = 6144
 limit_bottom = 11008
 position_smoothing_enabled = true
 position_smoothing_speed = 10.0
+position = Vector2(0, 0)
 script = ExtResource("3_cam")
 
 [node name="AmbientAudioManager" type="Node" parent="."]
