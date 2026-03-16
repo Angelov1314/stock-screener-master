@@ -70,6 +70,12 @@ func _ready():
 	
 	if item_panel:
 		item_panel.visible = false
+	
+	# Ensure first tab (animals) is active
+	var tab_container = get_node_or_null("MainContainer/TabContainer")
+	if tab_container:
+		print("[ShopUI] TabContainer current_tab: %d" % tab_container.current_tab)
+		print("[ShopUI] TabContainer tab count: %d" % tab_container.get_tab_count())
 
 func _load_shop_data():
 	var file_path = "res://data/shop_items.json"
@@ -97,8 +103,19 @@ func _populate_shop():
 	plants_grid.z_index = 10
 	plants_grid.visible = true
 	
-	print("[ShopUI] animals_grid visible: %s, z_index: %d" % [animals_grid.visible, animals_grid.z_index])
-	print("[ShopUI] plants_grid visible: %s, z_index: %d" % [plants_grid.visible, plants_grid.z_index])
+	# DEBUG: Make cards very visible
+	print("[ShopUI] DEBUG: Setting bright red background on next card")
+	
+	print("[ShopUI] animals_grid visible: %s, z_index: %d, size: %s" % [animals_grid.visible, animals_grid.z_index, str(animals_grid.size)])
+	print("[ShopUI] plants_grid visible: %s, z_index: %d, size: %s" % [plants_grid.visible, plants_grid.z_index, str(plants_grid.size)])
+	
+	# Check parent ScrollContainer sizes
+	var animals_scroll = animals_grid.get_parent()
+	var plants_scroll = plants_grid.get_parent()
+	if animals_scroll:
+		print("[ShopUI] Animals ScrollContainer size: %s" % str(animals_scroll.size))
+	if plants_scroll:
+		print("[ShopUI] Plants ScrollContainer size: %s" % str(plants_scroll.size))
 	
 	# Clear
 	for child in animals_grid.get_children():
@@ -130,7 +147,7 @@ func _populate_shop():
 		print("[ShopUI] Animal card %d: pos=%s, global_pos=%s, size=%s, visible=%s" % [i, str(child.position), str(child.global_position), str(child.size), child.visible])
 
 func _create_card(parent: GridContainer, item: Dictionary, item_type: String):
-	print("[ShopUI] _create_card: %s, parent=%s" % [item.get("name", "unknown"), parent.name])
+	print("[ShopUI] _create_card: %s, parent=%s, parent_child_count=%d" % [item.get("name", "unknown"), parent.name, parent.get_child_count()])
 	
 	var card = Button.new()
 	card.custom_minimum_size = Vector2(140, 180)
@@ -138,6 +155,13 @@ func _create_card(parent: GridContainer, item: Dictionary, item_type: String):
 	card.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	card.z_index = 100
 	card.visible = true
+	
+	# DEBUG: First card gets bright red background
+	if parent.get_child_count() == 0:
+		print("[ShopUI] DEBUG: Creating RED card for visibility test")
+		var debug_style = StyleBoxFlat.new()
+		debug_style.bg_color = Color(1, 0, 0)
+		card.add_theme_stylebox_override("normal", debug_style)
 	
 	# Card style
 	var style = StyleBoxFlat.new()
