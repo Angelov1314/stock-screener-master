@@ -11,10 +11,11 @@
   "sprite_prefix": "strawberry",
   "stages": [
     {"stage": 0, "name": "seed", "duration": 0},
-    {"stage": 1, "name": "sprout", "duration": 37},
-    {"stage": 2, "name": "leafy", "duration": 38},
-    {"stage": 3, "name": "flowering", "duration": 37},
-    {"stage": 4, "name": "fruiting", "duration": 38, "harvestable": true}
+    {"stage": 1, "name": "sprout", "duration": 30},
+    {"stage": 2, "name": "growing", "duration": 30},
+    {"stage": 3, "name": "leafy", "duration": 30},
+    {"stage": 4, "name": "flowering", "duration": 30},
+    {"stage": 5, "name": "fruiting", "duration": 30, "harvestable": true}
   ],
   "seasons": ["spring"],
   "water_needs": "high",

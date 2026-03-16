@@ -172,6 +172,9 @@ func plant_crop(crop_type: String, position: Vector2i, world_pos: Vector2 = Vect
 	
 	add_child(crop_entity)
 	
+	# Force visual update AFTER add_child (so @onready vars are initialized)
+	crop_entity.update_visual()
+	
 	# Track crop
 	active_crops[crop_id] = crop_entity
 	crop_positions[position] = crop_id

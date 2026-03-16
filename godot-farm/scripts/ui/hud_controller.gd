@@ -131,7 +131,7 @@ func show_toast(message: String):
 	
 	var style = StyleBoxFlat.new()
 	style.bg_color = Color(0, 0, 0, 0.8)
-	style.corner_radius_all = 8
+	style.set_corner_radius_all(8)
 	toast.add_theme_stylebox_override("normal", style)
 	
 	toast_container.add_child(toast)

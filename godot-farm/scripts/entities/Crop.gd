@@ -32,9 +32,14 @@ var regrowable: bool = false
 
 # Visual
 @onready var sprite: Sprite2D = $Sprite2D if has_node("Sprite2D") else null
+var debug_label: Label = null
 
 func _ready():
+	var n = name if name else "unnamed"
+	var cid = crop_id if crop_id else "no_id"
+	print("[Crop DEBUG] " + n + ": _ready() called, crop_id='" + cid + "'")
 	update_visual()
+	print("[Crop DEBUG] " + n + ": _ready() finished")
 
 ## Initialize crop with data
 func initialize(data: Dictionary) -> void:
@@ -104,10 +109,12 @@ func update_growth(delta_time: float, in_correct_season: bool) -> void:
 
 ## Advance to next growth stage
 func advance_stage() -> void:
+	var cid = crop_id if crop_id else "no_id"
+	print("[Crop DEBUG] " + cid + ": advance_stage() called")
 	if current_stage < stages.size() - 1:
 		current_stage += 1
 		growth_progress = 0.0
-		print("[Crop] %s advanced to stage %d (%s)" % [crop_id, current_stage, _get_current_stage_name()])
+		print("[Crop] " + cid + " advanced to stage " + str(current_stage))
 		emit_signal("growth_advanced", current_stage)
 		update_visual()
 		
@@ -202,31 +209,80 @@ func wither() -> void:
 
 ## Update visual representation
 func update_visual() -> void:
+	var debug_name = crop_id if crop_id != "" else name
+	print("[Crop DEBUG] " + debug_name + ": update_visual() called")
+	
+	# Check for multiple Sprite2D children
+	var sprite_count = 0
+	for child in get_children():
+		if child is Sprite2D:
+			sprite_count += 1
+			print("[Crop DEBUG] " + debug_name + ": Found Sprite2D child: " + child.name + ", texture=" + str(child.texture))
+	print("[Crop DEBUG] " + debug_name + ": Total Sprite2D children: " + str(sprite_count))
 	if sprite == null:
 		# Create sprite if missing
+		print("[Crop DEBUG] " + debug_name + ": Creating new Sprite2D")
 		sprite = Sprite2D.new()
 		sprite.name = "Sprite2D"
 		add_child(sprite)
+		print("[Crop DEBUG] " + debug_name + ": Sprite2D added, path=" + str(sprite.get_path()) + ", parent=" + str(get_path()))
+	else:
+		print("[Crop DEBUG] " + debug_name + ": Sprite2D exists, path=" + str(sprite.get_path()))
+	
+	# Create debug label if missing
+	if debug_label == null:
+		debug_label = Label.new()
+		debug_label.name = "DebugLabel"
+		debug_label.position = Vector2(-20, -40)  # Above the sprite
+		debug_label.add_theme_font_size_override("font_size", 24)
+		add_child(debug_label)
+	
+	# Update debug label
+	debug_label.text = "S" + str(current_stage)
 	
 	# Load the correct stage sprite
 	var stage_name = _get_current_stage_name()
-	var texture_path = "res://assets/crops/%s/%s_%s.png" % [crop_id, crop_id, stage_name]
+	var texture_path = "res://assets/crops/" + crop_id + "/" + crop_id + "_" + stage_name + ".png"
 	
-	if ResourceLoader.exists(texture_path):
-		sprite.texture = load(texture_path)
+	print("[Crop DEBUG] " + debug_name + ": Loading texture: " + texture_path)
+	
+	# Use ResourceLoader for runtime loading (load() doesn't work at runtime in Godot 4)
+	var texture = ResourceLoader.load(texture_path, "", ResourceLoader.CACHE_MODE_REUSE)
+	if texture:
+		sprite.texture = texture
+		# Force update
+		sprite.queue_redraw()
+		print("[Crop DEBUG] " + debug_name + ": Texture loaded OK, size=" + str(texture.get_size()))
 		# Scale from 1024x1024 to game size (~56px)
 		var target_size = 56.0
 		if sprite.texture.get_width() > 0:
 			var sf = target_size / sprite.texture.get_width()
 			sprite.scale = Vector2(sf, sf)
+			sprite.queue_redraw()  # Force redraw after scale change
+			print("[Crop DEBUG] " + debug_name + ": sprite scale=" + str(sprite.scale) + ", visible=" + str(sprite.visible) + ", position=" + str(sprite.position))
+		print("[Crop DEBUG] " + debug_name + ": Texture path in sprite: " + str(sprite.texture.resource_path))
+	else:
+		print("[Crop ERROR] " + debug_name + ": FAILED to load: " + texture_path)
+		# Fallback: try to load seed stage
+		var fallback_path = "res://assets/crops/" + crop_id + "/" + crop_id + "_seed.png"
+		var fallback_texture = ResourceLoader.load(fallback_path, "", ResourceLoader.CACHE_MODE_REUSE)
+		if fallback_texture:
+			sprite.texture = fallback_texture
+			print("[Crop DEBUG] " + debug_name + ": Using fallback texture")
 	
-	# Apply visual modifiers
+	# Apply visual modifiers based on stage
 	if is_withered:
 		sprite.modulate = Color(0.5, 0.4, 0.3)
 	elif can_harvest():
-		sprite.modulate = Color(1.0, 1.0, 1.0)
+		sprite.modulate = Color(1.0, 1.0, 1.0)  # White - ready to harvest
 	else:
-		sprite.modulate = Color(0.95, 0.98, 0.95)
+		# Different tint for different stages to make growth visible
+		match current_stage:
+			0: sprite.modulate = Color(1.0, 1.0, 0.8)   # Yellow tint - seed
+			1: sprite.modulate = Color(0.8, 1.0, 0.8)   # Green tint - sprout
+			2: sprite.modulate = Color(0.9, 1.0, 0.9)   # Light green - growing
+			3: sprite.modulate = Color(1.0, 1.0, 1.0)   # Normal - tall
+			_: sprite.modulate = Color(0.95, 0.98, 0.95) # Default
 
 ## Get stage name from current stage index
 func _get_current_stage_name() -> String:

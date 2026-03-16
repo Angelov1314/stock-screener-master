@@ -11,11 +11,12 @@
   "sprite_prefix": "tomato",
   "stages": [
     {"stage": 0, "name": "seed", "duration": 0},
-    {"stage": 1, "name": "sprout", "duration": 60},
-    {"stage": 2, "name": "leafy", "duration": 60},
-    {"stage": 3, "name": "flowering", "duration": 60},
-    {"stage": 4, "name": "green_fruit", "duration": 60},
-    {"stage": 5, "name": "ripe", "duration": 0, "harvestable": true}
+    {"stage": 1, "name": "sprout", "duration": 48},
+    {"stage": 2, "name": "growing", "duration": 48},
+    {"stage": 3, "name": "leafy", "duration": 48},
+    {"stage": 4, "name": "flowering", "duration": 48},
+    {"stage": 5, "name": "green_fruit", "duration": 48},
+    {"stage": 6, "name": "mature", "duration": 0, "harvestable": true}
   ],
   "seasons": ["summer"],
   "water_needs": "medium",
