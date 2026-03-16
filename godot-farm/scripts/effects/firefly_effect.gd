@@ -4,12 +4,15 @@ extends Node2D
 
 @export var firefly_count: int = 30
 @export var spawn_area: Vector2 = Vector2(6144, 11008)
+@export var refresh_interval: float = 30.0  # Refresh every 30 seconds
 
 var _fireflies: Array = []
+var _refresh_timer: Timer
 
 func _ready():
 	print("[FireflyEffect] Initializing %d fireflies..." % firefly_count)
 	_setup_fireflies()
+	_setup_refresh_timer()
 
 func _setup_fireflies():
 	for i in range(firefly_count):
@@ -55,6 +58,25 @@ func _setup_fireflies():
 		})
 	
 	print("[FireflyEffect] Created %d fireflies" % firefly_count)
+
+func _setup_refresh_timer():
+	_refresh_timer = Timer.new()
+	_refresh_timer.wait_time = refresh_interval
+	_refresh_timer.autostart = true
+	_refresh_timer.timeout.connect(_refresh_fireflies)
+	add_child(_refresh_timer)
+	print("[FireflyEffect] Refresh timer started (every %.0f seconds)" % refresh_interval)
+
+func _refresh_fireflies():
+	print("[FireflyEffect] Refreshing fireflies...")
+	for f in _fireflies:
+		var node = f["node"]
+		# Reset position to random location
+		f["base_pos"] = Vector2(randf() * spawn_area.x, randf() * spawn_area.y)
+		node.position = f["base_pos"]
+		# Ensure visibility
+		node.visible = true
+		node.modulate.a = 0.5
 
 func _process(delta):
 	var time = Time.get_time_dict_from_system()["second"] + Time.get_time_dict_from_system()["minute"] * 60.0

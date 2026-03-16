@@ -4,15 +4,18 @@ extends Node2D
 
 @export var cloud_speed: float = 20.0
 @export var particle_count: int = 15
+@export var refresh_interval: float = 45.0  # Refresh every 45 seconds
 
 var _clouds: Array[Sprite2D] = []
 var _particles: Array = []  # Stores Dictionary with particle data
+var _refresh_timer: Timer
 
 func _ready():
 	print("[DynamicBackground] Initializing...")
 	print("[DynamicBackground] Parent: %s" % str(get_parent()))
 	_setup_clouds()
 	_setup_particles()
+	_setup_refresh_timer()
 	print("[DynamicBackground] Initialized with %d clouds and %d particles" % [_clouds.size(), _particles.size()])
 
 func _setup_clouds():
@@ -82,6 +85,30 @@ func _setup_particles():
 		})
 	
 	print("[DynamicBackground] Created %d particles" % particle_count)
+
+func _setup_refresh_timer():
+	_refresh_timer = Timer.new()
+	_refresh_timer.wait_time = refresh_interval
+	_refresh_timer.autostart = true
+	_refresh_timer.timeout.connect(_refresh_effects)
+	add_child(_refresh_timer)
+	print("[DynamicBackground] Refresh timer started (every %.0f seconds)" % refresh_interval)
+
+func _refresh_effects():
+	print("[DynamicBackground] Refreshing clouds and particles...")
+	# Refresh clouds - reset to left side at random Y
+	for cloud in _clouds:
+		cloud.position.x = -500
+		cloud.position.y = randf() * 800 + 300
+		cloud.visible = true
+		cloud.modulate.a = 0.6
+	
+	# Refresh particles - reset to random positions
+	for p in _particles:
+		var node = p["node"]
+		node.position = Vector2(randf() * 6000, randf() * 10000)
+		node.visible = true
+		node.modulate.a = 0.6
 
 func _process(delta):
 	# Move clouds slowly
