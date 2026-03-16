@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main_script"]
 [ext_resource type="PackedScene" uid="uid://farmscene001" path="res://scenes/world/farm.tscn" id="2_farm"]
 [ext_resource type="PackedScene" uid="uid://dvdl8udbn73od" path="res://scenes/world/level2.tscn" id="6_level2"]
+[ext_resource type="PackedScene" uid="uid://level3scene001" path="res://scenes/world/level3.tscn" id="8_level3"]
 [ext_resource type="Script" path="res://scripts/level_manager.gd" id="7_level_manager"]
 [ext_resource type="PackedScene" uid="uid://hudscene001" path="res://scenes/ui/hud.tscn" id="3_hud"]
 [ext_resource type="PackedScene" uid="uid://invpanel001" path="res://scenes/ui/inventory_panel.tscn" id="4_inventory"]
@@ -15,6 +16,7 @@ script = ExtResource("1_main_script")
 script = ExtResource("7_level_manager")
 level1_scene = ExtResource("2_farm")
 level2_scene = ExtResource("6_level2")
+level3_scene = ExtResource("8_level3")
 
 [node name="LevelContainer" type="Node" parent="."]
 

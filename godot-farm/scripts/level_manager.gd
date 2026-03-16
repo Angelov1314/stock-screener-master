@@ -4,3 +4,4 @@ extends Node
 
 @export var level1_scene: PackedScene
 @export var level2_scene: PackedScene
+@export var level3_scene: PackedScene

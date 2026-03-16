@@ -53,10 +53,10 @@ func _load_level(level_id: int):
 	# Handle global AudioManager music
 	var audio_mgr = get_node_or_null("/root/AudioManager")
 	if audio_mgr:
-		if level_id == 2:
-			# Stop global music for level 2 (has its own music)
+		if level_id in [2, 3]:
+			# Stop global music for level 2 and 3 (they have their own music)
 			audio_mgr.stop_music()
-			print("[Main] Stopped global music for level 2")
+			print("[Main] Stopped global music for level %d" % level_id)
 		else:
 			# Ensure music is playing for level 1
 			audio_mgr.play_background_music()
@@ -73,6 +73,8 @@ func _load_level(level_id: int):
 			level_scene = level_manager.level1_scene
 		2:
 			level_scene = level_manager.level2_scene
+		3:
+			level_scene = level_manager.level3_scene
 		_:
 			level_scene = level_manager.level1_scene
 	

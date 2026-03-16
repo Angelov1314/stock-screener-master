@@ -1,0 +1,121 @@
+[gd_scene format=3 uid="uid://dys6vb5xur4iu"]
+
+[ext_resource type="Script" path="res://scripts/ui/farm_controller.gd" id="1_farm01"]
+[ext_resource type="Texture2D" uid="uid://bglevel3001" path="res://assets/backgrounds/level3_bg.png" id="2_bg"]
+[ext_resource type="Script" path="res://scripts/ui/draggable_camera.gd" id="3_cam"]
+[ext_resource type="Script" path="res://scripts/ui/interactive_animal.gd" id="4_animal_script"]
+[ext_resource type="Script" path="res://scripts/ui/dynamic_background.gd" id="5_dynamic_bg"]
+[ext_resource type="Script" path="res://scripts/ui/sickle_harvest_tool.gd" id="6_sickle"]
+[ext_resource type="Script" path="res://scripts/ui/watering_can_tool.gd" id="7_water"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/level3_bgm.mp3" id="8_music"]
+
+[node name="Level3" type="Node2D"]
+script = ExtResource("1_farm01")
+
+[node name="Background" type="Sprite2D" parent="."]
+scale = Vector2(4, 4)
+texture = ExtResource("2_bg")
+centered = false
+
+[node name="DynamicBackground" type="Node2D" parent="Background"]
+script = ExtResource("5_dynamic_bg")
+
+[node name="PlotsContainer" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="CropsContainer" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="Decorations" type="Node2D" parent="."]
+
+[node name="Animals" type="Node2D" parent="."]
+
+[node name="Koala1" type="Node2D" parent="Animals"]
+position = Vector2(1500, 2000)
+script = ExtResource("4_animal_script")
+walk_speed = 15.0
+scale_factor = 0.7
+use_separate_frames = true
+animal_name = "koala"
+
+[node name="Koala2" type="Node2D" parent="Animals"]
+position = Vector2(4500, 5000)
+script = ExtResource("4_animal_script")
+walk_speed = 12.0
+scale_factor = 0.65
+use_separate_frames = true
+animal_name = "koala"
+
+[node name="Shiba1" type="Node2D" parent="Animals"]
+position = Vector2(2000, 3500)
+script = ExtResource("4_animal_script")
+walk_speed = 35.0
+scale_factor = 0.8
+use_separate_frames = true
+animal_name = "shiba"
+
+[node name="Shiba2" type="Node2D" parent="Animals"]
+position = Vector2(5000, 7000)
+script = ExtResource("4_animal_script")
+walk_speed = 38.0
+scale_factor = 0.75
+use_separate_frames = true
+animal_name = "shiba"
+
+[node name="Cat1" type="Node2D" parent="Animals"]
+position = Vector2(800, 6000)
+script = ExtResource("4_animal_script")
+walk_speed = 40.0
+scale_factor = 0.6
+use_separate_frames = true
+animal_name = "cat"
+
+[node name="Cat2" type="Node2D" parent="Animals"]
+position = Vector2(3500, 1500)
+script = ExtResource("4_animal_script")
+walk_speed = 42.0
+scale_factor = 0.55
+use_separate_frames = true
+animal_name = "cat"
+
+[node name="Capybara1" type="Node2D" parent="Animals"]
+position = Vector2(3000, 4500)
+script = ExtResource("4_animal_script")
+walk_speed = 20.0
+scale_factor = 0.9
+use_separate_frames = true
+animal_name = "capybara"
+
+[node name="Capybara2" type="Node2D" parent="Animals"]
+position = Vector2(5500, 3000)
+script = ExtResource("4_animal_script")
+walk_speed = 18.0
+scale_factor = 0.85
+use_separate_frames = true
+animal_name = "capybara"
+
+[node name="FarmCamera" type="Camera2D" parent="."]
+unique_name_in_owner = true
+anchor_mode = 0
+limit_left = 0
+limit_top = 0
+limit_right = 6144
+limit_bottom = 11008
+position_smoothing_enabled = true
+position_smoothing_speed = 10.0
+position = Vector2(0, 0)
+script = ExtResource("3_cam")
+
+[node name="BackgroundMusic" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_music")
+volume_db = -10.0
+autoplay = true
+bus = "Music"
+
+[node name="SickleTool" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("6_sickle")
+
+[node name="WateringCanTool" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("7_water")
