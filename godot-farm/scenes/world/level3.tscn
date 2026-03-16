@@ -14,7 +14,7 @@
 script = ExtResource("1_farm01")
 
 [node name="Background" type="Sprite2D" parent="."]
-scale = Vector2(4, 4)
+scale = Vector2(2.69, 2.69)
 texture = ExtResource("2_bg")
 centered = false
 
