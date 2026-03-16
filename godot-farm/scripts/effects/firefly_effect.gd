@@ -38,7 +38,7 @@ func _setup_fireflies():
 			randf() * spawn_area.y
 		)
 		
-		// Scale variation
+		# Scale variation
 		var scale = 1.0 + randf() * 1.5
 		firefly.scale = Vector2(scale, scale)
 		

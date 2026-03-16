@@ -723,6 +723,7 @@ func _on_crop_stage_changed(crop_id: String, new_stage: int):
 		var center_pos = Vector2(rect.position.x + rect.size.x/2, rect.position.y + rect.size.y/2)
 		if crop_entity.position.distance_to(center_pos) < 200:
 			_update_crop_visual_stage(plot_id, new_stage)
+			_animate_growth_effect(plot_id, new_stage)
 			return
 
 ## Visual Creation
@@ -973,6 +974,88 @@ func _create_droplet() -> Sprite2D:
 	image.fill(Color(0.3, 0.6, 0.9))
 	droplet.texture = ImageTexture.create_from_image(image)
 	return droplet
+
+func _animate_growth_effect(plot_id: String, stage: int):
+	if not _crop_instances.has(plot_id):
+		return
+	
+	var crop_container = _crop_instances[plot_id]
+	
+	# Create growth particles
+	for i in range(5):
+		var particle = _create_growth_particle()
+		var rect = _plot_rects.get(plot_id, Rect2())
+		particle.position = Vector2(
+			rect.position.x + rect.size.x/2 + randf() * 60 - 30,
+			rect.position.y + rect.size.y/2 + randf() * 40 - 20
+		)
+		add_child(particle)
+		
+		var tween = create_tween()
+		tween.tween_interval(randf() * 0.3)
+		tween.tween_property(particle, "position:y", particle.position.y - 50, 0.8)
+		tween.parallel().tween_property(particle, "modulate:a", 0, 0.8)
+		tween.finished.connect(func(): particle.queue_free())
+	
+	# Animate crops with bounce effect
+	for crop in crop_container.get_children():
+		var sprite = crop.get_node_or_null("CropSprite")
+		if sprite:
+			var tween = create_tween()
+			var delay = randf() * 0.15
+			tween.tween_interval(delay)
+			# Pop up animation
+			tween.tween_property(sprite, "scale", sprite.scale * 1.4, 0.15).set_ease(Tween.EASE_OUT)
+			tween.tween_property(sprite, "scale", sprite.scale, 0.25).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+			
+			# Add sparkle effect for stage 3+
+			if stage >= 3:
+				var sparkle = _create_sparkle()
+				sparkle.position = crop.position
+				crop_container.add_child(sparkle)
+				
+				var s_tween = create_tween()
+				s_tween.tween_interval(delay + 0.2)
+				s_tween.tween_property(sparkle, "scale", Vector2(1.5, 1.5), 0.3)
+				s_tween.parallel().tween_property(sparkle, "modulate:a", 0, 0.3)
+				s_tween.finished.connect(func(): sparkle.queue_free())
+
+func _create_growth_particle() -> Sprite2D:
+	var particle = Sprite2D.new()
+	var size = 8
+	var img = Image.create(size, size, false, Image.FORMAT_RGBA8)
+	img.fill(Color(0, 0, 0, 0))
+	
+	# Draw plus sign
+	var color = Color(0.4, 0.9, 0.3, 0.8)
+	for x in range(size):
+		img.set_pixel(x, size/2, color)
+	for y in range(size):
+		img.set_pixel(size/2, y, color)
+	
+	particle.texture = ImageTexture.create_from_image(img)
+	particle.modulate = Color(0.5, 1.0, 0.4, 0.9)
+	return particle
+
+func _create_sparkle() -> Sprite2D:
+	var sparkle = Sprite2D.new()
+	var size = 16
+	var img = Image.create(size, size, false, Image.FORMAT_RGBA8)
+	img.fill(Color(0, 0, 0, 0))
+	
+	# Draw star shape
+	var color = Color(1, 1, 0.6, 0.9)
+	var center = size / 2
+	for r in range(4):
+		for i in range(center):
+			img.set_pixel(center, i, color)
+			img.set_pixel(center, size - 1 - i, color)
+			img.set_pixel(i, center, color)
+			img.set_pixel(size - 1 - i, center, color)
+	
+	sparkle.texture = ImageTexture.create_from_image(img)
+	sparkle.modulate = Color(1, 1, 0.5, 1)
+	return sparkle
 
 func _animate_harvest(plot_id: String):
 	if not _crop_instances.has(plot_id):
