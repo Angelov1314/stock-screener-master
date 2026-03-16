@@ -334,9 +334,8 @@ func _start_resting():
 	if sprite.sprite_frames.has_animation("sleep"):
 		sprite.play("sleep")
 		print("[InteractiveAnimal] %s is taking a 10-second nap!" % animal_name)
-	else:
-		if sprite.sprite_frames.has_animation("idle"):
-			sprite.play("idle")
+	elif sprite.sprite_frames.has_animation("idle"):
+		sprite.play("idle")
 	
 	# Stop footsteps
 	_stop_walking_footsteps()
