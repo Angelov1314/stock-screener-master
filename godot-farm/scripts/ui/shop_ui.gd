@@ -74,6 +74,12 @@ func _populate_shop():
 	
 	print("[ShopUI] animals_grid children: %d" % animals_grid.get_child_count())
 	print("[ShopUI] plants_grid children: %d" % plants_grid.get_child_count())
+	
+	# Delayed position check after layout
+	await get_tree().create_timer(0.5).timeout
+	for i in range(animals_grid.get_child_count()):
+		var child = animals_grid.get_child(i)
+		print("[ShopUI] Animal card %d: pos=%s, global_pos=%s, size=%s, visible=%s" % [i, str(child.position), str(child.global_position), str(child.size), child.visible])
 
 func _create_card(parent: GridContainer, item: Dictionary, item_type: String):
 	print("[ShopUI] _create_card: %s, parent=%s" % [item.get("name", "unknown"), parent.name])
@@ -162,6 +168,7 @@ func _create_card(parent: GridContainer, item: Dictionary, item_type: String):
 	card.pressed.connect(_on_card_clicked.bind(item, item_type))
 	
 	parent.add_child(card)
+	print("[ShopUI] Card added to %s at position: %s, size: %s" % [parent.name, str(card.position), str(card.size)])
 
 func _get_icon_path(id: String, item_type: String) -> String:
 	if item_type == "animal":
