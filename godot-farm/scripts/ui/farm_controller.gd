@@ -670,16 +670,12 @@ func _try_harvest_crop(plot_id: String):
 
 ## Signal Handlers
 func _on_crop_planted(coord: Vector2i, crop_id: String):
-	# Find which plot this crop belongs to based on position
-	var crop_mgr = get_node_or_null("/root/CropManager")
-	if not crop_mgr:
-		return
-	
+	# Visual is now handled by CropEntity itself
+	# Just play growth animation at the plot position
 	for plot_id in _plot_rects.keys():
 		var rect = _plot_rects[plot_id]
 		var plot_coord = Vector2i(int(rect.position.x / 100), int(rect.position.y / 100))
 		if plot_coord == coord:
-			_create_crop_visual(plot_id, crop_id)
 			_animate_crop_growth(plot_id, 0)
 			return
 
@@ -901,11 +897,11 @@ func _load_existing_crops():
 		var rect = _plot_rects[plot_id]
 		var center_pos = Vector2(rect.position.x + rect.size.x/2, rect.position.y + rect.size.y/2)
 		
-		# Find crop at this position (scaled detection for 4x world)
+		# Find crop at this position - visual handled by CropEntity
 		for crop_id in crop_mgr.active_crops.keys():
 			var crop = crop_mgr.active_crops[crop_id]
 			if crop.position.distance_to(center_pos) < 200:
-				_create_crop_visual(plot_id, crop.crop_id)
+				# CropEntity handles its own visual
 				break
 
 ## Animations

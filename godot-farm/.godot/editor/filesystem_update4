@@ -14,3 +14,4 @@ res://scripts/effects/firefly_effect.gd
 res://scripts/simulation/crop_manager.gd
 res://scripts/entities/Crop.gd
 res://scripts/ui/planting_menu_new.gd
+res://scripts/ui/inventory_controller.gd
