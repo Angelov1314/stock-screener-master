@@ -90,24 +90,29 @@ layout_mode = 2
 [node name="TabContainer" type="TabContainer" parent="MainContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+z_index = 5
 
 [node name="动物" type="ScrollContainer" parent="MainContainer/TabContainer"]
 layout_mode = 2
+z_index = 5
 
 [node name="AnimalsGrid" type="GridContainer" parent="MainContainer/TabContainer/动物"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 columns = 3
+z_index = 10
 
 [node name="植物" type="ScrollContainer" parent="MainContainer/TabContainer"]
 layout_mode = 2
+z_index = 5
 
 [node name="PlantsGrid" type="GridContainer" parent="MainContainer/TabContainer/植物"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 columns = 3
+z_index = 10
 
 [node name="BottomBar" type="HBoxContainer" parent="MainContainer"]
 layout_mode = 2
@@ -126,8 +131,9 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "❌ 关闭"
 
-[node name="ItemPanel" type="Panel" parent="."]
+[node name="ItemPanel" type="Panel" parent="MainContainer"]
 visible = false
+z_index = 100
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5

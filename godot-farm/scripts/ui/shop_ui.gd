@@ -50,11 +50,19 @@ func _load_shop_data():
 func _populate_shop():
 	print("[ShopUI] Populating shop...")
 	
-	# Ensure grids have proper sizing
+	# Ensure grids have proper sizing and visibility
 	animals_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	animals_grid.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	animals_grid.z_index = 10
+	animals_grid.visible = true
+	
 	plants_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	plants_grid.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	plants_grid.z_index = 10
+	plants_grid.visible = true
+	
+	print("[ShopUI] animals_grid visible: %s, z_index: %d" % [animals_grid.visible, animals_grid.z_index])
+	print("[ShopUI] plants_grid visible: %s, z_index: %d" % [plants_grid.visible, plants_grid.z_index])
 	
 	# Clear
 	for child in animals_grid.get_children():
@@ -92,6 +100,8 @@ func _create_card(parent: GridContainer, item: Dictionary, item_type: String):
 	card.custom_minimum_size = Vector2(140, 180)
 	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	card.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	card.z_index = 100
+	card.visible = true
 	
 	# Card style
 	var style = StyleBoxFlat.new()
