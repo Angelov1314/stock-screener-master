@@ -12,11 +12,13 @@ signal animal_purchased(animal_id: String)
 @onready var plants_grid: GridContainer = %PlantsGrid
 @onready var refresh_button: Button = %RefreshButton
 @onready var item_panel: Panel = $MainContainer/ItemPanel
-@onready var item_icon: TextureRect = $MainContainer/ItemPanel/ItemVBox/ItemIcon
-@onready var item_name: Label = $MainContainer/ItemPanel/ItemVBox/ItemName
-@onready var item_desc: Label = $MainContainer/ItemPanel/ItemVBox/ItemDesc
-@onready var item_price: Label = $MainContainer/ItemPanel/ItemVBox/ItemPrice
-@onready var buy_button: Button = $MainContainer/ItemPanel/ItemVBox/BuyButton
+
+# Item panel children - initialized in _ready
+var item_icon: TextureRect
+var item_name: Label
+var item_desc: Label
+var item_price: Label
+var buy_button: Button
 
 # Shop Data
 var shop_data: Dictionary = {}
@@ -27,6 +29,15 @@ const REFRESH_COST: int = 50
 func _ready():
 	refresh_button.pressed.connect(_on_refresh_pressed)
 	$MainContainer/BottomBar/CloseButton.pressed.connect(_on_close_pressed)
+	
+	# Initialize item panel children
+	var item_vbox = item_panel.get_node("ItemVBox")
+	item_icon = item_vbox.get_node("ItemIcon")
+	item_name = item_vbox.get_node("ItemName")
+	item_desc = item_vbox.get_node("ItemDesc")
+	item_price = item_vbox.get_node("ItemPrice")
+	buy_button = item_vbox.get_node("BuyButton")
+	
 	buy_button.pressed.connect(_on_buy_pressed)
 	
 	_load_shop_data()
