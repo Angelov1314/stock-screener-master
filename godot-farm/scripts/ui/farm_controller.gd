@@ -605,12 +605,15 @@ func _handle_plot_tap(plot_id: String):
 		return
 	
 	var crop_entity = _get_crop_at_plot(plot_id)
+	print("[Farm] Tap plot=%s, crop=%s, selected=%s" % [plot_id, crop_entity, _selected_crop_id])
 	
 	if crop_entity == null:
 		# Empty plot - plant crop
+		print("[Farm] Plot empty, planting...")
 		_try_plant_crop(plot_id)
 	else:
 		# Check if ready to harvest
+		print("[Farm] Has crop, stage=%d, harvestable=%s" % [crop_entity.current_stage, crop_entity.can_harvest()])
 		if crop_entity.can_harvest():
 			_try_harvest_crop(plot_id)
 		else:

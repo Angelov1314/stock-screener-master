@@ -77,3 +77,10 @@ func get_available_crops() -> Array[String]:
 	var crops: Array[String] = []
 	crops.assign(crop_database.keys())
 	return crops
+
+func get_harvestable_crops() -> Array[String]:
+	var harvestable: Array[String] = []
+	for crop_id in active_crops.keys():
+		if active_crops[crop_id].can_harvest():
+			harvestable.append(crop_id)
+	return harvestable
