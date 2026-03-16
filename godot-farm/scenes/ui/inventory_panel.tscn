@@ -27,7 +27,6 @@ grow_vertical = 2
 color = Color(0, 0, 0, 0.5)
 
 [node name="Control" type="Panel" parent="."]
-layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
