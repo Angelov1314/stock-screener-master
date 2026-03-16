@@ -179,9 +179,11 @@ func _create_card(parent: GridContainer, item: Dictionary, item_type: String):
 	hover_style.border_width_bottom = 5
 	card.add_theme_stylebox_override("hover", hover_style)
 	
-	# Container
+	# Container - fill the entire card
 	var vbox = VBoxContainer.new()
 	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	vbox.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	card.add_child(vbox)
 	
 	# Icon background
