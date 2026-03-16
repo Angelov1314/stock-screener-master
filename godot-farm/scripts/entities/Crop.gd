@@ -62,11 +62,23 @@ func initialize(data: Dictionary) -> void:
 const STAGE_DURATION_SECONDS := 10.0
 
 func update_growth(delta_time: float, in_correct_season: bool) -> void:
-	if is_withered or can_harvest():
+	# Debug: print every frame for first few calls
+	if Engine.get_process_frames() % 300 == 0:
+		print("[Crop DEBUG] %s: update_growth called, delta=%.3f, stage=%d, progress=%.3f, withered=%s" % [crop_id, delta_time, current_stage, growth_progress, is_withered])
+	
+	if is_withered:
+		if Engine.get_process_frames() % 300 == 0:
+			print("[Crop DEBUG] %s: blocked - is_withered" % crop_id)
+		return
+	
+	if can_harvest():
+		if Engine.get_process_frames() % 300 == 0:
+			print("[Crop DEBUG] %s: blocked - can_harvest=true (stage %d)" % [crop_id, current_stage])
 		return
 	
 	if not in_correct_season:
-		# Crops don't grow in wrong season, but don't wither immediately
+		if Engine.get_process_frames() % 300 == 0:
+			print("[Crop DEBUG] %s: blocked - wrong season" % crop_id)
 		return
 	
 	# Calculate growth speed multiplier
@@ -76,16 +88,16 @@ func update_growth(delta_time: float, in_correct_season: bool) -> void:
 	if is_fertilized:
 		speed_mult *= 1.3
 	
-	# Advance growth progress - each stage takes 1 minute
+	# Advance growth progress - each stage takes 10 seconds
 	var stage_duration = STAGE_DURATION_SECONDS / speed_mult
-	var old_progress = growth_progress
 	growth_progress += delta_time / stage_duration
 	
 	# Debug output every few seconds
 	if Engine.get_process_frames() % 180 == 0:
-		print("[Crop] %s growing: stage=%d, progress=%.3f, watered=%s" % [crop_id, current_stage, growth_progress, is_watered])
+		print("[Crop] %s growing: stage=%d, progress=%.3f/1.0, watered=%s, speed=%.1fx" % [crop_id, current_stage, growth_progress, is_watered, speed_mult])
 	
 	if growth_progress >= 1.0:
+		print("[Crop] %s: advancing from stage %d to next stage!" % [crop_id, current_stage])
 		advance_stage()
 	
 	total_growth_time += delta_time

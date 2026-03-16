@@ -52,6 +52,8 @@ func _get_state_manager() -> Node:
 
 func _process(delta: float):
 	# Update all crops' growth
+	if Engine.get_process_frames() % 300 == 0:
+		print("[CropManager DEBUG] _process called, delta=%.3f, active_crops=%d" % [delta, active_crops.size()])
 	_update_crops_growth(delta)
 
 ## Load all crop data from JSON files
@@ -143,7 +145,8 @@ func _load_fallback_data(crop_id: String) -> void:
 
 ## Plant a crop at a position
 func plant_crop(crop_type: String, position: Vector2i, world_pos: Vector2 = Vector2.ZERO) -> String:
-	print("[CropManager] plant_crop called: %s at %s" % [crop_type, str(position)])
+	print("[CropManager] plant_crop called: %s at %s, world_pos=%s" % [crop_type, str(position), str(world_pos)])
+	print("[CropManager] Current active_crops count: %d" % active_crops.size())
 	
 	if not crop_database.has(crop_type):
 		push_error("[CropManager] Unknown crop type: %s" % crop_type)
@@ -174,6 +177,7 @@ func plant_crop(crop_type: String, position: Vector2i, world_pos: Vector2 = Vect
 	crop_positions[position] = crop_id
 	
 	emit_signal("crop_planted", crop_id, crop_type, world_pos)
+	print("[CropManager] Crop planted successfully: %s, total crops: %d" % [crop_id, active_crops.size()])
 	
 	return crop_id
 
