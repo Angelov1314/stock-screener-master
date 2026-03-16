@@ -6,14 +6,12 @@ signal shop_closed
 signal item_purchased(item_id: String, item_type: String)
 signal animal_purchased(animal_id: String)
 
-# UI References
-@onready var gold_label: Label = %GoldLabel
-@onready var animals_grid: GridContainer = %AnimalsGrid
-@onready var plants_grid: GridContainer = %PlantsGrid
-@onready var refresh_button: Button = %RefreshButton
-@onready var item_panel: Panel = $MainContainer/ItemPanel
-
-# Item panel children - initialized in _ready
+# UI References - all initialized manually in _ready
+var gold_label: Label
+var animals_grid: GridContainer
+var plants_grid: GridContainer
+var refresh_button: Button
+var item_panel: Panel
 var item_icon: TextureRect
 var item_name: Label
 var item_desc: Label
@@ -27,31 +25,51 @@ var selected_item: Dictionary = {}
 const REFRESH_COST: int = 50
 
 func _ready():
-	refresh_button.pressed.connect(_on_refresh_pressed)
-	$MainContainer/BottomBar/CloseButton.pressed.connect(_on_close_pressed)
+	# Manually get all nodes
+	gold_label = get_node_or_null("%GoldLabel")
+	animals_grid = get_node_or_null("%AnimalsGrid")
+	plants_grid = get_node_or_null("%PlantsGrid")
+	refresh_button = get_node_or_null("%RefreshButton")
+	item_panel = get_node_or_null("MainContainer/ItemPanel")
 	
-	# Initialize item panel children safely
-	print("[ShopUI] item_panel: %s" % item_panel)
-	var item_vbox = item_panel.get_node_or_null("ItemVBox")
-	if item_vbox:
-		item_icon = item_vbox.get_node_or_null("ItemIcon")
-		item_name = item_vbox.get_node_or_null("ItemName")
-		item_desc = item_vbox.get_node_or_null("ItemDesc")
-		item_price = item_vbox.get_node_or_null("ItemPrice")
-		buy_button = item_vbox.get_node_or_null("BuyButton")
-		
-		if buy_button:
-			buy_button.pressed.connect(_on_buy_pressed)
+	print("[ShopUI] Nodes: gold=%s, animals=%s, plants=%s, refresh=%s, panel=%s" % [
+		gold_label != null, animals_grid != null, plants_grid != null, 
+		refresh_button != null, item_panel != null])
+	
+	if refresh_button:
+		refresh_button.pressed.connect(_on_refresh_pressed)
+	
+	var close_button = get_node_or_null("MainContainer/BottomBar/CloseButton")
+	if close_button:
+		close_button.pressed.connect(_on_close_pressed)
+	
+	# Initialize item panel children
+	if item_panel:
+		var item_vbox = item_panel.get_node_or_null("ItemVBox")
+		if item_vbox:
+			item_icon = item_vbox.get_node_or_null("ItemIcon")
+			item_name = item_vbox.get_node_or_null("ItemName")
+			item_desc = item_vbox.get_node_or_null("ItemDesc")
+			item_price = item_vbox.get_node_or_null("ItemPrice")
+			buy_button = item_vbox.get_node_or_null("BuyButton")
+			
+			print("[ShopUI] Item panel children: icon=%s, name=%s, desc=%s, price=%s, buy=%s" % [
+				item_icon != null, item_name != null, item_desc != null,
+				item_price != null, buy_button != null])
+			
+			if buy_button:
+				buy_button.pressed.connect(_on_buy_pressed)
 		else:
-			print("[ShopUI] ERROR: BuyButton not found")
+			print("[ShopUI] ERROR: ItemVBox not found")
 	else:
-		print("[ShopUI] ERROR: ItemVBox not found")
+		print("[ShopUI] ERROR: ItemPanel not found")
 	
 	_load_shop_data()
 	_populate_shop()
 	_update_gold_display()
 	
-	item_panel.visible = false
+	if item_panel:
+		item_panel.visible = false
 
 func _load_shop_data():
 	var file_path = "res://data/shop_items.json"
