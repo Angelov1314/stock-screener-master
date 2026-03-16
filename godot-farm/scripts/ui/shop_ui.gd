@@ -30,15 +30,22 @@ func _ready():
 	refresh_button.pressed.connect(_on_refresh_pressed)
 	$MainContainer/BottomBar/CloseButton.pressed.connect(_on_close_pressed)
 	
-	# Initialize item panel children
-	var item_vbox = item_panel.get_node("ItemVBox")
-	item_icon = item_vbox.get_node("ItemIcon")
-	item_name = item_vbox.get_node("ItemName")
-	item_desc = item_vbox.get_node("ItemDesc")
-	item_price = item_vbox.get_node("ItemPrice")
-	buy_button = item_vbox.get_node("BuyButton")
-	
-	buy_button.pressed.connect(_on_buy_pressed)
+	# Initialize item panel children safely
+	print("[ShopUI] item_panel: %s" % item_panel)
+	var item_vbox = item_panel.get_node_or_null("ItemVBox")
+	if item_vbox:
+		item_icon = item_vbox.get_node_or_null("ItemIcon")
+		item_name = item_vbox.get_node_or_null("ItemName")
+		item_desc = item_vbox.get_node_or_null("ItemDesc")
+		item_price = item_vbox.get_node_or_null("ItemPrice")
+		buy_button = item_vbox.get_node_or_null("BuyButton")
+		
+		if buy_button:
+			buy_button.pressed.connect(_on_buy_pressed)
+		else:
+			print("[ShopUI] ERROR: BuyButton not found")
+	else:
+		print("[ShopUI] ERROR: ItemVBox not found")
 	
 	_load_shop_data()
 	_populate_shop()
@@ -213,6 +220,10 @@ func _get_icon_path(id: String, item_type: String) -> String:
 	return ""
 
 func _on_card_clicked(item: Dictionary, item_type: String):
+	if not item_name or not item_desc or not item_price or not item_icon or not buy_button:
+		print("[ShopUI] ERROR: Item panel children not initialized")
+		return
+	
 	selected_item = item.duplicate()
 	selected_item["type"] = item_type
 	
