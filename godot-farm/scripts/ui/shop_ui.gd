@@ -108,7 +108,9 @@ func _create_card(parent: GridContainer, item: Dictionary, item_type: String):
 	icon.position = Vector2(5, 5)
 	
 	# Spacer
-	vbox.add_child(Control.new()).custom_minimum_size = Vector2(0, 8)
+	var spacer = Control.new()
+	spacer.custom_minimum_size = Vector2(0, 8)
+	vbox.add_child(spacer)
 	
 	# Name
 	var name_label = Label.new()
