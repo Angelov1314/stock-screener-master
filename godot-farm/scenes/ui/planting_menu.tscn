@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://plantingmenu001"]
+[gd_scene format=3 uid="uid://bm6x5q1wb4t3e"]
 
 [ext_resource type="Script" path="res://scripts/ui/planting_menu.gd" id="1_script"]
 [ext_resource type="Texture2D" path="res://assets/crops/carrot/carrot_seed.png" id="2_carrot"]

@@ -8,7 +8,7 @@ extends Camera2D
 @export var edge_scroll_margin: int = 50
 @export var edge_scroll_speed: float = 500.0
 @export var zoom_speed: float = 0.1
-@export var min_zoom: float = 0.5
+@export var min_zoom: float = 0.35
 @export var max_zoom: float = 2.0
 
 var _is_dragging: bool = false
@@ -18,6 +18,9 @@ var _drag_start_pos: Vector2
 func _ready():
 	print("[DraggableCamera] Initialized")
 	print("[DraggableCamera] Limits: %d x %d" % [limit_right, limit_bottom])
+	
+	# Start with maximum zoomed out view (0.35 = 65% larger view, can see the most of the map)
+	zoom = Vector2.ONE * 0.35
 
 func _input(event):
 	# Mouse wheel zoom

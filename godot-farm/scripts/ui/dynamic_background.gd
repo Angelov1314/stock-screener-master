@@ -6,7 +6,7 @@ extends Node2D
 @export var particle_count: int = 15
 
 var _clouds: Array[Sprite2D] = []
-var _particles: Array[Node2D] = []
+var _particles: Array = []  # Stores Dictionary with particle data
 
 func _ready():
 	print("[DynamicBackground] Initializing...")
