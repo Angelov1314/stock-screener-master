@@ -12,11 +12,11 @@ signal animal_purchased(animal_id: String)
 @onready var plants_grid: GridContainer = %PlantsGrid
 @onready var refresh_button: Button = %RefreshButton
 @onready var item_panel: Panel = $MainContainer/ItemPanel
-@onready var item_icon: TextureRect = %ItemIcon
-@onready var item_name: Label = %ItemName
-@onready var item_desc: Label = %ItemDesc
-@onready var item_price: Label = %ItemPrice
-@onready var buy_button: Button = %BuyButton
+@onready var item_icon: TextureRect = $MainContainer/ItemPanel/ItemVBox/ItemIcon
+@onready var item_name: Label = $MainContainer/ItemPanel/ItemVBox/ItemName
+@onready var item_desc: Label = $MainContainer/ItemPanel/ItemVBox/ItemDesc
+@onready var item_price: Label = $MainContainer/ItemPanel/ItemVBox/ItemPrice
+@onready var buy_button: Button = $MainContainer/ItemPanel/ItemVBox/BuyButton
 
 # Shop Data
 var shop_data: Dictionary = {}
