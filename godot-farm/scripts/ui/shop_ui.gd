@@ -1,4 +1,4 @@
-extends Control
+extends CanvasLayer
 
 ## Shop UI - Animal and Plant Shop with Refresh Feature
 
@@ -55,7 +55,7 @@ func _load_shop_data():
 			print("[ShopUI] Loaded shop data: %d animals, %d plants" % [
 				shop_data.get("animals", []).size(),
 				shop_data.get("plants", []).size()
-			]
+			])
 		else:
 			push_error("[ShopUI] Failed to parse shop data")
 	else:
