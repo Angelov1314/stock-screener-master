@@ -13,3 +13,4 @@ res://scripts/core/state/state_manager.gd
 res://scripts/effects/firefly_effect.gd
 res://scripts/simulation/crop_manager.gd
 res://scripts/entities/Crop.gd
+res://scripts/ui/planting_menu_new.gd

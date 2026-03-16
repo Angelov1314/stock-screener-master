@@ -1,15 +1,13 @@
 extends Node
 
 ## Manages all crops in the game world
-## Handles planting, growth, harvesting, and season effects
+## Handles planting, harvesting, and season effects
 
 const CropEntityScript = preload("res://scripts/entities/Crop.gd")
 
 # Signals
 signal crop_planted(crop_id: String, crop_type: String, position: Vector2)
-signal crop_stage_changed(crop_id: String, new_stage: int)
 signal crop_harvested(crop_id: String, crop_type: String, quality: int)
-signal crop_withered(crop_id: String)
 signal crop_watered(crop_id: String)
 signal all_crops_updated
 
@@ -22,13 +20,8 @@ var active_crops: Dictionary = {}
 # Position tracking: Vector2i -> crop_id
 var crop_positions: Dictionary = {}
 
-# Growth configuration
-@export var growth_speed_multiplier: float = 1.0
-@export var auto_save_interval: float = 300.0  # 5 minutes
-
 # Lazy-loaded references
 var _time_manager: Node = null
-var _state_manager: Node = null
 
 func _ready():
 	print("[CropManager] Initializing...")
@@ -38,23 +31,11 @@ func _ready():
 	var time_mgr = get_node_or_null("/root/TimeManager")
 	if time_mgr:
 		time_mgr.day_changed.connect(_on_day_changed)
-		time_mgr.season_changed.connect(_on_season_changed)
 
 func _get_time_manager() -> Node:
 	if _time_manager == null:
 		_time_manager = get_node_or_null("/root/TimeManager")
 	return _time_manager
-
-func _get_state_manager() -> Node:
-	if _state_manager == null:
-		_state_manager = get_node_or_null("/root/StateManager")
-	return _state_manager
-
-func _process(delta: float):
-	# Update all crops' growth
-	if Engine.get_process_frames() % 300 == 0:
-		print("[CropManager DEBUG] _process called, delta=%.3f, active_crops=%d" % [delta, active_crops.size()])
-	_update_crops_growth(delta)
 
 ## Load all crop data from JSON files
 func load_crop_database() -> void:
@@ -73,7 +54,6 @@ func load_crop_database() -> void:
 				push_error("[CropManager] Failed to parse %s" % file_path)
 			file.close()
 		else:
-			# Use fallback data if file not found
 			_load_fallback_data(crop_id)
 	
 	print("[CropManager] Loaded %d crop types" % crop_database.size())
@@ -82,7 +62,7 @@ func load_crop_database() -> void:
 func _load_fallback_data(crop_id: String) -> void:
 	var fallbacks = {
 		"carrot": {
-			"id": "carrot", "name": "Carrot", "growth_time": 120,
+			"id": "carrot", "name": "Carrot",
 			"sell_price": 15, "seed_cost": 5, "seasons": ["spring", "autumn"],
 			"water_needs": "medium", "stages": [
 				{"stage": 0, "name": "seed", "duration": 0},
@@ -92,50 +72,43 @@ func _load_fallback_data(crop_id: String) -> void:
 			]
 		},
 		"corn": {
-			"id": "corn", "name": "Corn", "growth_time": 300,
+			"id": "corn", "name": "Corn",
 			"sell_price": 45, "seed_cost": 15, "seasons": ["summer", "autumn"],
 			"water_needs": "medium", "stages": [
 				{"stage": 0, "name": "seed", "duration": 0},
-				{"stage": 1, "name": "sprout", "duration": 60},
-				{"stage": 2, "name": "growing", "duration": 75},
-				{"stage": 3, "name": "tall", "duration": 75},
-				{"stage": 4, "name": "tassels", "duration": 45},
-				{"stage": 5, "name": "ears_forming", "duration": 45},
-				{"stage": 6, "name": "mature", "duration": 0, "harvestable": true}
+				{"stage": 1, "name": "sprout", "duration": 30},
+				{"stage": 2, "name": "growing", "duration": 30},
+				{"stage": 3, "name": "mature", "duration": 0, "harvestable": true}
 			]
 		},
 		"strawberry": {
-			"id": "strawberry", "name": "Strawberry", "growth_time": 150,
+			"id": "strawberry", "name": "Strawberry",
 			"sell_price": 25, "seed_cost": 10, "seasons": ["spring"],
 			"water_needs": "high", "stages": [
 				{"stage": 0, "name": "seed", "duration": 0},
-				{"stage": 1, "name": "sprout", "duration": 37},
-				{"stage": 2, "name": "leafy", "duration": 38},
-				{"stage": 3, "name": "flowering", "duration": 37},
-				{"stage": 4, "name": "fruiting", "duration": 38, "harvestable": true}
+				{"stage": 1, "name": "sprout", "duration": 30},
+				{"stage": 2, "name": "growing", "duration": 30},
+				{"stage": 3, "name": "mature", "duration": 0, "harvestable": true}
 			]
 		},
 		"tomato": {
-			"id": "tomato", "name": "Tomato", "growth_time": 240,
+			"id": "tomato", "name": "Tomato",
 			"sell_price": 30, "seed_cost": 12, "seasons": ["summer"],
 			"water_needs": "medium", "stages": [
 				{"stage": 0, "name": "seed", "duration": 0},
-				{"stage": 1, "name": "sprout", "duration": 60},
-				{"stage": 2, "name": "leafy", "duration": 60},
-				{"stage": 3, "name": "flowering", "duration": 60},
-				{"stage": 4, "name": "green_fruit", "duration": 60},
-				{"stage": 5, "name": "ripe", "duration": 0, "harvestable": true}
+				{"stage": 1, "name": "sprout", "duration": 30},
+				{"stage": 2, "name": "growing", "duration": 30},
+				{"stage": 3, "name": "mature", "duration": 0, "harvestable": true}
 			]
 		},
 		"wheat": {
-			"id": "wheat", "name": "Wheat", "growth_time": 180,
+			"id": "wheat", "name": "Wheat",
 			"sell_price": 12, "seed_cost": 3, "seasons": ["spring", "summer", "autumn"],
 			"water_needs": "low", "stages": [
 				{"stage": 0, "name": "seed", "duration": 0},
-				{"stage": 1, "name": "sprout", "duration": 45},
-				{"stage": 2, "name": "growing", "duration": 67},
-				{"stage": 3, "name": "tall", "duration": 68},
-				{"stage": 4, "name": "mature", "duration": 0, "harvestable": true}
+				{"stage": 1, "name": "sprout", "duration": 30},
+				{"stage": 2, "name": "growing", "duration": 30},
+				{"stage": 3, "name": "mature", "duration": 0, "harvestable": true}
 			]
 		}
 	}
@@ -145,9 +118,6 @@ func _load_fallback_data(crop_id: String) -> void:
 
 ## Plant a crop at a position
 func plant_crop(crop_type: String, position: Vector2i, world_pos: Vector2 = Vector2.ZERO) -> String:
-	print("[CropManager] plant_crop called: %s at %s, world_pos=%s" % [crop_type, str(position), str(world_pos)])
-	print("[CropManager] Current active_crops count: %d" % active_crops.size())
-	
 	if not crop_database.has(crop_type):
 		push_error("[CropManager] Unknown crop type: %s" % crop_type)
 		return ""
@@ -166,21 +136,17 @@ func plant_crop(crop_type: String, position: Vector2i, world_pos: Vector2 = Vect
 	crop_entity.initialize(crop_database[crop_type])
 	
 	# Connect signals
-	crop_entity.growth_advanced.connect(_on_crop_stage_changed.bind(crop_id))
+	crop_entity.stage_changed.connect(_on_crop_stage_changed.bind(crop_id))
 	crop_entity.became_harvestable.connect(_on_crop_harvestable.bind(crop_id))
-	crop_entity.withered.connect(_on_crop_withered.bind(crop_id))
 	
 	add_child(crop_entity)
-	
-	# Force visual update AFTER add_child (so @onready vars are initialized)
-	crop_entity.update_visual()
 	
 	# Track crop
 	active_crops[crop_id] = crop_entity
 	crop_positions[position] = crop_id
 	
 	emit_signal("crop_planted", crop_id, crop_type, world_pos)
-	print("[CropManager] Crop planted successfully: %s, total crops: %d" % [crop_id, active_crops.size()])
+	print("[CropManager] Planted %s at stage 0" % crop_id)
 	
 	return crop_id
 
@@ -237,29 +203,6 @@ func _remove_crop(crop_id: String) -> void:
 		active_crops.erase(crop_id)
 		crop.queue_free()
 
-## Update all crops growth
-func _update_crops_growth(delta: float) -> void:
-	var time_mgr = _get_time_manager()
-	var current_season = "spring"  # Default season
-	
-	if time_mgr:
-		current_season = time_mgr.get_current_season()
-	
-	# Debug: print growth update every 3 seconds
-	if Engine.get_process_frames() % 180 == 0 and active_crops.size() > 0:
-		print("[CropManager] Updating %d crops, season: %s, delta=%.3f" % [active_crops.size(), current_season, delta])
-	
-	for crop_id in active_crops.keys():
-		var crop = active_crops[crop_id]
-		var in_season = current_season in crop.seasons
-		
-		# Debug first crop
-		if Engine.get_process_frames() % 180 == 0 and active_crops.size() > 0 and crop_id == active_crops.keys()[0]:
-			print("[CropManager] Crop %s: season=%s, in_season=%s, stage=%d, progress=%.2f" % [crop_id, str(crop.seasons), in_season, crop.current_stage, crop.growth_progress])
-		
-		# Force growth for testing - ignore season check
-		crop.update_growth(delta * growth_speed_multiplier, true)
-
 ## Get all harvestable crops
 func get_harvestable_crops() -> Array[String]:
 	var harvestable: Array[String] = []
@@ -280,36 +223,22 @@ func get_crop_info(crop_id: String) -> Dictionary:
 			"can_harvest": crop.can_harvest(),
 			"is_watered": crop.is_watered,
 			"is_withered": crop.is_withered,
-			"sell_price": crop.sell_price,
-			"growth_progress": crop.growth_progress
+			"sell_price": crop.sell_price
 		}
 	return {}
 
 ## Signal handlers
 func _on_crop_stage_changed(new_stage: int, crop_id: String) -> void:
-	emit_signal("crop_stage_changed", crop_id, new_stage)
+	print("[CropManager] %s changed to stage %d" % [crop_id, new_stage])
 
 func _on_crop_harvestable(crop_id: String) -> void:
-	# Crop is ready to harvest
-	pass
-
-func _on_crop_withered(crop_id: String) -> void:
-	emit_signal("crop_withered", crop_id)
+	print("[CropManager] %s is harvestable!" % crop_id)
 
 func _on_day_changed(day: int, season: String) -> void:
 	# Reset water status on all crops at day end
 	for crop in active_crops.values():
 		crop.reset_water()
 	emit_signal("all_crops_updated")
-
-func _on_season_changed(season: String) -> void:
-	# Check for crops that should wither (wrong season for too long)
-	for crop_id in active_crops.keys():
-		var crop = active_crops[crop_id]
-		if not season in crop.seasons:
-			# Crops start to wither after 3 days in wrong season
-			# This would need a tracking mechanism for simplicity we skip
-			pass
 
 ## Get all crop types available
 func get_available_crops() -> Array[String]:
@@ -340,8 +269,4 @@ func load_save_data(data: Dictionary) -> void:
 	# Restore positions
 	if data.has("positions"):
 		for pos_key in data.positions.keys():
-			# Convert string keys back to Vector2i if needed
 			crop_positions[pos_key] = data.positions[pos_key]
-	
-	# Restore crops would need crop entity reconstruction
-	# This is simplified - in production you'd recreate entities

@@ -11,10 +11,9 @@
   "sprite_prefix": "wheat",
   "stages": [
     {"stage": 0, "name": "seed", "duration": 0},
-    {"stage": 1, "name": "sprout", "duration": 45},
-    {"stage": 2, "name": "growing", "duration": 67},
-    {"stage": 3, "name": "tall", "duration": 68},
-    {"stage": 4, "name": "mature", "duration": 0, "harvestable": true}
+    {"stage": 1, "name": "sprout", "duration": 30},
+    {"stage": 2, "name": "growing", "duration": 30},
+    {"stage": 3, "name": "mature", "duration": 0, "harvestable": true}
   ],
   "seasons": ["spring", "summer", "autumn"],
   "water_needs": "low",
