@@ -137,9 +137,11 @@ func _create_card(parent: GridContainer, item: Dictionary, item_type: String):
 func _get_icon_path(id: String, item_type: String) -> String:
 	if item_type == "animal":
 		var paths = [
-			"res://assets/characters/%s/idle/%s_idle_01.png" % [id, id],
-			"res://assets/characters/%s/idle/%s_idle_0.png" % [id, id],
-			"res://assets/characters/%s/idle/%s_idle_1.png" % [id, id],
+			"res://assets/characters/%s/idle/%s_idle_01.png" % [id, id],  # capybara_idle_01.png
+			"res://assets/characters/%s/idle/%s_idle_0.png" % [id, id],   # cow_idle_0.png
+			"res://assets/characters/%s/idle/%s_idle_1.png" % [id, id],   # cow_idle_1.png
+			"res://assets/characters/%s/idle/idle_0.png" % [id],          # pig/idle_0.png (no prefix)
+			"res://assets/characters/%s/idle/idle_1.png" % [id],          # pig/idle_1.png (no prefix)
 		]
 		for path in paths:
 			if ResourceLoader.exists(path):
