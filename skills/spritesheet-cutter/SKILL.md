@@ -19,15 +19,62 @@ Two-stage pipeline to extract individual sprite frames from a spritesheet image.
 
 ## Pipeline
 
-### Stage 1: Get Row Coordinates
+### Stage 1: AI-Powered Row Detection
 
-If the user provides coordinates, use them directly.
+Automatically detect row positions using AI analysis.
 
-Otherwise, use a vision model to analyze the spritesheet. Prompt:
+#### 1.1 Analyze with Gemini Vision
 
-> 这个图含有N行精灵图：[describe rows]. 需要裁剪成N行，请告诉我裁剪的坐标。以整张图像素为基准，原点在左上角，格式是 (left, top) - (right, bottom)。建议按整行裁剪。
+```bash
+python3 scripts/analyze_with_gemini.py <image_path> --rows 5
+```
 
-Note the **reference size** the coordinates are based on — it may differ from actual image dimensions.
+**For 5-animation spritesheet (idle/walk/happy/sleep/carried):**
+
+```bash
+python3 scripts/analyze_with_gemini.py \
+  character_spritesheet.png \
+  --rows 5 \
+  --names idle,walk,happy,sleep,carried \
+  --frames 4,4,4,2,2
+```
+
+**Gemini Vision Prompt:**
+```
+分析这张精灵图，包含5行动画：
+- 第1行：站立/idle动画，4帧
+- 第2行：行走/walk动画，4帧  
+- 第3行：开心/happy动画，4帧
+- 第4行：睡觉/sleep动画，2帧
+- 第5行：被抱起/carried动画，2帧
+
+请检测每行的精确像素坐标，以JSON格式返回：
+{
+  "idle": {"coords": [left, top, right, bottom], "frames": 4},
+  "walk": {"coords": [left, top, right, bottom], "frames": 4},
+  "happy": {"coords": [left, top, right, bottom], "frames": 4},
+  "sleep": {"coords": [left, top, right, bottom], "frames": 2},
+  "carried": {"coords": [left, top, right, bottom], "frames": 2}
+}
+
+坐标原点为左上角，格式为 [left, top, right, bottom]。
+```
+
+**Output:** `analysis_result.json`
+
+#### 1.2 Fallback: Auto-Estimate Rows
+
+If AI analysis unavailable, use automatic row estimation:
+
+```bash
+python3 scripts/analyze_spritesheet.py \
+  character_spritesheet.png \
+  --rows 5 \
+  --names idle,walk,happy,sleep,carried \
+  --frames 4,4,4,2,2
+```
+
+This divides the image into 5 equal rows and outputs estimated coordinates.
 
 ### Stage 2: Crop Rows
 
@@ -82,6 +129,37 @@ python3 scripts/upscale.py ./assets/characters/cow
 
 # Upscale sheep to 4x
 python3 scripts/upscale.py ./assets/characters/sheep 4
+```
+
+### Full Example: 5-Row Character (idle/walk/happy/sleep/carried)
+
+```bash
+# Complete pipeline for 5-animation character
+# Animation config: idle×4, walk×4, happy×4, sleep×2, carried×2
+
+# 1. AI Analysis (or manual coordinates)
+python3 scripts/analyze_with_gemini.py \
+  character.png \
+  --rows 5 \
+  --names idle,walk,happy,sleep,carried \
+  --frames 4,4,4,2,2
+
+# 2. Crop to strips  
+python3 scripts/crop_rows.py \
+  character.png \
+  ./strips/ \
+  '<coords_from_step_1>'
+
+# 3. Segment frames
+python3 -u scripts/sam_segment.py \
+  ./strips/ \
+  '{"idle": ["idle.png", 4], "walk": ["walk.png", 4], "happy": ["happy.png", 4], "sleep": ["sleep.png", 2], "carried": ["carried.png", 2]}'
+
+# 4. Upscale
+python3 scripts/upscale.py ./strips/
+
+# 5. Move to project
+mv ./strips/*/ ./assets/characters/character/
 ```
 
 ### Stage 5: Organize

@@ -60,11 +60,8 @@ func _process(delta):
 	_update_position()
 
 func _update_position():
-	var camera = get_viewport().get_camera_2d()
-	if camera:
-		var mouse_pos = get_viewport().get_mouse_position()
-		var screen_size = Vector2(get_viewport().size)
-		position = camera.get_screen_center_position() + (mouse_pos - screen_size / 2.0) / camera.zoom
+	# Directly use global mouse position for accurate cursor following
+	position = get_global_mouse_position()
 
 func _try_water():
 	var current_time = Time.get_time_dict_from_system()["second"]
