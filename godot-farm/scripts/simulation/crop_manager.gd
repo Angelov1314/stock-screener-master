@@ -77,9 +77,44 @@ func harvest_crop(crop_id: String) -> Dictionary:
 			if crop_positions[pos] == crop_id:
 				crop_positions.erase(pos)
 				break
+		
+		# Add to inventory via StateManager
+		var state = get_node_or_null("/root/StateManager")
+		if state:
+			state.apply_action({"type": "add_item", "item_id": result.crop_id, "amount": 1})
+			print("[CropManager] Added %s to inventory" % result.crop_id)
+		
 		crop_harvested.emit(crop_id, result.crop_id, 3)
 	
 	return result
+
+## Sell crops from inventory
+func sell_crop(crop_id: String, amount: int = 1) -> int:
+	var state = get_node_or_null("/root/StateManager")
+	if not state:
+		return 0
+	
+	# Check if we have the crop
+	var inventory = state.get_inventory()
+	if inventory.get(crop_id, 0) < amount:
+		print("[CropManager] Not enough %s to sell" % crop_id)
+		return 0
+	
+	# Get sell price from database
+	var crop_data = crop_database.get(crop_id, {})
+	var sell_price = crop_data.get("sell_price", 10)
+	var total_gold = sell_price * amount
+	
+	# Remove from inventory
+	var remove_success = state.apply_action({"type": "remove_item", "item_id": crop_id, "amount": amount})
+	if not remove_success:
+		return 0
+	
+	# Add gold
+	state.apply_action({"type": "add_gold", "amount": total_gold})
+	
+	print("[CropManager] Sold %d %s for %d gold" % [amount, crop_id, total_gold])
+	return total_gold
 
 func get_available_crops() -> Array[String]:
 	var crops: Array[String] = []
