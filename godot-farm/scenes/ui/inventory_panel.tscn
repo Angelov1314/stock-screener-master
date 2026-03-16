@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://invpanel001"]
+[gd_scene load_steps=3 format=3 uid="uid://invpanel001"]
 
 [ext_resource type="Script" path="res://scripts/ui/inventory_controller.gd" id="1_def34"]
 
@@ -26,7 +26,8 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.5)
 
-[node name="MainContainer" type="Panel" parent="."]
+[node name="Control" type="Panel" parent="."]
+layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -40,97 +41,115 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer"]
+[node name="Background" type="Panel" parent="Control"]
+visible = false
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = -20.0
-offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="TitleLabel" type="Label" parent="MainContainer/VBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="Control/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 28
-text = "背包"
+text = "Backpack"
 horizontal_alignment = 1
 
-[node name="Spacer" type="Control" parent="MainContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 20)
+[node name="Spacer" type="Control" parent="Control/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="Control/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ItemGrid" type="GridContainer" parent="MainContainer/VBoxContainer/ScrollContainer"]
+[node name="ItemGrid" type="GridContainer" parent="Control/MarginContainer/VBoxContainer/ScrollContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 columns = 5
 
-[node name="EmptyLabel" type="Label" parent="MainContainer/VBoxContainer/ScrollContainer/ItemGrid"]
+[node name="EmptyLabel" type="Label" parent="Control/MarginContainer/VBoxContainer/ScrollContainer/ItemGrid"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "背包是空的"
+text = "Your backpack is empty"
 horizontal_alignment = 1
 
-[node name="ItemDetailPanel" type="Panel" parent="MainContainer/VBoxContainer"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 100)
+[node name="Spacer2" type="Control" parent="Control/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/VBoxContainer/ItemDetailPanel"]
+[node name="ItemDetailPanel" type="Panel" parent="Control/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Control/MarginContainer/VBoxContainer/ItemDetailPanel"]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = 10.0
-offset_right = -10.0
-offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
 
-[node name="ItemNameLabel" type="Label" parent="MainContainer/VBoxContainer/ItemDetailPanel/VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer/VBoxContainer/ItemDetailPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="ItemNameLabel" type="Label" parent="Control/MarginContainer/VBoxContainer/ItemDetailPanel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
-text = "物品名称"
-horizontal_alignment = 1
+text = "Item Name"
 
-[node name="ItemCountLabel" type="Label" parent="MainContainer/VBoxContainer/ItemDetailPanel/VBoxContainer"]
+[node name="ItemCountLabel" type="Label" parent="Control/MarginContainer/VBoxContainer/ItemDetailPanel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "数量: 0"
-horizontal_alignment = 1
+text = "Count: 0"
 
-[node name="ItemDescriptionLabel" type="Label" parent="MainContainer/VBoxContainer/ItemDetailPanel/VBoxContainer"]
+[node name="ItemDescriptionLabel" type="Label" parent="Control/MarginContainer/VBoxContainer/ItemDetailPanel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "描述"
-horizontal_alignment = 1
+text = "Description"
 autowrap_mode = 3
 
-[node name="ButtonContainer" type="HBoxContainer" parent="MainContainer/VBoxContainer/ItemDetailPanel/VBoxContainer"]
+[node name="ButtonContainer" type="HBoxContainer" parent="Control/MarginContainer/VBoxContainer/ItemDetailPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 alignment = 1
 
-[node name="UseButton" type="Button" parent="MainContainer/VBoxContainer/ItemDetailPanel/VBoxContainer/ButtonContainer"]
+[node name="UseButton" type="Button" parent="Control/MarginContainer/VBoxContainer/ItemDetailPanel/MarginContainer/VBoxContainer/ButtonContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(80, 40)
 layout_mode = 2
-text = "使用"
+text = "Use"
 
-[node name="SellButton" type="Button" parent="MainContainer/VBoxContainer/ItemDetailPanel/VBoxContainer/ButtonContainer"]
+[node name="SellButton" type="Button" parent="Control/MarginContainer/VBoxContainer/ItemDetailPanel/MarginContainer/VBoxContainer/ButtonContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(80, 40)
 layout_mode = 2
-text = "出售"
+text = "Sell"
 
-[node name="CloseButton" type="Button" parent="MainContainer/VBoxContainer"]
+[node name="CloseButton" type="Button" parent="Control/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
-text = "关闭"
+text = "Close"
