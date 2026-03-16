@@ -35,8 +35,8 @@ func plant_crop(crop_type: String, position: Vector2i, world_pos: Vector2 = Vect
 	
 	add_child(crop)
 	
-	# Now _ready() has been called, update visual
-	crop.update_visual()
+	# Now _ready() has been called, start growth
+	crop.start_growth()
 	
 	active_crops[crop_id] = crop
 	crop_positions[position] = crop_id

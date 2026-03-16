@@ -642,10 +642,20 @@ func _get_crop_at_plot(plot_id: String) -> Node:
 
 ## Action Handlers
 func _try_plant_crop(plot_id: String):
+	print("[FarmController] _try_plant_crop called: plot_id=%s, selected_crop=%s" % [plot_id, _selected_crop_id])
+	
+	if _selected_crop_id.is_empty():
+		print("[FarmController] ERROR: No crop selected!")
+		return
+	
 	var rect = _plot_rects.get(plot_id, Rect2())
-	var coord = Vector2i(int(rect.position.x / 100), int(rect.position.y / 100))  # Use scaled coordinate as grid coord
+	var coord = Vector2i(int(rect.position.x / 100), int(rect.position.y / 100))
+	
+	print("[FarmController] Planting at coord: %s, crop: %s" % [str(coord), _selected_crop_id])
 	
 	var success = ActionSystem.plant(coord, _selected_crop_id)
+	print("[FarmController] Plant result: %s" % success)
+	
 	if success:
 		_animate_plot_action(plot_id, "plant")
 		_play_sfx("plant")
