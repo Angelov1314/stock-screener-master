@@ -3,12 +3,12 @@
 importer="mp3"
 type="AudioStreamMP3"
 uid="uid://d3vbn1nrpkume"
-path="res://.godot/imported/sheep_walk.mp3-f04e2d33583f967d8f9b4e8399a5ae56.mp3str"
+path="res://.godot/imported/sheep_walk.wav-f04e2d33583f967d8f9b4e8399a5ae56.wavstr"
 
 [deps]
 
-source_file="res://assets/audio/sfx/sheep/sheep_walk.mp3"
-dest_files=["res://.godot/imported/sheep_walk.mp3-f04e2d33583f967d8f9b4e8399a5ae56.mp3str"]
+source_file="res://assets/audio/sfx/sheep/sheep_walk.wav"
+dest_files=["res://.godot/imported/sheep_walk.wav-f04e2d33583f967d8f9b4e8399a5ae56.wavstr"]
 
 [params]
 

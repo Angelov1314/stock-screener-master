@@ -3,12 +3,12 @@
 importer="mp3"
 type="AudioStreamMP3"
 uid="uid://dknb4o4lfrnlu"
-path="res://.godot/imported/cow.mp3-4f8456eb4db2d601bef6c153a8d386be.mp3str"
+path="res://.godot/imported/cow.wav-4f8456eb4db2d601bef6c153a8d386be.wavstr"
 
 [deps]
 
-source_file="res://assets/audio/sfx/cow/cow.mp3"
-dest_files=["res://.godot/imported/cow.mp3-4f8456eb4db2d601bef6c153a8d386be.mp3str"]
+source_file="res://assets/audio/sfx/cow/cow.wav"
+dest_files=["res://.godot/imported/cow.wav-4f8456eb4db2d601bef6c153a8d386be.wavstr"]
 
 [params]
 

@@ -399,9 +399,9 @@ func _play_animal_sound(sound_type: String = "idle"):
 	
 	var sound_path = ""
 	if sound_type == "idle":
-		sound_path = "res://assets/audio/sfx/%s/%s.mp3" % [animal_name, animal_name]
+		sound_path = "res://assets/audio/sfx/%s/%s.wav" % [animal_name, animal_name]
 	elif sound_type == "walk":
-		sound_path = "res://assets/audio/sfx/%s/%s_walk.mp3" % [animal_name, animal_name]
+		sound_path = "res://assets/audio/sfx/%s/%s_walk.wav" % [animal_name, animal_name]
 	
 	print("[InteractiveAnimal] Trying to play: %s" % sound_path)
 	

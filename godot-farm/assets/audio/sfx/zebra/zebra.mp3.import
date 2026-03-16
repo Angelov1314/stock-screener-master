@@ -3,12 +3,12 @@
 importer="mp3"
 type="AudioStreamMP3"
 uid="uid://brx0qey4n44av"
-path="res://.godot/imported/zebra.mp3-71f0c272b9ee2e815a81d66edb732f70.mp3str"
+path="res://.godot/imported/zebra.wav-71f0c272b9ee2e815a81d66edb732f70.wavstr"
 
 [deps]
 
-source_file="res://assets/audio/sfx/zebra/zebra.mp3"
-dest_files=["res://.godot/imported/zebra.mp3-71f0c272b9ee2e815a81d66edb732f70.mp3str"]
+source_file="res://assets/audio/sfx/zebra/zebra.wav"
+dest_files=["res://.godot/imported/zebra.wav-71f0c272b9ee2e815a81d66edb732f70.wavstr"]
 
 [params]
 

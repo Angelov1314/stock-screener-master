@@ -3,12 +3,12 @@
 importer="mp3"
 type="AudioStreamMP3"
 uid="uid://bh308l2rfdfyv"
-path="res://.godot/imported/pig_walk.mp3-71720875f11b3025411e2118c275ac68.mp3str"
+path="res://.godot/imported/pig_walk.wav-71720875f11b3025411e2118c275ac68.wavstr"
 
 [deps]
 
-source_file="res://assets/audio/sfx/pig/pig_walk.mp3"
-dest_files=["res://.godot/imported/pig_walk.mp3-71720875f11b3025411e2118c275ac68.mp3str"]
+source_file="res://assets/audio/sfx/pig/pig_walk.wav"
+dest_files=["res://.godot/imported/pig_walk.wav-71720875f11b3025411e2118c275ac68.wavstr"]
 
 [params]
 

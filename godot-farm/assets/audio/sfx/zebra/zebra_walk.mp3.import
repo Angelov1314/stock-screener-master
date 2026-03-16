@@ -3,12 +3,12 @@
 importer="mp3"
 type="AudioStreamMP3"
 uid="uid://du77w0ltss8iu"
-path="res://.godot/imported/zebra_walk.mp3-0671bf3ca7d39d848214b05e5a59ddc6.mp3str"
+path="res://.godot/imported/zebra_walk.wav-0671bf3ca7d39d848214b05e5a59ddc6.wavstr"
 
 [deps]
 
-source_file="res://assets/audio/sfx/zebra/zebra_walk.mp3"
-dest_files=["res://.godot/imported/zebra_walk.mp3-0671bf3ca7d39d848214b05e5a59ddc6.mp3str"]
+source_file="res://assets/audio/sfx/zebra/zebra_walk.wav"
+dest_files=["res://.godot/imported/zebra_walk.wav-0671bf3ca7d39d848214b05e5a59ddc6.wavstr"]
 
 [params]
 
