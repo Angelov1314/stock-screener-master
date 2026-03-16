@@ -200,11 +200,6 @@ func _ready():
 		action_sys.crop_watered.connect(_on_crop_watered)
 		action_sys.crop_harvested.connect(_on_crop_harvested)
 	
-	# Connect to CropManager signals for growth updates
-	var crop_mgr = get_node_or_null("/root/CropManager")
-	if crop_mgr:
-		crop_mgr.crop_stage_changed.connect(_on_crop_stage_changed)
-	
 	# Build custom farm plots
 	_build_custom_plots()
 	
@@ -707,37 +702,6 @@ func _on_crop_harvested(coord: Vector2i, crop_id: String):
 			var timer = get_tree().create_timer(0.5)
 			timer.timeout.connect(func(): _remove_crop_visual(plot_id))
 			return
-
-func _on_crop_stage_changed(crop_id: String, new_stage: int):
-	print("[FarmController] _on_crop_stage_changed called: crop_id=%s, new_stage=%d" % [crop_id, new_stage])
-	
-	var crop_mgr = get_node_or_null("/root/CropManager")
-	if not crop_mgr:
-		print("[FarmController] ERROR: CropManager not found")
-		return
-	
-	var crop_entity = crop_mgr.active_crops.get(crop_id, null)
-	if not crop_entity:
-		print("[FarmController] ERROR: crop_entity not found for %s" % crop_id)
-		return
-	
-	print("[FarmController] crop_entity found at position: %s" % str(crop_entity.position))
-	
-	# Find plot by position (scaled detection for 4x world)
-	var found_plot = false
-	for plot_id in _plot_rects.keys():
-		var rect = _plot_rects[plot_id]
-		var center_pos = Vector2(rect.position.x + rect.size.x/2, rect.position.y + rect.size.y/2)
-		var dist = crop_entity.position.distance_to(center_pos)
-		if dist < 200:
-			print("[FarmController] Found matching plot: %s (distance=%.1f)" % [plot_id, dist])
-			_update_crop_visual_stage(plot_id, new_stage)
-			_animate_growth_effect(plot_id, new_stage)
-			found_plot = true
-			return
-	
-	if not found_plot:
-		print("[FarmController] ERROR: No matching plot found for crop at position %s" % str(crop_entity.position))
 
 ## Visual Creation
 func _create_crop_visual(plot_id: String, crop_id: String):

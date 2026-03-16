@@ -5,7 +5,7 @@ extends CanvasLayer
 ## Connects to ActionSystem signals for inventory updates
 
 # UI References - updated paths for CanvasLayer structure
-@onready var main_container: Panel = $MainContainer
+@onready var main_container: Panel = $Control
 @onready var item_grid: GridContainer = %ItemGrid
 @onready var item_detail_panel: Panel = %ItemDetailPanel
 @onready var item_name_label: Label = %ItemNameLabel
