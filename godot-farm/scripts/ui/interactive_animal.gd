@@ -181,8 +181,8 @@ func _pickup():
 	if sprite.sprite_frames.has_animation("carried"):
 		sprite.play("carried")
 	
-	# Play pickup sound
-	_play_pickup_sound()
+	# Play pickup sound (animal idle sound)
+	_play_animal_sound("idle")
 	
 	# Visual feedback - bounce up and add glow
 	var tween = create_tween()
@@ -416,23 +416,6 @@ func _play_animal_sound(sound_type: String = "idle"):
 			print("[InteractiveAnimal] Failed to load stream: %s" % sound_path)
 	else:
 		print("[InteractiveAnimal] Sound file not found: %s" % sound_path)
-
-func _play_pickup_sound():
-	if not _audio_player:
-		return
-	
-	var pickup_sound_path = "res://assets/audio/sfx/interaction/pickup.mp3"
-	print("[InteractiveAnimal] Playing pickup sound")
-	
-	if ResourceLoader.exists(pickup_sound_path):
-		var stream = load(pickup_sound_path)
-		if stream:
-			_audio_player.stream = stream
-			_audio_player.volume_db = -5.0  # Slightly quieter
-			_audio_player.play()
-	else:
-		# Fallback to idle sound if pickup sound doesn't exist
-		_play_animal_sound("idle")
 
 func _play_footstep():
 	if current_state != State.WALKING:
