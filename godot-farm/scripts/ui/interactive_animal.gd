@@ -32,11 +32,13 @@ var bounce_velocity: Vector2 = Vector2.ZERO
 var gravity: float = 1000.0
 
 func _ready():
+	# Set the Node2D scale (affects all children)
+	self.scale = Vector2(scale_factor, scale_factor)
+	
 	# Create animated sprite
 	sprite = AnimatedSprite2D.new()
 	sprite.name = "AnimatedSprite2D"
 	add_child(sprite)
-	sprite.scale = Vector2(scale_factor, scale_factor)
 	
 	# Setup animations
 	_setup_animations()
@@ -112,10 +114,17 @@ func _setup_animation_from_frames(sprite_frames: SpriteFrames, anim_name: String
 	sprite_frames.set_animation_loop(anim_name, true)
 	
 	for i in range(frame_count):
-		var path = "res://assets/characters/%s/%s/%s_%d.png" % [character, folder, folder, i]
+		# Try with character prefix first (e.g., cow_idle_0.png)
+		var path = "res://assets/characters/%s/%s/%s_%s_%d.png" % [character, folder, character, folder, i]
 		if ResourceLoader.exists(path):
 			var texture = load(path)
 			sprite_frames.add_frame(anim_name, texture)
+		else:
+			# Fallback to simple naming (e.g., idle_0.png)
+			path = "res://assets/characters/%s/%s/%s_%d.png" % [character, folder, folder, i]
+			if ResourceLoader.exists(path):
+				var texture = load(path)
+				sprite_frames.add_frame(anim_name, texture)
 
 func _setup_animation_from_spritesheet(sprite_frames: SpriteFrames, anim_name: String, texture: Texture2D, frames: int, speed: int):
 	if not texture:
@@ -301,6 +310,11 @@ func _pick_new_direction():
 	_update_facing()
 
 func _start_idle():
+	# Small chance (10%) to rest for 10 seconds
+	if randf() < 0.1 and sprite.sprite_frames.has_animation("sleep"):
+		_start_resting()
+		return
+	
 	current_state = State.IDLE
 	if sprite.sprite_frames.has_animation("idle"):
 		sprite.play("idle")
@@ -314,6 +328,24 @@ func _start_idle():
 	
 	var idle_time = randf_range(1.5, 4.0)
 	change_state_timer.start(idle_time)
+
+func _start_resting():
+	current_state = State.IDLE  # Use IDLE state but with sleep animation
+	if sprite.sprite_frames.has_animation("sleep"):
+		sprite.play("sleep")
+		print("[InteractiveAnimal] %s is taking a 10-second nap!" % animal_name)
+	else:
+		if sprite.sprite_frames.has_animation("idle"):
+			sprite.play("idle")
+	
+	# Stop footsteps
+	_stop_walking_footsteps()
+	
+	# Play sleep sound if available
+	_play_animal_sound("idle")
+	
+	# Rest for 10 seconds
+	change_state_timer.start(10.0)
 
 func _start_walking():
 	current_state = State.WALKING

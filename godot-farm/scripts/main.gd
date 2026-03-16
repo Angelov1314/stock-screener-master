@@ -98,7 +98,63 @@ func _on_planting_menu_requested():
 	planting_menu.toggle()
 
 func _on_shop_requested():
-	print("[Main] Shop requested")
+	print("[Main] Opening shop...")
+	_open_shop()
+
+func _open_shop():
+	var shop_scene = load("res://scenes/ui/shop_ui.tscn")
+	if shop_scene:
+		var shop = shop_scene.instantiate()
+		add_child(shop)
+		
+		# Connect signals
+		shop.shop_closed.connect(_on_shop_closed)
+		shop.item_purchased.connect(_on_item_purchased)
+		shop.animal_purchased.connect(_on_animal_purchased)
+		
+		print("[Main] Shop opened")
+
+func _on_shop_closed():
+	print("[Main] Shop closed")
+
+func _on_item_purchased(item_id: String, item_type: String):
+	print("[Main] Item purchased: %s (%s)" % [item_id, item_type])
+
+func _on_animal_purchased(animal_id: String):
+	print("[Main] Animal purchased, adding to farm: %s" % animal_id)
+	_add_animal_to_farm(animal_id)
+
+func _add_animal_to_farm(animal_id: String):
+	if not farm:
+		push_error("[Main] No farm to add animal to!")
+		return
+	
+	# Find Animals container
+	var animals_container = farm.get_node_or_null("Animals")
+	if not animals_container:
+		push_error("[Main] Animals container not found!")
+		return
+	
+	# Create animal
+	var animal = Node2D.new()
+	animal.name = animal_id.capitalize() + str(randi() % 1000)
+	
+	# Random position within farm bounds
+	var random_x = randf_range(500, 6000)
+	var random_y = randf_range(500, 10500)
+	animal.position = Vector2(random_x, random_y)
+	
+	# Add script
+	animal.set_script(load("res://scripts/ui/interactive_animal.gd"))
+	animal.animal_name = animal_id
+	animal.use_separate_frames = true
+	animal.walk_speed = randf_range(20, 35)
+	animal.scale_factor = randf_range(0.7, 0.9)
+	
+	# Add to scene
+	animals_container.add_child(animal)
+	
+	print("[Main] Added %s to farm at position (%d, %d)" % [animal_id, int(random_x), int(random_y)])
 
 func _on_sickle_mode_toggled(active: bool):
 	print("[Main] Sickle mode: %s" % active)

@@ -39,7 +39,7 @@ unique_name_in_owner = true
 [node name="Animals" type="Node2D" parent="."]
 
 [node name="Cow1" type="Node2D" parent="Animals"]
-position = Vector2(800, 800)
+position = Vector2(500, 800)
 script = ExtResource("12_animal_script")
 walk_texture = ExtResource("5_cow_walk")
 idle_texture = ExtResource("4_cow_idle")
@@ -48,8 +48,28 @@ scale_factor = 0.8
 use_separate_frames = true
 animal_name = "cow"
 
+[node name="Cow2" type="Node2D" parent="Animals"]
+position = Vector2(4500, 3500)
+script = ExtResource("12_animal_script")
+walk_texture = ExtResource("5_cow_walk")
+idle_texture = ExtResource("4_cow_idle")
+walk_speed = 28.0
+scale_factor = 0.75
+use_separate_frames = true
+animal_name = "cow"
+
+[node name="Cow3" type=" Node2D" parent="Animals"]
+position = Vector2(800, 6500)
+script = ExtResource("12_animal_script")
+walk_texture = ExtResource("5_cow_walk")
+idle_texture = ExtResource("4_cow_idle")
+walk_speed = 32.0
+scale_factor = 0.85
+use_separate_frames = true
+animal_name = "cow"
+
 [node name="Sheep1" type="Node2D" parent="Animals"]
-position = Vector2(1200, 600)
+position = Vector2(900, 1200)
 script = ExtResource("12_animal_script")
 walk_texture = ExtResource("7_sheep_walk")
 idle_texture = ExtResource("6_sheep_idle")
@@ -58,18 +78,28 @@ scale_factor = 0.7
 use_separate_frames = true
 animal_name = "sheep"
 
-[node name="Zebra1" type="Node2D" parent="Animals"]
-position = Vector2(2000, 1000)
+[node name="Sheep2" type="Node2D" parent="Animals"]
+position = Vector2(5200, 2800)
 script = ExtResource("12_animal_script")
-walk_texture = ExtResource("9_zebra_walk")
-idle_texture = ExtResource("8_zebra_idle")
-walk_speed = 40.0
-scale_factor = 0.9
+walk_texture = ExtResource("7_sheep_walk")
+idle_texture = ExtResource("6_sheep_idle")
+walk_speed = 22.0
+scale_factor = 0.65
 use_separate_frames = true
-animal_name = "zebra"
+animal_name = "sheep"
+
+[node name="Sheep3" type="Node2D" parent="Animals"]
+position = Vector2(1200, 7200)
+script = ExtResource("12_animal_script")
+walk_texture = ExtResource("7_sheep_walk")
+idle_texture = ExtResource("6_sheep_idle")
+walk_speed = 28.0
+scale_factor = 0.72
+use_separate_frames = true
+animal_name = "sheep"
 
 [node name="Pig1" type="Node2D" parent="Animals"]
-position = Vector2(3200, 3200)
+position = Vector2(700, 2000)
 script = ExtResource("12_animal_script")
 walk_texture = ExtResource("11_pig_walk")
 idle_texture = ExtResource("10_pig_idle")
@@ -78,13 +108,61 @@ scale_factor = 0.6
 use_separate_frames = true
 animal_name = "pig"
 
+[node name="Pig2" type="Node2D" parent="Animals"]
+position = Vector2(4800, 4200)
+script = ExtResource("12_animal_script")
+walk_texture = ExtResource("11_pig_walk")
+idle_texture = ExtResource("10_pig_idle")
+walk_speed = 30.0
+scale_factor = 0.55
+use_separate_frames = true
+animal_name = "pig"
+
+[node name="Pig3" type="Node2D" parent="Animals"]
+position = Vector2(600, 8500)
+script = ExtResource("12_animal_script")
+walk_texture = ExtResource("11_pig_walk")
+idle_texture = ExtResource("10_pig_idle")
+walk_speed = 38.0
+scale_factor = 0.65
+use_separate_frames = true
+animal_name = "pig"
+
 [node name="Alpaca1" type="Node2D" parent="Animals"]
-position = Vector2(1500, 2500)
+position = Vector2(5500, 1500)
 script = ExtResource("12_animal_script")
 walk_speed = 20.0
 scale_factor = 0.75
 use_separate_frames = true
 animal_name = "alpaca"
+
+[node name="Alpaca2" type="Node2D" parent="Animals"]
+position = Vector2(1000, 4800)
+script = ExtResource("12_animal_script")
+walk_speed = 22.0
+scale_factor = 0.7
+use_separate_frames = true
+animal_name = "alpaca"
+
+[node name="Zebra1" type="Node2D" parent="Animals"]
+position = Vector2(5300, 5500)
+script = ExtResource("12_animal_script")
+walk_texture = ExtResource("9_zebra_walk")
+idle_texture = ExtResource("8_zebra_idle")
+walk_speed = 40.0
+scale_factor = 0.9
+use_separate_frames = true
+animal_name = "zebra"
+
+[node name="Zebra2" type="Node2D" parent="Animals"]
+position = Vector2(1500, 9200)
+script = ExtResource("12_animal_script")
+walk_texture = ExtResource("9_zebra_walk")
+idle_texture = ExtResource("8_zebra_idle")
+walk_speed = 35.0
+scale_factor = 0.85
+use_separate_frames = true
+animal_name = "zebra"
 
 [node name="FarmCamera" type="Camera2D" parent="."]
 unique_name_in_owner = true
