@@ -74,7 +74,7 @@ func _ready():
 	# Ensure first tab (animals) is active
 	var tab_container = get_node_or_null("MainContainer/TabContainer")
 	if tab_container:
-		print("[ShopUI] TabContainer current_tab: %d" % tab_container.current_tab)
+		print("[ShopUI] TabContainer current_tab: %d, size: %s, global_pos: %s" % [tab_container.current_tab, str(tab_container.size), str(tab_container.global_position)])
 		print("[ShopUI] TabContainer tab count: %d" % tab_container.get_tab_count())
 
 func _load_shop_data():
@@ -109,13 +109,13 @@ func _populate_shop():
 	print("[ShopUI] animals_grid visible: %s, z_index: %d, size: %s" % [animals_grid.visible, animals_grid.z_index, str(animals_grid.size)])
 	print("[ShopUI] plants_grid visible: %s, z_index: %d, size: %s" % [plants_grid.visible, plants_grid.z_index, str(plants_grid.size)])
 	
-	# Check parent ScrollContainer sizes
+	# Check parent ScrollContainer sizes and positions
 	var animals_scroll = animals_grid.get_parent()
 	var plants_scroll = plants_grid.get_parent()
 	if animals_scroll:
-		print("[ShopUI] Animals ScrollContainer size: %s" % str(animals_scroll.size))
+		print("[ShopUI] Animals ScrollContainer pos: %s, size: %s, global_pos: %s" % [str(animals_scroll.position), str(animals_scroll.size), str(animals_scroll.global_position)])
 	if plants_scroll:
-		print("[ShopUI] Plants ScrollContainer size: %s" % str(plants_scroll.size))
+		print("[ShopUI] Plants ScrollContainer pos: %s, size: %s, global_pos: %s" % [str(plants_scroll.position), str(plants_scroll.size), str(plants_scroll.global_position)])
 	
 	# Clear
 	for child in animals_grid.get_children():
@@ -137,8 +137,8 @@ func _populate_shop():
 	for plant in plants:
 		_create_card(plants_grid, plant, "plant")
 	
-	print("[ShopUI] animals_grid children: %d" % animals_grid.get_child_count())
-	print("[ShopUI] plants_grid children: %d" % plants_grid.get_child_count())
+	print("[ShopUI] animals_grid children: %d, pos: %s, size: %s, global_pos: %s" % [animals_grid.get_child_count(), str(animals_grid.position), str(animals_grid.size), str(animals_grid.global_position)])
+	print("[ShopUI] plants_grid children: %d, pos: %s, size: %s" % [plants_grid.get_child_count(), str(plants_grid.position), str(plants_grid.size)])
 	
 	# Delayed position check after layout
 	await get_tree().create_timer(0.5).timeout
