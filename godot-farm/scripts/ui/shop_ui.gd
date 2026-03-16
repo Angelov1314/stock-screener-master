@@ -93,9 +93,9 @@ func _create_card(parent: GridContainer, item: Dictionary, item_type: String):
 	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	card.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	
-	# DEBUG: Bright red background to make sure it's visible
+	# Card style
 	var style = StyleBoxFlat.new()
-	style.bg_color = Color(1, 0.5, 0.5)  # DEBUG: Bright red
+	style.bg_color = Color(0.95, 0.95, 0.9)
 	style.border_color = Color(0.7, 0.6, 0.4)
 	style.border_width_bottom = 3
 	style.corner_radius_top_left = 8
@@ -105,7 +105,7 @@ func _create_card(parent: GridContainer, item: Dictionary, item_type: String):
 	card.add_theme_stylebox_override("normal", style)
 	
 	var hover_style = style.duplicate()
-	hover_style.bg_color = Color(1, 0.7, 0.7)
+	hover_style.bg_color = Color(1, 1, 0.95)
 	hover_style.border_width_bottom = 5
 	card.add_theme_stylebox_override("hover", hover_style)
 	
