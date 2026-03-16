@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://farmscene001" path="res://scenes/world/farm.tscn" id="2_farm"]
 [ext_resource type="PackedScene" uid="uid://hudscene001" path="res://scenes/ui/hud.tscn" id="3_hud"]
 [ext_resource type="PackedScene" uid="uid://invpanel001" path="res://scenes/ui/inventory_panel.tscn" id="4_inventory"]
-[ext_resource type="PackedScene" uid="uid://buigvpf8hmujg" path="res://scenes/ui/seed_toolbar.tscn" id="5_seedtoolbar"]
+[ext_resource type="PackedScene" uid="uid://plantingmenu001" path="res://scenes/ui/planting_menu.tscn" id="5_plantingmenu"]
 
 [node name="Main" type="Node" unique_id=564349925]
 script = ExtResource("1_main_script")
@@ -16,4 +16,5 @@ script = ExtResource("1_main_script")
 [node name="InventoryPanel" parent="." unique_id=2124753794 instance=ExtResource("4_inventory")]
 visible = false
 
-[node name="SeedToolbar" parent="." unique_id=1056727643 instance=ExtResource("5_seedtoolbar")]
+[node name="PlantingMenu" parent="." unique_id=1056727643 instance=ExtResource("5_plantingmenu")]
+visible = false

@@ -5,6 +5,7 @@ extends CanvasLayer
 
 signal inventory_requested
 signal shop_requested
+signal planting_menu_requested
 signal sickle_mode_toggled(active: bool)
 signal water_mode_toggled(active: bool)
 
@@ -62,7 +63,7 @@ func _on_water_pressed():
 
 func _on_inventory_pressed():
 	_animate_button(inventory_button)
-	inventory_requested.emit()
+	planting_menu_requested.emit()
 
 func _on_shop_pressed():
 	_animate_button(shop_button)

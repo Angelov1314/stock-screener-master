@@ -21,7 +21,7 @@ func _ready():
 func _setup_watering_can():
 	_watering_can_sprite = Sprite2D.new()
 	_watering_can_sprite.name = "WateringCanSprite"
-	_watering_can_sprite.texture = load("res://assets/ui/buttons_extracted/row5_tool_watering/row5_tool_watering_0.png")
+	_watering_can_sprite.texture = load("res://assets/ui/button_water.png")
 	_watering_can_sprite.scale = Vector2(0.8, 0.8)
 	_watering_can_sprite.centered = false
 	# Center the sprite

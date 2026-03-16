@@ -1,0 +1,77 @@
+[gd_scene load_steps=7 format=3 uid="uid://plantingmenu001"]
+
+[ext_resource type="Script" path="res://scripts/ui/planting_menu.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/crops/carrot/carrot_seed.png" id="2_carrot"]
+[ext_resource type="Texture2D" path="res://assets/crops/corn/corn_seed.png" id="3_corn"]
+[ext_resource type="Texture2D" path="res://assets/crops/tomato/tomato_seed.png" id="4_tomato"]
+[ext_resource type="Texture2D" path="res://assets/crops/strawberry/strawberry_seed.png" id="5_strawberry"]
+[ext_resource type="Texture2D" path="res://assets/crops/wheat/wheat_seed.png" id="6_wheat"]
+
+[node name="PlantingMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 400.0
+offset_bottom = 100.0
+script = ExtResource("1_script")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="CarrotButton" type="Button" parent="HBoxContainer"]
+custom_minimum_size = Vector2(70, 70)
+layout_mode = 2
+tooltip_text = "胡萝卜 - 5金币"
+icon = ExtResource("2_carrot")
+expand_icon = true
+
+[node name="CornButton" type="Button" parent="HBoxContainer"]
+custom_minimum_size = Vector2(70, 70)
+layout_mode = 2
+tooltip_text = "玉米 - 15金币"
+icon = ExtResource("3_corn")
+expand_icon = true
+
+[node name="TomatoButton" type="Button" parent="HBoxContainer"]
+custom_minimum_size = Vector2(70, 70)
+layout_mode = 2
+tooltip_text = "番茄 - 12金币"
+icon = ExtResource("4_tomato")
+expand_icon = true
+
+[node name="StrawberryButton" type="Button" parent="HBoxContainer"]
+custom_minimum_size = Vector2(70, 70)
+layout_mode = 2
+tooltip_text = "草莓 - 10金币"
+icon = ExtResource("5_strawberry")
+expand_icon = true
+
+[node name="WheatButton" type="Button" parent="HBoxContainer"]
+custom_minimum_size = Vector2(70, 70)
+layout_mode = 2
+tooltip_text = "小麦 - 3金币"
+icon = ExtResource("6_wheat")
+expand_icon = true
+
+[node name="SelectedIndicator" type="ColorRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+offset_left = 10.0
+offset_top = 5.0
+offset_right = 80.0
+offset_bottom = 95.0
+color = Color(1, 0.8, 0.2, 0.5)

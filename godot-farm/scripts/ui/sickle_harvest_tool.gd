@@ -22,7 +22,7 @@ func _ready():
 func _setup_sickle():
 	_sickle_sprite = Sprite2D.new()
 	_sickle_sprite.name = "SickleSprite"
-	_sickle_sprite.texture = load("res://assets/ui/buttons_extracted/row6_tool_trowel/row6_tool_trowel_0.png")
+	_sickle_sprite.texture = load("res://assets/ui/button_sickle.png")
 	_sickle_sprite.scale = Vector2(0.8, 0.8)
 	_sickle_sprite.centered = false
 	# Center the sprite
