@@ -325,7 +325,10 @@ func _on_buy_pressed():
 			var state = get_node_or_null("/root/StateManager")
 			if state:
 				state.apply_action({"type": "add_item", "item_id": selected_item.id, "amount": 1})
-			print("[ShopUI] Added animal to inventory: %s" % selected_item.id)
+				# Add experience for purchasing animal
+				var xp_amount = 25  # XP for buying an animal
+				state.apply_action({"type": "add_experience", "amount": xp_amount})
+				print("[ShopUI] Added animal to inventory: %s, gained %d XP" % [selected_item.id, xp_amount])
 		elif selected_item.type == "plant":
 			_give_seed(selected_item.id)
 	
@@ -353,7 +356,11 @@ func _spawn_animal(animal_id: String):
 func _give_seed(plant_id: String):
 	var state = get_node_or_null("/root/StateManager")
 	if state:
-		state.add_item_to_inventory(plant_id + "_seed", 1)
+		state.apply_action({"type": "add_item", "item_id": plant_id + "_seed", "amount": 1})
+		# Add experience for purchasing seeds
+		var xp_amount = 10  # XP for buying seeds
+		state.apply_action({"type": "add_experience", "amount": xp_amount})
+		print("[ShopUI] Added seed to inventory: %s, gained %d XP" % [plant_id, xp_amount])
 
 func _on_refresh_pressed():
 	var gold = _get_current_gold()

@@ -82,7 +82,10 @@ func harvest_crop(crop_id: String) -> Dictionary:
 		var state = get_node_or_null("/root/StateManager")
 		if state:
 			state.apply_action({"type": "add_item", "item_id": result.crop_id, "amount": 1})
-			print("[CropManager] Added %s to inventory" % result.crop_id)
+			# Add experience for harvesting (different crops give different XP)
+			var xp_amount = 15  # Base XP for harvesting
+			state.apply_action({"type": "add_experience", "amount": xp_amount})
+			print("[CropManager] Added %s to inventory, gained %d XP" % [result.crop_id, xp_amount])
 		
 		crop_harvested.emit(crop_id, result.crop_id, 3)
 	
