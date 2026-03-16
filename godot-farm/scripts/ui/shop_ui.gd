@@ -49,8 +49,12 @@ func _load_shop_data():
 
 func _populate_shop():
 	print("[ShopUI] Populating shop...")
-	print("[ShopUI] animals_grid: %s" % animals_grid)
-	print("[ShopUI] plants_grid: %s" % plants_grid)
+	
+	# Ensure grids have proper sizing
+	animals_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	animals_grid.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	plants_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	plants_grid.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	
 	# Clear
 	for child in animals_grid.get_children():
@@ -168,7 +172,15 @@ func _create_card(parent: GridContainer, item: Dictionary, item_type: String):
 	card.pressed.connect(_on_card_clicked.bind(item, item_type))
 	
 	parent.add_child(card)
-	print("[ShopUI] Card added to %s at position: %s, size: %s" % [parent.name, str(card.position), str(card.size)])
+	print("[ShopUI] Card added to %s" % parent.name)
+
+func _notification(what):
+	if what == NOTIFICATION_VISIBILITY_CHANGED and visible:
+		# Force layout update when shop becomes visible
+		if animals_grid:
+			animals_grid.queue_sort()
+		if plants_grid:
+			plants_grid.queue_sort()
 
 func _get_icon_path(id: String, item_type: String) -> String:
 	if item_type == "animal":
