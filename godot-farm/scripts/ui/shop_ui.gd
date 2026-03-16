@@ -147,13 +147,13 @@ func _populate_shop():
 		print("[ShopUI] Animal card %d: pos=%s, global_pos=%s, size=%s, visible=%s" % [i, str(child.position), str(child.global_position), str(child.size), child.visible])
 
 func _create_card(parent: GridContainer, item: Dictionary, item_type: String):
-	print("[ShopUI] _create_card: %s, parent=%s, parent_child_count=%d" % [item.get("name", "unknown"), parent.name, parent.get_child_count()])
+	print("[ShopUI] _create_card: %s, parent=%s, parent_path=%s" % [item.get("name", "unknown"), parent.name, str(parent.get_path())])
 	
 	var card = Button.new()
 	card.custom_minimum_size = Vector2(140, 180)
 	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	card.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	card.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	card.z_index = 100
 	card.visible = true
 	
 	# DEBUG: First card gets bright red background
