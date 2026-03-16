@@ -135,8 +135,14 @@ func _add_animal_to_farm(animal_id: String):
 		push_error("[Main] Animals container not found!")
 		return
 	
-	# Create animal
-	var animal = Node2D.new()
+	# Load animal scene
+	var animal_scene = load("res://scenes/characters/alpaca.tscn")
+	if not animal_scene:
+		push_error("[Main] Failed to load animal scene!")
+		return
+	
+	# Create animal instance
+	var animal = animal_scene.instantiate()
 	animal.name = animal_id.capitalize() + str(randi() % 1000)
 	
 	# Random position within farm bounds
@@ -144,10 +150,8 @@ func _add_animal_to_farm(animal_id: String):
 	var random_y = randf_range(500, 10500)
 	animal.position = Vector2(random_x, random_y)
 	
-	# Add script
-	animal.set_script(load("res://scripts/ui/interactive_animal.gd"))
+	# Configure the animal
 	animal.animal_name = animal_id
-	animal.use_separate_frames = true
 	animal.walk_speed = randf_range(20, 35)
 	animal.scale_factor = randf_range(0.7, 0.9)
 	
