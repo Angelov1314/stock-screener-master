@@ -48,19 +48,32 @@ func _load_shop_data():
 			])
 
 func _populate_shop():
+	print("[ShopUI] Populating shop...")
+	print("[ShopUI] animals_grid: %s" % animals_grid)
+	print("[ShopUI] plants_grid: %s" % plants_grid)
+	
 	# Clear
 	for child in animals_grid.get_children():
 		child.queue_free()
 	for child in plants_grid.get_children():
 		child.queue_free()
 	
+	var animals = shop_data.get("animals", [])
+	var plants = shop_data.get("plants", [])
+	print("[ShopUI] Creating %d animal cards" % animals.size())
+	print("[ShopUI] Creating %d plant cards" % plants.size())
+	
 	# All animals
-	for animal in shop_data.get("animals", []):
+	for animal in animals:
+		print("[ShopUI] Creating card for: %s" % animal.get("name", "unknown"))
 		_create_card(animals_grid, animal, "animal")
 	
 	# All plants
-	for plant in shop_data.get("plants", []):
+	for plant in plants:
 		_create_card(plants_grid, plant, "plant")
+	
+	print("[ShopUI] animals_grid children: %d" % animals_grid.get_child_count())
+	print("[ShopUI] plants_grid children: %d" % plants_grid.get_child_count())
 
 func _create_card(parent: GridContainer, item: Dictionary, item_type: String):
 	var card = Button.new()
