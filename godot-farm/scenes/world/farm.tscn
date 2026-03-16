@@ -58,7 +58,7 @@ scale_factor = 0.75
 use_separate_frames = true
 animal_name = "cow"
 
-[node name="Cow3" type=" Node2D" parent="Animals"]
+[node name="Cow3" type="Node2D" parent="Animals"]
 position = Vector2(800, 6500)
 script = ExtResource("12_animal_script")
 walk_texture = ExtResource("5_cow_walk")
