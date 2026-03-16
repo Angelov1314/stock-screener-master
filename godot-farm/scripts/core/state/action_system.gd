@@ -86,6 +86,15 @@ func sell_item(item_id: String, amount: int = 1, price: int = 10) -> bool:
 func plant(coord: Vector2i, crop_id: String) -> bool:
 	var state = _get_state()
 	if state.get_crop_at(coord).is_empty():
+		# Check planting cost
+		var crop_data = _get_crop_data(crop_id)
+		var plant_cost = crop_data.get("seed_cost", 5)
+		
+		var eco_mgr = get_node_or_null("/root/EconomyManager")
+		if eco_mgr and not eco_mgr.can_afford(plant_cost):
+			print("[ActionSystem] Cannot plant: need %d gold" % plant_cost)
+			return false
+		
 		# Get farm controller to calculate proper world position
 		var farm_ctrl = get_node_or_null("/root/Main/Farm")
 		var world_pos = Vector2.ZERO
@@ -103,8 +112,10 @@ func plant(coord: Vector2i, crop_id: String) -> bool:
 			var planted_id = crop_mgr.plant_crop(crop_id, coord, world_pos)
 			crop_created = not planted_id.is_empty()
 		
-		# Then execute through StateManager (this emits signals)
+		# Deduct gold and execute
 		if crop_created:
+			if eco_mgr:
+				eco_mgr.remove_gold(plant_cost, "plant_%s" % crop_id)
 			return execute("plant_crop", {"coord": coord, "crop_id": crop_id})
 	return false
 
@@ -133,10 +144,19 @@ func harvest(coord: Vector2i) -> bool:
 	if not crop_entity or not crop_entity.can_harvest():
 		return false
 	
+	# Get sell price before harvesting
+	var crop_data = _get_crop_data(crop_entity.crop_id)
+	var sell_price = crop_data.get("sell_price", 10)
+	
 	# Harvest through CropManager
 	var result = crop_mgr.harvest_crop(crop_id)
 	if not result.is_empty():
-		# Also update StateManager
+		# Add gold for harvest
+		var eco_mgr = get_node_or_null("/root/EconomyManager")
+		if eco_mgr:
+			eco_mgr.add_gold(sell_price, "harvest_%s" % result.crop_id)
+		
+		# Update StateManager
 		execute("harvest_crop", {"coord": coord, "crop_id": result.crop_id})
 		return true
 	return false
