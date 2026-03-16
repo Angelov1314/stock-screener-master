@@ -709,22 +709,35 @@ func _on_crop_harvested(coord: Vector2i, crop_id: String):
 			return
 
 func _on_crop_stage_changed(crop_id: String, new_stage: int):
+	print("[FarmController] _on_crop_stage_changed called: crop_id=%s, new_stage=%d" % [crop_id, new_stage])
+	
 	var crop_mgr = get_node_or_null("/root/CropManager")
 	if not crop_mgr:
+		print("[FarmController] ERROR: CropManager not found")
 		return
 	
 	var crop_entity = crop_mgr.active_crops.get(crop_id, null)
 	if not crop_entity:
+		print("[FarmController] ERROR: crop_entity not found for %s" % crop_id)
 		return
 	
+	print("[FarmController] crop_entity found at position: %s" % str(crop_entity.position))
+	
 	# Find plot by position (scaled detection for 4x world)
+	var found_plot = false
 	for plot_id in _plot_rects.keys():
 		var rect = _plot_rects[plot_id]
 		var center_pos = Vector2(rect.position.x + rect.size.x/2, rect.position.y + rect.size.y/2)
-		if crop_entity.position.distance_to(center_pos) < 200:
+		var dist = crop_entity.position.distance_to(center_pos)
+		if dist < 200:
+			print("[FarmController] Found matching plot: %s (distance=%.1f)" % [plot_id, dist])
 			_update_crop_visual_stage(plot_id, new_stage)
 			_animate_growth_effect(plot_id, new_stage)
+			found_plot = true
 			return
+	
+	if not found_plot:
+		print("[FarmController] ERROR: No matching plot found for crop at position %s" % str(crop_entity.position))
 
 ## Visual Creation
 func _create_crop_visual(plot_id: String, crop_id: String):
@@ -824,9 +837,12 @@ func _update_crop_sprite(sprite: Sprite2D, crop_id: String, stage: int, base_sca
 	var stage_name = _get_stage_name(crop_id, stage)
 	var texture_path = "res://assets/crops/%s/%s_%s.png" % [crop_id, crop_id, stage_name]
 	
+	print("[FarmController] Updating sprite: crop=%s, stage=%d, stage_name=%s, path=%s" % [crop_id, stage, stage_name, texture_path])
+	
 	if ResourceLoader.exists(texture_path):
 		var tex = load(texture_path)
 		sprite.texture = tex
+		print("[FarmController] Sprite loaded successfully: %s" % texture_path)
 		# Scale to fit plot in 4x world (max 224px = 56 * 4) * base_scale * 1.5 magnitude
 		var target_size = 224.0 * base_scale * 1.5  # 1.5x magnitude increase
 		if tex.get_width() > 0:
@@ -834,16 +850,21 @@ func _update_crop_sprite(sprite: Sprite2D, crop_id: String, stage: int, base_sca
 			sprite.scale = Vector2(scale_factor, scale_factor)
 	else:
 		push_warning("[FarmController] Missing sprite: %s" % texture_path)
+		print("[FarmController] Using fallback color block for: %s" % crop_id)
 		var size = int((128 + (stage * 32)) * base_scale * 1.5)  # Scaled for 4x world * 1.5x magnitude
 		var image = Image.create(size, size, false, Image.FORMAT_RGBA8)
 		image.fill(_get_crop_color(crop_id))
 		sprite.texture = ImageTexture.create_from_image(image)
 
 func _update_crop_visual_stage(plot_id: String, new_stage: int):
+	print("[FarmController] _update_crop_visual_stage called: plot_id=%s, new_stage=%d" % [plot_id, new_stage])
+	
 	if not _crop_instances.has(plot_id):
+		print("[FarmController] ERROR: plot_id %s not found in _crop_instances" % plot_id)
 		return
 	
 	var crop_container = _crop_instances[plot_id]
+	print("[FarmController] Found crop container with %d children" % crop_container.get_child_count())
 	
 	# Get crop ID from CropManager
 	var crop_mgr = get_node_or_null("/root/CropManager")
@@ -852,12 +873,19 @@ func _update_crop_visual_stage(plot_id: String, new_stage: int):
 		var crop_entity = _get_crop_at_plot(plot_id)
 		if crop_entity:
 			crop_id = crop_entity.crop_id
+			print("[FarmController] Got crop_id from CropManager: %s" % crop_id)
+		else:
+			print("[FarmController] WARNING: Could not get crop entity from CropManager for plot %s" % plot_id)
+	else:
+		print("[FarmController] WARNING: CropManager not found")
 	
 	# Update all crop sprites in the container
+	var updated_count = 0
 	for crop in crop_container.get_children():
 		var sprite = crop.get_node_or_null("CropSprite")
 		if sprite:
 			_update_crop_sprite(sprite, crop_id, new_stage, 0.45)
+			updated_count += 1
 			
 			# Add growth animation with slight delay for each crop
 			var tween = create_tween()
@@ -865,6 +893,8 @@ func _update_crop_visual_stage(plot_id: String, new_stage: int):
 			tween.tween_interval(delay)
 			tween.tween_property(sprite, "scale", sprite.scale * 1.2, 0.1)
 			tween.tween_property(sprite, "scale", sprite.scale, 0.2).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	
+	print("[FarmController] Updated %d crop sprites for plot %s" % [updated_count, plot_id])
 
 func _remove_crop_visual(plot_id: String):
 	if _crop_instances.has(plot_id):
