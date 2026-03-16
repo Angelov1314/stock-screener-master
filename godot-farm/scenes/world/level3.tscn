@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://level3scene001"]
 
 [ext_resource type="Script" path="res://scripts/ui/farm_controller.gd" id="1_farm01"]
-[ext_resource type="Texture2D" uid="uid://ce05ei4warnuh" path="res://assets/backgrounds/level3_bg.png" id="2_bg"]
+[ext_resource type="Texture2D" path="res://assets/backgrounds/level3_bg.jpg" id="2_bg"]
 [ext_resource type="Script" path="res://scripts/ui/draggable_camera.gd" id="3_cam"]
 [ext_resource type="Script" path="res://scripts/ui/interactive_animal.gd" id="4_animal_script"]
 [ext_resource type="Script" path="res://scripts/ui/dynamic_background.gd" id="5_dynamic_bg"]
