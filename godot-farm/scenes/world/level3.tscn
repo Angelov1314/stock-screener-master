@@ -1,7 +1,7 @@
-[gd_scene format=3 uid="uid://dys6vb5xur4iu"]
+[gd_scene format=3 uid="uid://level3scene001"]
 
 [ext_resource type="Script" path="res://scripts/ui/farm_controller.gd" id="1_farm01"]
-[ext_resource type="Texture2D" uid="uid://bglevel3001" path="res://assets/backgrounds/level3_bg.png" id="2_bg"]
+[ext_resource type="Texture2D" uid="uid://ce05ei4warnuh" path="res://assets/backgrounds/level3_bg.png" id="2_bg"]
 [ext_resource type="Script" path="res://scripts/ui/draggable_camera.gd" id="3_cam"]
 [ext_resource type="Script" path="res://scripts/ui/interactive_animal.gd" id="4_animal_script"]
 [ext_resource type="Script" path="res://scripts/ui/dynamic_background.gd" id="5_dynamic_bg"]
@@ -110,6 +110,7 @@ script = ExtResource("3_cam")
 stream = ExtResource("8_music")
 volume_db = -10.0
 autoplay = true
+parameters/looping = true
 bus = "Music"
 
 [node name="SickleTool" type="Node2D" parent="."]
