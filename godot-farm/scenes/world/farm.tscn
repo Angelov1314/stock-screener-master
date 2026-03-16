@@ -164,6 +164,38 @@ scale_factor = 0.85
 use_separate_frames = true
 animal_name = "zebra"
 
+[node name="Koala1" type="Node2D" parent="Animals"]
+position = Vector2(3000, 2000)
+script = ExtResource("12_animal_script")
+walk_speed = 15.0
+scale_factor = 0.7
+use_separate_frames = true
+animal_name = "koala"
+
+[node name="Shiba1" type="Node2D" parent="Animals"]
+position = Vector2(4500, 6500)
+script = ExtResource("12_animal_script")
+walk_speed = 35.0
+scale_factor = 0.8
+use_separate_frames = true
+animal_name = "shiba"
+
+[node name="Cat1" type="Node2D" parent="Animals"]
+position = Vector2(2500, 4500)
+script = ExtResource("12_animal_script")
+walk_speed = 40.0
+scale_factor = 0.6
+use_separate_frames = true
+animal_name = "cat"
+
+[node name="Capybara1" type="Node2D" parent="Animals"]
+position = Vector2(1500, 5500)
+script = ExtResource("12_animal_script")
+walk_speed = 20.0
+scale_factor = 0.9
+use_separate_frames = true
+animal_name = "capybara"
+
 [node name="FarmCamera" type="Camera2D" parent="."]
 unique_name_in_owner = true
 anchor_mode = 0
