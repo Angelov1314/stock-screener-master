@@ -1,16 +1,20 @@
 {
   "animals": [
-    {"id": "cow", "name": "奶牛", "price": 500, "description": "产出牛奶", "icon": "cow_idle"},
-    {"id": "sheep", "name": "绵羊", "price": 400, "description": "产出羊毛", "icon": "sheep_idle"},
-    {"id": "pig", "name": "小猪", "price": 300, "description": "可爱贪吃", "icon": "pig_idle"},
-    {"id": "zebra", "name": "斑马", "price": 800, "description": "稀有动物", "icon": "zebra_idle"},
-    {"id": "alpaca", "name": "羊驼", "price": 600, "description": "温顺可爱", "icon": "alpaca_idle"}
+    {"id": "cow", "name": "奶牛", "price": 500, "description": "产出牛奶"},
+    {"id": "sheep", "name": "绵羊", "price": 400, "description": "产出羊毛"},
+    {"id": "pig", "name": "小猪", "price": 300, "description": "可爱贪吃"},
+    {"id": "zebra", "name": "斑马", "price": 800, "description": "稀有动物"},
+    {"id": "alpaca", "name": "羊驼", "price": 600, "description": "温顺可爱"},
+    {"id": "capybara", "name": "水豚", "price": 700, "description": "网红萌宠"},
+    {"id": "koala", "name": "考拉", "price": 900, "description": "爱睡觉"},
+    {"id": "shiba", "name": "柴犬", "price": 550, "description": "忠诚伙伴"},
+    {"id": "cat", "name": "猫咪", "price": 450, "description": "可爱傲娇"}
   ],
   "plants": [
-    {"id": "carrot", "name": "胡萝卜", "price": 50, "description": "生长快，易种植", "growth_time": 60},
-    {"id": "tomato", "name": "番茄", "price": 80, "description": "价值较高", "growth_time": 90},
-    {"id": "corn", "name": "玉米", "price": 100, "description": "高产作物", "growth_time": 120},
-    {"id": "strawberry", "name": "草莓", "price": 150, "description": "高价值水果", "growth_time": 150},
-    {"id": "wheat", "name": "小麦", "price": 40, "description": "基础作物", "growth_time": 45}
+    {"id": "carrot", "name": "胡萝卜", "price": 50, "description": "生长快，易种植"},
+    {"id": "tomato", "name": "番茄", "price": 80, "description": "价值较高"},
+    {"id": "corn", "name": "玉米", "price": 100, "description": "高产作物"},
+    {"id": "strawberry", "name": "草莓", "price": 150, "description": "高价值水果"},
+    {"id": "wheat", "name": "小麦", "price": 40, "description": "基础作物"}
   ]
 }

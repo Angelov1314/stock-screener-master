@@ -1,6 +1,6 @@
 extends CanvasLayer
 
-## Shop UI - Animal and Plant Shop with Refresh Feature
+## Shop UI - Animal and Plant Shop with Card Design
 
 signal shop_closed
 signal item_purchased(item_id: String, item_type: String)
@@ -20,29 +20,19 @@ signal animal_purchased(animal_id: String)
 
 # Shop Data
 var shop_data: Dictionary = {}
-var current_animals: Array = []
-var current_plants: Array = []
 var selected_item: Dictionary = {}
 
-# Refresh Cost
 const REFRESH_COST: int = 50
 
 func _ready():
-	# Connect buttons
 	refresh_button.pressed.connect(_on_refresh_pressed)
 	$MainContainer/BottomBar/CloseButton.pressed.connect(_on_close_pressed)
 	buy_button.pressed.connect(_on_buy_pressed)
 	
-	# Load shop data
 	_load_shop_data()
-	
-	# Initial refresh
-	refresh_shop()
-	
-	# Update gold display
+	_populate_shop()
 	_update_gold_display()
 	
-	# Hide item panel
 	item_panel.visible = false
 
 func _load_shop_data():
@@ -52,116 +42,143 @@ func _load_shop_data():
 		var json = JSON.new()
 		if json.parse(file.get_as_text()) == OK:
 			shop_data = json.data
-			print("[ShopUI] Loaded shop data: %d animals, %d plants" % [
+			print("[ShopUI] Loaded: %d animals, %d plants" % [
 				shop_data.get("animals", []).size(),
 				shop_data.get("plants", []).size()
 			])
-		else:
-			push_error("[ShopUI] Failed to parse shop data")
-	else:
-		push_error("[ShopUI] Shop data file not found")
 
-func refresh_shop():
-	print("[ShopUI] Refreshing shop...")
-	
-	# Clear existing items
+func _populate_shop():
+	# Clear
 	for child in animals_grid.get_children():
 		child.queue_free()
 	for child in plants_grid.get_children():
 		child.queue_free()
 	
-	# Randomly select 3-4 animals
-	var all_animals = shop_data.get("animals", [])
-	current_animals = _get_random_items(all_animals, 4)
+	# All animals
+	for animal in shop_data.get("animals", []):
+		_create_card(animals_grid, animal, "animal")
 	
-	# Randomly select 3-4 plants
-	var all_plants = shop_data.get("plants", [])
-	current_plants = _get_random_items(all_plants, 4)
-	
-	# Create animal items
-	for animal in current_animals:
-		_create_shop_item(animals_grid, animal, "animal")
-	
-	# Create plant items
-	for plant in current_plants:
-		_create_shop_item(plants_grid, plant, "plant")
-	
-	print("[ShopUI] Shop refreshed with %d animals, %d plants" % [current_animals.size(), current_plants.size()])
+	# All plants
+	for plant in shop_data.get("plants", []):
+		_create_card(plants_grid, plant, "plant")
 
-func _get_random_items(source_array: Array, count: int) -> Array:
-	if source_array.size() <= count:
-		return source_array.duplicate()
+func _create_card(parent: GridContainer, item: Dictionary, item_type: String):
+	var card = Button.new()
+	card.custom_minimum_size = Vector2(140, 180)
+	card.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	
-	var shuffled = source_array.duplicate()
-	shuffled.shuffle()
-	return shuffled.slice(0, count)
-
-func _create_shop_item(parent: GridContainer, item_data: Dictionary, item_type: String):
-	var button = Button.new()
-	button.custom_minimum_size = Vector2(120, 150)
-	button.alignment = HORIZONTAL_ALIGNMENT_CENTER
+	# Card style
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0.95, 0.95, 0.9)
+	style.border_color = Color(0.7, 0.6, 0.4)
+	style.border_width_bottom = 3
+	style.corner_radius_top_left = 8
+	style.corner_radius_top_right = 8
+	style.corner_radius_bottom_left = 8
+	style.corner_radius_bottom_right = 8
+	card.add_theme_stylebox_override("normal", style)
 	
-	# Create container for icon and text
+	var hover_style = style.duplicate()
+	hover_style.bg_color = Color(1, 1, 0.95)
+	hover_style.border_width_bottom = 5
+	card.add_theme_stylebox_override("hover", hover_style)
+	
+	# Container
 	var vbox = VBoxContainer.new()
-	button.add_child(vbox)
+	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	card.add_child(vbox)
+	
+	# Icon background
+	var icon_bg = ColorRect.new()
+	icon_bg.custom_minimum_size = Vector2(80, 80)
+	icon_bg.color = Color(0.9, 0.9, 0.85)
+	vbox.add_child(icon_bg)
 	
 	# Icon
 	var icon = TextureRect.new()
-	icon.custom_minimum_size = Vector2(64, 64)
-	icon.expand_mode = TextureRect.EXPAND_FIT_HEIGHT
-	vbox.add_child(icon)
+	icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon.custom_minimum_size = Vector2(70, 70)
 	
-	# Try to load icon
-	var icon_path = "res://assets/characters/%s/idle/%s_idle_0.png" % [item_data.id, item_data.id]
-	if item_type == "plant":
-		icon_path = "res://assets/crops/%s/%s_seed.png" % [item_data.id, item_data.id]
-	
+	var icon_path = _get_icon_path(item.id, item_type)
 	if ResourceLoader.exists(icon_path):
 		icon.texture = load(icon_path)
 	
+	icon_bg.add_child(icon)
+	icon.position = Vector2(5, 5)
+	
+	# Spacer
+	vbox.add_child(Control.new()).custom_minimum_size = Vector2(0, 8)
+	
 	# Name
 	var name_label = Label.new()
-	name_label.text = item_data.name
+	name_label.text = item.name
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	name_label.add_theme_font_size_override("font_size", 14)
+	name_label.add_theme_color_override("font_color", Color(0.2, 0.2, 0.2))
 	vbox.add_child(name_label)
 	
-	# Price
+	# Price tag
+	var price_container = Panel.new()
+	price_container.custom_minimum_size = Vector2(80, 24)
+	
+	var price_style = StyleBoxFlat.new()
+	price_style.bg_color = Color(1, 0.85, 0.3)
+	price_style.corner_radius_top_left = 12
+	price_style.corner_radius_top_right = 12
+	price_style.corner_radius_bottom_left = 12
+	price_style.corner_radius_bottom_right = 12
+	price_container.add_theme_stylebox_override("panel", price_style)
+	vbox.add_child(price_container)
+	
 	var price_label = Label.new()
-	price_label.text = "%d💰" % item_data.price
+	price_label.text = "💰 %d" % item.price
 	price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	vbox.add_child(price_label)
+	price_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	price_label.add_theme_font_size_override("font_size", 12)
+	price_label.add_theme_color_override("font_color", Color(0.4, 0.25, 0))
+	price_container.add_child(price_label)
+	price_label.size = Vector2(80, 24)
 	
-	# Connect click
-	button.pressed.connect(_on_item_selected.bind(item_data, item_type))
+	# Click
+	card.pressed.connect(_on_card_clicked.bind(item, item_type))
 	
-	parent.add_child(button)
+	parent.add_child(card)
 
-func _on_item_selected(item_data: Dictionary, item_type: String):
-	selected_item = item_data
+func _get_icon_path(id: String, item_type: String) -> String:
+	if item_type == "animal":
+		# Try multiple naming conventions
+		var paths = [
+			"res://assets/characters/%s/idle/%s_idle_01.png" % [id, id],
+			"res://assets/characters/%s/idle/%s_idle_0.png" % [id, id],
+			"res://assets/characters/%s/idle/%s_idle_1.png" % [id, id],
+		]
+		for path in paths:
+			if ResourceLoader.exists(path):
+				return path
+	else:
+		var path = "res://assets/crops/%s/%s_seed.png" % [id, id]
+		if ResourceLoader.exists(path):
+			return path
+	return ""
+
+func _on_card_clicked(item: Dictionary, item_type: String):
+	selected_item = item.duplicate()
 	selected_item["type"] = item_type
 	
-	# Update item panel
-	item_name.text = item_data.name
-	item_desc.text = item_data.description
-	item_price.text = "价格: %d金" % item_data.price
+	item_name.text = item.name
+	item_desc.text = item.description
+	item_price.text = "💰 %d" % item.price
 	
-	# Update icon
-	var icon_path = "res://assets/characters/%s/idle/%s_idle_0.png" % [item_data.id, item_data.id]
-	if item_type == "plant":
-		icon_path = "res://assets/crops/%s/%s_seed.png" % [item_data.id, item_data.id]
-	
+	var icon_path = _get_icon_path(item.id, item_type)
 	if ResourceLoader.exists(icon_path):
 		item_icon.texture = load(icon_path)
 	else:
 		item_icon.texture = null
 	
-	# Check if affordable
-	var current_gold = _get_current_gold()
-	buy_button.disabled = current_gold < item_data.price
-	if buy_button.disabled:
-		buy_button.text = "金币不足"
-	else:
-		buy_button.text = "购买"
+	var gold = _get_current_gold()
+	buy_button.disabled = gold < item.price
+	buy_button.text = "金币不足" if buy_button.disabled else "购买"
 	
 	item_panel.visible = true
 
@@ -170,47 +187,51 @@ func _on_buy_pressed():
 		return
 	
 	var price = selected_item.price
-	var current_gold = _get_current_gold()
+	var gold = _get_current_gold()
 	
-	if current_gold < price:
-		print("[ShopUI] Not enough gold!")
+	if gold < price:
 		return
 	
-	# Deduct gold
 	var eco_mgr = get_node_or_null("/root/EconomyManager")
 	if eco_mgr:
 		eco_mgr.remove_gold(price, "shop_purchase")
 	
-	# Emit signal
 	item_purchased.emit(selected_item.id, selected_item.type)
 	
-	# If animal, emit special signal
 	if selected_item.type == "animal":
 		animal_purchased.emit(selected_item.id)
-		print("[ShopUI] Animal purchased: %s" % selected_item.id)
+		_spawn_animal(selected_item.id)
+	elif selected_item.type == "plant":
+		_give_seed(selected_item.id)
 	
-	# Update UI
 	_update_gold_display()
 	item_panel.visible = false
-	
-	print("[ShopUI] Purchased %s: %s" % [selected_item.type, selected_item.id])
+
+func _spawn_animal(animal_id: String):
+	# Spawn animal in farm
+	var farm = get_node_or_null("/root/Main/Farm")
+	if farm and farm.has_method("spawn_animal"):
+		farm.spawn_animal(animal_id)
+		print("[Shop] Spawned animal: %s" % animal_id)
+
+func _give_seed(plant_id: String):
+	# Add seed to inventory
+	var state = get_node_or_null("/root/StateManager")
+	if state:
+		state.add_item_to_inventory(plant_id + "_seed", 1)
+		print("[Shop] Gave seed: %s" % plant_id)
 
 func _on_refresh_pressed():
-	var current_gold = _get_current_gold()
-	
-	if current_gold < REFRESH_COST:
-		print("[ShopUI] Not enough gold to refresh!")
+	var gold = _get_current_gold()
+	if gold < REFRESH_COST:
 		return
 	
-	# Deduct refresh cost
 	var eco_mgr = get_node_or_null("/root/EconomyManager")
 	if eco_mgr:
 		eco_mgr.remove_gold(REFRESH_COST, "shop_refresh")
 	
-	refresh_shop()
+	_populate_shop()
 	_update_gold_display()
-	
-	print("[ShopUI] Shop refreshed for %d gold" % REFRESH_COST)
 
 func _on_close_pressed():
 	shop_closed.emit()
@@ -218,7 +239,7 @@ func _on_close_pressed():
 
 func _update_gold_display():
 	var gold = _get_current_gold()
-	gold_label.text = str(gold)
+	gold_label.text = "💰 %d" % gold
 
 func _get_current_gold() -> int:
 	var state = get_node_or_null("/root/StateManager")
@@ -227,6 +248,5 @@ func _get_current_gold() -> int:
 	return 0
 
 func _input(event):
-	if event is InputEventKey:
-		if event.pressed and event.keycode == KEY_ESCAPE:
-			_on_close_pressed()
+	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
+		_on_close_pressed()

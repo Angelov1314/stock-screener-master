@@ -1130,3 +1130,21 @@ func set_water_mode(active: bool):
 			_water_tool.activate()
 		else:
 			_water_tool.deactivate()
+
+## Spawn animal from shop purchase
+func spawn_animal(animal_id: String):
+	var AnimalScene = load("res://scenes/entities/interactive_animal.tscn")
+	if not AnimalScene:
+		push_error("[Farm] Failed to load animal scene")
+		return
+	
+	var animal = AnimalScene.instantiate()
+	animal.animal_name = animal_id
+	
+	# Random position on farm
+	var x = randf_range(500, 2000)
+	var y = randf_range(500, 2500)
+	animal.position = Vector2(x, y)
+	
+	add_child(animal)
+	print("[Farm] Spawned animal: %s at %s" % [animal_id, str(animal.position)])

@@ -117,17 +117,24 @@ func _setup_animation_from_frames(sprite_frames: SpriteFrames, anim_name: String
 	sprite_frames.set_animation_loop(anim_name, true)
 	
 	for i in range(frame_count):
-		# Try with character prefix first (e.g., cow_idle_0.png)
-		var path = "res://assets/characters/%s/%s/%s_%s_%d.png" % [character, folder, character, folder, i]
+		# Try 1-based naming first (capybara_idle_01.png)
+		var frame_num = i + 1
+		var path = "res://assets/characters/%s/%s/%s_%s_%02d.png" % [character, folder, character, folder, frame_num]
 		if ResourceLoader.exists(path):
 			var texture = load(path)
 			sprite_frames.add_frame(anim_name, texture)
 		else:
-			# Fallback to simple naming (e.g., idle_0.png)
-			path = "res://assets/characters/%s/%s/%s_%d.png" % [character, folder, folder, i]
+			# Fallback to 0-based naming (cow_idle_0.png)
+			path = "res://assets/characters/%s/%s/%s_%s_%d.png" % [character, folder, character, folder, i]
 			if ResourceLoader.exists(path):
 				var texture = load(path)
 				sprite_frames.add_frame(anim_name, texture)
+			else:
+				# Try simple naming without character prefix
+				path = "res://assets/characters/%s/%s/%s_%d.png" % [character, folder, folder, i]
+				if ResourceLoader.exists(path):
+					var texture = load(path)
+					sprite_frames.add_frame(anim_name, texture)
 
 func _setup_animation_from_spritesheet(sprite_frames: SpriteFrames, anim_name: String, texture: Texture2D, frames: int, speed: int):
 	if not texture:
