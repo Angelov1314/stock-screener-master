@@ -21,6 +21,12 @@ signal water_mode_toggled(active: bool)
 @onready var shop_button: TextureButton = %ShopButton
 @onready var toast_container: VBoxContainer = %ToastContainer
 
+# Player Info UI References
+@onready var player_name_label: Label = %NameLabel
+@onready var player_level_label: Label = %LevelLabel
+@onready var player_xp_label: Label = %XPLabel
+@onready var player_xp_bar: ProgressBar = %XPBar
+
 # State
 var _sickle_active: bool = false
 var _water_active: bool = false
@@ -39,9 +45,12 @@ func _ready():
 	if state:
 		_update_gold_display(state.get_gold())
 		_update_day_display(state.current_day)
+		_update_player_info(state.get_player_name(), state.get_player_level(), state.get_experience(), state.get_xp_for_next_level(), state.get_xp_progress())
+		state.state_changed.connect(_on_state_changed)
 	else:
 		_update_gold_display(100)  # Starting gold
 		_update_day_display(1)
+		_update_player_info("农场主", 1, 0, 100, 0.0)
 	_update_season_display("Spring")
 	
 	print("[HUDController] Initialized")
@@ -132,3 +141,28 @@ func show_toast(message: String):
 	out_tween.tween_property(toast, "modulate:a", 0, 0.2)
 	await out_tween.finished
 	toast.queue_free()
+
+## Player Info Display
+func _update_player_info(name: String, level: int, xp: int, xp_next: int, xp_progress: float):
+	if player_name_label:
+		player_name_label.text = name
+	if player_level_label:
+		player_level_label.text = "Lv.%d" % level
+	if player_xp_label:
+		player_xp_label.text = "XP: %d/%d" % [xp, xp_next]
+	if player_xp_bar:
+		player_xp_bar.value = xp_progress * 100
+
+## State Change Handler
+func _on_state_changed(action: Dictionary):
+	var state = get_node_or_null("/root/StateManager")
+	if not state:
+		return
+	
+	match action.type:
+		"add_gold", "remove_gold":
+			_update_gold_display(state.get_gold())
+		"add_experience", "harvest_crop":
+			_update_player_info(state.get_player_name(), state.get_player_level(), state.get_experience(), state.get_xp_for_next_level(), state.get_xp_progress())
+		"advance_time":
+			_update_day_display(state.current_day)

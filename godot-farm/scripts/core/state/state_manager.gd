@@ -8,11 +8,17 @@ signal state_changed(action: Dictionary)
 signal state_loaded
 
 # Truth sources
+var player_name: String = "农场主"
 var inventory: Dictionary = {}  # item_id -> count
 var gold: int = 0
+var experience: int = 0
+var player_level: int = 1
 var current_day: int = 1
 var current_time: float = 6.0  # 24h format
 var planted_crops: Dictionary = {}  # tile_coord -> crop_data
+
+# Experience required for each level
+const XP_PER_LEVEL: Array = [0, 100, 250, 500, 1000, 2000, 4000, 8000, 15000, 30000]
 
 # Session data storage (for passing data between scenes)
 var _session_data: Dictionary = {}
@@ -22,6 +28,11 @@ var _action_history: Array = []
 
 func _ready():
     print("[StateManager] Initialized as truth source")
+    # Set initial values
+    gold = 100
+    player_name = "农场主"
+    experience = 0
+    player_level = 1
 
 ## Session data storage - for passing data between scenes
 func set_data(key: String, value) -> void:
@@ -31,14 +42,35 @@ func get_data(key: String, default_value = null):
     return _session_data.get(key, default_value)
 
 ## Getters - these are the ONLY way to read state
+func get_player_name() -> String:
+    return player_name
+
 func get_inventory() -> Dictionary:
     return inventory.duplicate()
 
 func get_gold() -> int:
     return gold
 
+func get_experience() -> int:
+    return experience
+
+func get_player_level() -> int:
+    return player_level
+
 func get_crop_at(coord: Vector2i) -> Dictionary:
     return planted_crops.get(coord, {})
+
+func get_xp_for_next_level() -> int:
+    if player_level < XP_PER_LEVEL.size():
+        return XP_PER_LEVEL[player_level]
+    return XP_PER_LEVEL[XP_PER_LEVEL.size() - 1] * 2
+
+func get_xp_progress() -> float:
+    var current_level_xp = XP_PER_LEVEL[player_level - 1] if player_level > 1 else 0
+    var next_level_xp = get_xp_for_next_level()
+    var xp_in_level = experience - current_level_xp
+    var xp_needed = next_level_xp - current_level_xp
+    return float(xp_in_level) / float(xp_needed) if xp_needed > 0 else 1.0
 
 ## State modification - ONLY through ActionSystem
 func apply_action(action: Dictionary) -> bool:
@@ -64,6 +96,8 @@ func apply_action(action: Dictionary) -> bool:
 
 func _apply_internal(action: Dictionary) -> bool:
     match action.type:
+        "set_player_name":
+            player_name = action.name
         "add_gold":
             gold += action.amount
         "remove_gold":
@@ -71,6 +105,9 @@ func _apply_internal(action: Dictionary) -> bool:
                 gold -= action.amount
             else:
                 return false
+        "add_experience":
+            experience += action.amount
+            _check_level_up()
         "add_item":
             inventory[action.item_id] = inventory.get(action.item_id, 0) + action.amount
         "remove_item":
@@ -101,6 +138,9 @@ func _apply_internal(action: Dictionary) -> bool:
                 # Add harvest result to inventory
                 inventory[crop_data.crop_id] = inventory.get(crop_data.crop_id, 0) + 1
                 planted_crops.erase(action.coord)
+                # Add experience for harvesting
+                experience += 10
+                _check_level_up()
             else:
                 return false
         "advance_time":
@@ -114,6 +154,13 @@ func _apply_internal(action: Dictionary) -> bool:
     
     return true
 
+func _check_level_up():
+    var next_level_xp = get_xp_for_next_level()
+    while experience >= next_level_xp and player_level < XP_PER_LEVEL.size():
+        player_level += 1
+        print("[StateManager] Level up! Now level %d" % player_level)
+        next_level_xp = get_xp_for_next_level()
+
 func _validate_action(action: Dictionary) -> bool:
     if not action.has("type"):
         return false
@@ -122,8 +169,11 @@ func _validate_action(action: Dictionary) -> bool:
 ## Serialization for save/load
 func serialize() -> Dictionary:
     return {
+        "player_name": player_name,
         "inventory": inventory.duplicate(),
         "gold": gold,
+        "experience": experience,
+        "player_level": player_level,
         "current_day": current_day,
         "current_time": current_time,
         "planted_crops": planted_crops.duplicate()
@@ -133,8 +183,11 @@ func deserialize(data: Dictionary) -> bool:
     if not data.has_all(["inventory", "gold", "current_day"]):
         return false
     
+    player_name = data.get("player_name", "农场主")
     inventory = data.inventory.duplicate()
     gold = data.gold
+    experience = data.get("experience", 0)
+    player_level = data.get("player_level", 1)
     current_day = data.current_day
     current_time = data.get("current_time", 6.0)
     planted_crops = data.get("planted_crops", {}).duplicate()

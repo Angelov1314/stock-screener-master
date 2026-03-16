@@ -11,7 +11,7 @@ default_bus_layout.tres::AudioBusLayout::-1::1772836669::0::1::::<><><>0<>0<><>:
 background_music.mp3::AudioStreamMP3::1364740828554213355::1773020996::1773641209::1::::<><><>0<>0<>d92fb74d7c8907e2eff61b33c0083371<>res://.godot/imported/background_music.mp3-c3e80d797fb395739ca7718bd7547628.mp3str::
 level2_bgm.mp3::AudioStreamMP3::7639896064274558919::1773665004::1773665783::1::::<><><>0<>0<>5b8bcfe8813f04c306c66127797ab966<>res://.godot/imported/level2_bgm.mp3-09672ee5b30d191d6b7ae11e17047863.mp3str::
 level3_bgm.mp3::AudioStreamMP3::3720957283417858778::1773676097::1773676096::1::::<><><>0<>0<>574999f3f7663fabe3f8c090bdb9ea91<>res://.godot/imported/level3_bgm.mp3-4f05551cc22fee30dfe52d9f6916d4cf.mp3str::
-::res://assets/audio/sfx/::1773676277
+::res://assets/audio/sfx/::1773676285
 ::res://assets/audio/sfx/alpaca/::1773641210
 Firefly_audio_Create_a_relaxing_sound_for_interacting_with_alpac_variation1.wav::AudioStreamWAV::5629858970820216450::1773095843::1773641210::1::::<><><>0<>0<>3550e2a2bbd730298de1dae6ff36193b<>res://.godot/imported/Firefly_audio_Create_a_relaxing_sound_for_interacting_with_alpac_variation1.wav-f664f3552f535734dcfa3498afc5fcd8.sample::
 ::res://assets/audio/sfx/ambient/::1773641209
@@ -21,10 +21,10 @@ leaves_rustle.mp3::AudioStreamMP3::3414577240832984970::1773594245::1773641209::
 wind.mp3::AudioStreamMP3::704364758498989432::1773594243::1773641209::1::::<><><>0<>0<>6afdcfcb8729af2ee0d7d105d5fff3df<>res://.godot/imported/wind.mp3-0fcdaadd3e6f0c7ff5570e8be7aa76ac.mp3str::
 ::res://assets/audio/sfx/buttons/::1773641210
 Firefly_audio_Create_a_relaxing_paper_like_sound_for_clicking_on_variation2.wav::AudioStreamWAV::2664197000826178441::1773094809::1773641210::1::::<><><>0<>0<>1d9c97e70cf868c755a178900dcb3379<>res://.godot/imported/Firefly_audio_Create_a_relaxing_paper_like_sound_for_clicking_on_variation2.wav-cb59f361c5af65800291e61d4f0a0256.sample::
-::res://assets/audio/sfx/capybara/::1773676277
+::res://assets/audio/sfx/capybara/::1773676281
 capybara.mp3::AudioStreamMP3::8675426929555347649::1773676277::1773676281::0::::<><><>0<>0<>ee3dc0b694d31535e161e9c46cab0fe7<>::
 capybara_walk.mp3::AudioStreamMP3::6139100012727853498::1773676277::1773676281::1::::<><><>0<>0<>3e878924d6318b9574295196e7ccb53a<>res://.godot/imported/capybara_walk.mp3-7328388505a602fe8955b7534ce3b154.mp3str::
-::res://assets/audio/sfx/cat/::1773676277
+::res://assets/audio/sfx/cat/::1773676281
 cat.mp3::AudioStreamMP3::1271986856304130588::1773676277::1773676281::0::::<><><>0<>0<>88b4c7801dfb73ff40b8af250cee1b23<>::
 cat_walk.mp3::AudioStreamMP3::1120409690825340160::1773676277::1773676281::1::::<><><>0<>0<>959b61569b84df8ea97f6874264ebd2f<>res://.godot/imported/cat_walk.mp3-218db3399963c1196e051ffb671aaad0.mp3str::
 ::res://assets/audio/sfx/cow/::1773641210
@@ -33,7 +33,9 @@ cow_walk.mp3::AudioStreamMP3::7749160266374209414::1773594223::1773641209::1::::
 Firefly_audio_Create_a_relaxing_sound_for_interacting_with_cows,_variation2.wav::AudioStreamWAV::1749632428574003281::1773094605::1773641210::1::::<><><>0<>0<>f510aba69041f924a5f30e5887006425<>res://.godot/imported/Firefly_audio_Create_a_relaxing_sound_for_interacting_with_cows,_variation2.wav-27bf9dec00e0c9005482031c69e6748a.sample::
 ::res://assets/audio/sfx/cropping/::1773641210
 Firefly_audio_Create_a_relaxing_sound_for_harvesting_crops,_for__variation4.wav::AudioStreamWAV::5489981605554712100::1773094557::1773641210::1::::<><><>0<>0<>d045c26171102d51d5c77bbca6ddc3b9<>res://.godot/imported/Firefly_audio_Create_a_relaxing_sound_for_harvesting_crops,_for__variation4.wav-5ae5a852daefdc2692cb6a7be6beb7ba.sample::
-::res://assets/audio/sfx/koala/::1773676277
+::res://assets/audio/sfx/interaction/::1773676285
+pickup.mp3::AudioStreamMP3::4351341871096052240::1773676285::1773676332::0::::<><><>0<>0<>8bfc5a5b2824173fac81226e722f4b6e<>::
+::res://assets/audio/sfx/koala/::1773676281
 koala.mp3::AudioStreamMP3::7141751074636603135::1773676277::1773676281::0::::<><><>0<>0<>dafe99117f8b28512e1ad202e48c346c<>::
 koala_walk.mp3::AudioStreamMP3::4202416533414788170::1773676277::1773676281::1::::<><><>0<>0<>963a2f6a55a9d50d287533f006135855<>res://.godot/imported/koala_walk.mp3-3c73b887b740ec1233fa53567935b671.mp3str::
 ::res://assets/audio/sfx/pig/::1773641209
@@ -46,7 +48,7 @@ Firefly_audio_Create_a_relaxing_sound_for_interacting_with_the_p_variation4.wav:
 ::res://assets/audio/sfx/sheep/::1773641209
 sheep.mp3::AudioStreamMP3::504329024843122505::1773594225::1773641209::1::::<><><>0<>0<>c8bf5e36cfea55205f0c830b0d4e99ff<>res://.godot/imported/sheep.mp3-518c17ac79f84d27a4aaa0ea0d9c68b1.mp3str::
 sheep_walk.mp3::AudioStreamMP3::9167986924575420300::1773594227::1773641209::1::::<><><>0<>0<>b838438156bbf1a2d2bbb35d44419c20<>res://.godot/imported/sheep_walk.mp3-f04e2d33583f967d8f9b4e8399a5ae56.mp3str::
-::res://assets/audio/sfx/shiba/::1773676277
+::res://assets/audio/sfx/shiba/::1773676281
 shiba.mp3::AudioStreamMP3::3098625304742170674::1773676277::1773676281::0::::<><><>0<>0<>cb4c59b6352e868a39da519820737a90<>::
 shiba_walk.mp3::AudioStreamMP3::6828171229321158772::1773676277::1773676281::1::::<><><>0<>0<>90ee9615c84f30160084c5441f8aab9e<>res://.godot/imported/shiba_walk.mp3-f2b67fdd021d39b761212a3298bf57b1.mp3str::
 ::res://assets/audio/sfx/watering/::1773641210
@@ -488,7 +490,7 @@ draggable_camera.gd::GDScript::3838063003728511712::1773651332::0::1::::Draggabl
 dynamic_background.gd::GDScript::4131130134834181413::1773654902::0::1::::<>Node2D<><>0<>0<><>::
 farm_controller.gd::GDScript::4428520479176883368::1773667078::0::1::::FarmController<>Node2D<><>0<>0<><>::
 hud_controller.gd::GDScript::9081744454399963342::1773675863::0::1::::HUDController<>CanvasLayer<><>0<>0<><>::
-interactive_animal.gd::GDScript::2517276577378463575::1773673421::0::1::::<>Node2D<><>0<>0<><>::
+interactive_animal.gd::GDScript::2517276577378463575::1773676313::0::1::::<>Node2D<><>0<>0<><>::
 inventory_controller.gd::GDScript::3011258356131126342::1773675273::0::1::::InventoryController<>CanvasLayer<><>0<>0<><>::
 level2_music.gd::GDScript::3879853963590655221::1773666817::0::1::::<>AudioStreamPlayer<><>0<>0<><>::
 light_manager.gd::GDScript::8263672306061906130::1773595616::0::1::::LightManager<>Node2D<><>0<>0<><>::
