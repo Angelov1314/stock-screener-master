@@ -41,6 +41,15 @@ func plant_crop(crop_type: String, position: Vector2i, world_pos: Vector2 = Vect
 	crop_positions[position] = crop_id
 	
 	crop_planted.emit(crop_id, crop_type, world_pos)
+	
+	# Play planting sound
+	var audio = AudioStreamPlayer.new()
+	audio.stream = load("res://assets/audio/sfx/plant.ogg")
+	audio.bus = "SFX"
+	add_child(audio)
+	audio.play()
+	audio.finished.connect(func(): audio.queue_free())
+	
 	return crop_id
 
 func get_crop_at(position: Vector2i) -> Node2D:

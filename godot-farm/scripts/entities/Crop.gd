@@ -92,7 +92,7 @@ func _plant_animation():
 		var tween = create_tween()
 		tween.set_trans(Tween.TRANS_BACK)
 		tween.set_ease(Tween.EASE_OUT)
-		tween.tween_property(sprite, "scale", target_scale, 0.4)
+		tween.tween_property(sprite, "scale", Vector2(0.455, 0.455), 0.4)
 
 func _on_timer_timeout():
 	if current_stage < 3:
@@ -108,8 +108,8 @@ func _growth_animation():
 		var tween = create_tween()
 		tween.set_trans(Tween.TRANS_ELASTIC)
 		tween.set_ease(Tween.EASE_OUT)
-		tween.tween_property(sprite, "scale", Vector2(0.4, 0.4), 0.3)
-		tween.tween_property(sprite, "scale", Vector2(0.35, 0.35), 0.2)
+		tween.tween_property(sprite, "scale", Vector2(0.52, 0.52), 0.3)
+		tween.tween_property(sprite, "scale", Vector2(0.455, 0.455), 0.2)
 	
 	if current_stage == 3:
 		became_harvestable.emit()
