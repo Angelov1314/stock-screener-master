@@ -84,8 +84,9 @@ func _load_level(level_id: int):
 		push_error("[Main] Failed to load level %d scene!" % level_id)
 
 func _on_inventory_requested():
-	print("[Main] Opening inventory...")
-	inventory_panel.show_panel()
+	print("[Main] Inventory disabled")
+	# 背包功能已禁用
+	pass
 
 func _on_planting_menu_requested():
 	print("[Main] Toggling planting menu...")
