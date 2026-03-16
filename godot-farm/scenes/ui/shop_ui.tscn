@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scripts/ui/shop_ui.gd" id="1_shop_script"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-bg_color = Color(0.25, 0.2, 0.15, 0.75)
+bg_color = Color(0.25, 0.2, 0.15, 0.95)
 border_width_left = 3
 border_width_top = 3
 border_width_right = 3
@@ -15,7 +15,7 @@ corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_item"]
-bg_color = Color(0.2, 0.15, 0.1, 0.7)
+bg_color = Color(0.2, 0.15, 0.1, 0.9)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -35,7 +35,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.4)
+color = Color(0, 0, 0, 0.5)
 
 [node name="MainContainer" type="Panel" parent="."]
 anchors_preset = 8
@@ -69,69 +69,56 @@ theme_override_font_sizes/font_size = 36
 text = "🛒 农场商店"
 horizontal_alignment = 1
 
-[node name="GoldDisplay" type="HBoxContainer" parent="MainContainer"]
+[node name="GoldDisplay" type="HBoxContainer" parent="MainContainer/VBoxContainer"]
 layout_mode = 2
 alignment = 1
 
-[node name="GoldIcon" type="TextureRect" parent="MainContainer/GoldDisplay"]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-
-[node name="GoldLabel" type="Label" parent="MainContainer/GoldDisplay"]
+[node name="GoldLabel" type="Label" parent="MainContainer/VBoxContainer/GoldDisplay"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
-text = "1000"
+text = "💰 1000"
 
-[node name="Spacer" type="Control" parent="MainContainer"]
-custom_minimum_size = Vector2(0, 20)
-layout_mode = 2
-
-[node name="TabContainer" type="TabContainer" parent="MainContainer"]
+[node name="TabContainer" type="TabContainer" parent="MainContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-z_index = 5
 
-[node name="动物" type="ScrollContainer" parent="MainContainer/TabContainer"]
+[node name="动物" type="ScrollContainer" parent="MainContainer/VBoxContainer/TabContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-z_index = 5
 
-[node name="AnimalsGrid" type="GridContainer" parent="MainContainer/TabContainer/动物"]
+[node name="AnimalsGrid" type="GridContainer" parent="MainContainer/VBoxContainer/TabContainer/动物"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 columns = 3
-z_index = 10
 
-[node name="植物" type="ScrollContainer" parent="MainContainer/TabContainer"]
+[node name="植物" type="ScrollContainer" parent="MainContainer/VBoxContainer/TabContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-z_index = 5
 
-[node name="PlantsGrid" type="GridContainer" parent="MainContainer/TabContainer/植物"]
+[node name="PlantsGrid" type="GridContainer" parent="MainContainer/VBoxContainer/TabContainer/植物"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 columns = 3
-z_index = 10
 
-[node name="BottomBar" type="HBoxContainer" parent="MainContainer"]
+[node name="BottomBar" type="HBoxContainer" parent="MainContainer/VBoxContainer"]
 layout_mode = 2
 alignment = 1
 
-[node name="RefreshButton" type="Button" parent="MainContainer/BottomBar"]
+[node name="RefreshButton" type="Button" parent="MainContainer/VBoxContainer/BottomBar"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(150, 50)
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "🔄 刷新 (50金)"
 
-[node name="CloseButton" type="Button" parent="MainContainer/BottomBar"]
+[node name="CloseButton" type="Button" parent="MainContainer/VBoxContainer/BottomBar"]
 custom_minimum_size = Vector2(150, 50)
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
@@ -139,7 +126,6 @@ text = "❌ 关闭"
 
 [node name="ItemPanel" type="Panel" parent="MainContainer"]
 visible = false
-z_index = 100
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -154,7 +140,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_item")
 
-[node name="ItemVBox" type="VBoxContainer" parent="ItemPanel"]
+[node name="ItemVBox" type="VBoxContainer" parent="MainContainer/ItemPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -166,35 +152,35 @@ offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ItemIcon" type="TextureRect" parent="ItemPanel/ItemVBox"]
+[node name="ItemIcon" type="TextureRect" parent="MainContainer/ItemPanel/ItemVBox"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
 size_flags_horizontal = 4
 expand_mode = 1
 
-[node name="ItemName" type="Label" parent="ItemPanel/ItemVBox"]
+[node name="ItemName" type="Label" parent="MainContainer/ItemPanel/ItemVBox"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "名称"
 horizontal_alignment = 1
 
-[node name="ItemDesc" type="Label" parent="ItemPanel/ItemVBox"]
+[node name="ItemDesc" type="Label" parent="MainContainer/ItemPanel/ItemVBox"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "描述"
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="ItemPrice" type="Label" parent="ItemPanel/ItemVBox"]
+[node name="ItemPrice" type="Label" parent="MainContainer/ItemPanel/ItemVBox"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
-text = "价格: 100金"
+text = "💰 100金"
 horizontal_alignment = 1
 
-[node name="BuyButton" type="Button" parent="ItemPanel/ItemVBox"]
+[node name="BuyButton" type="Button" parent="MainContainer/ItemPanel/ItemVBox"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(100, 40)
 layout_mode = 2
