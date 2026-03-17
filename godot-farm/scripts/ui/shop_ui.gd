@@ -407,6 +407,9 @@ func _on_buy_pressed():
 			print("[ShopUI] Failed to deduct gold")
 			return
 		
+		var audio_mgr = get_node_or_null("/root/AudioManager")
+		if audio_mgr:
+			audio_mgr.play_sfx_path("res://assets/audio/sfx/ui/coin_asmr.mp3", 0.85)
 		print("[ShopUI] Bought %s for %d gold" % [selected_item.id, price])
 		item_purchased.emit(selected_item.id, selected_item.type)
 		
@@ -440,7 +443,7 @@ func _sell_crop(crop_id: String, amount: int):
 	if gold_earned > 0:
 		var audio_mgr = get_node_or_null("/root/AudioManager")
 		if audio_mgr:
-			audio_mgr.play_sfx_path("res://assets/audio/sfx/ui/gold_gain.mp3", 0.9)
+			audio_mgr.play_sfx_path("res://assets/audio/sfx/ui/coin_asmr.mp3", 0.85)
 		print("[ShopUI] Sold %s for %d gold" % [crop_id, gold_earned])
 
 func _spawn_animal(animal_id: String):

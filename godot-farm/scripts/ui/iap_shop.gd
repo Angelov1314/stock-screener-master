@@ -167,6 +167,9 @@ func _on_purchase_pressed(gold_amount: int, price: String):
 	var confirmed = await _show_confirm_dialog(price, gold_amount)
 	
 	if confirmed:
+		var audio_mgr = get_node_or_null("/root/AudioManager")
+		if audio_mgr:
+			audio_mgr.play_sfx_path("res://assets/audio/sfx/ui/coin_asmr.mp3", 0.85)
 		# Add gold to player
 		var state = get_node_or_null("/root/StateManager")
 		if state:
