@@ -34,8 +34,8 @@ var _sickle_active: bool = false
 var _water_active: bool = false
 
 # Gold frame positioning (tuned values)
-var _gold_frame_offset: Vector2 = Vector2(-40.0, -17.0)
-var _gold_frame_scale: Vector2 = Vector2(1.95, 1.95)
+var _gold_frame_offset: Vector2 = Vector2(-44.0, 21.0)
+var _gold_frame_scale: Vector2 = Vector2(2.05, 2.05)
 var _gold_frame_debug_mode: bool = false
 
 func _ready():
@@ -64,18 +64,14 @@ func _ready():
 		_update_player_name("农场主")
 		_update_player_info("农场主", 1, 0, 100, 0.0)
 	
-	# Load gold frame texture and apply tuned position (deferred to avoid container override)
+	# Load gold frame texture and apply tuned position
 	if gold_frame:
 		gold_frame.texture = load("res://assets/ui/gold_frame.png")
 		gold_frame.scale = _gold_frame_scale
-		# Use deferred call to set position after container layout is done
-		call_deferred("_apply_gold_frame_position")
-		print("[HUDController] Gold frame scale: %s, position will be applied deferred" % [_gold_frame_scale])
-
-func _apply_gold_frame_position():
-	if gold_frame:
+		# Set position on next frame to override container layout
+		await get_tree().process_frame
 		gold_frame.position = _gold_frame_offset
-		print("[HUDController] Gold frame position applied: %s" % [_gold_frame_offset])
+		print("[HUDController] Gold frame positioned at %s with scale %s" % [_gold_frame_offset, _gold_frame_scale])
 	
 	print("[HUDController] Initialized")
 
@@ -250,8 +246,8 @@ func _input(event):
 				_gold_frame_scale -= Vector2(scale_speed, scale_speed)
 				changed = true
 			KEY_R:
-				_gold_frame_offset = Vector2(-40.0, -17.0)
-				_gold_frame_scale = Vector2(1.95, 1.95)
+				_gold_frame_offset = Vector2(-44.0, 21.0)
+				_gold_frame_scale = Vector2(2.05, 2.05)
 				changed = true
 	
 	if changed:
