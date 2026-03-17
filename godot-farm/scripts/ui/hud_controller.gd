@@ -14,8 +14,7 @@ signal home_requested
 @onready var gold_label: Label = %GoldLabel
 @onready var gold_icon: TextureRect = %GoldIcon
 @onready var gold_frame: TextureRect = %GoldFrame
-@onready var player_title_label: Label = %PlayerTitleLabel
-@onready var name_edit: LineEdit = %NameEdit
+@onready var player_title_label: Label = %PlayerNameLabel
 @onready var sickle_button: TextureButton = %SickleButton
 @onready var water_button: TextureButton = %WaterButton
 @onready var plant_button: TextureButton = %PlantButton
@@ -49,10 +48,6 @@ func _ready():
 	inventory_button.pressed.connect(_on_inventory_pressed)
 	shop_button.pressed.connect(_on_shop_pressed)
 	home_button.pressed.connect(_on_home_pressed)
-	
-	# Connect name edit signal
-	if name_edit:
-		name_edit.text_changed.connect(_on_name_changed)
 	
 	# Initial UI update
 	var state = get_node_or_null("/root/StateManager")
@@ -141,13 +136,6 @@ func update_gold(amount: int):
 func _update_player_name(name: String):
 	if player_title_label:
 		player_title_label.text = "农场主：" + name
-
-func _on_name_changed(new_name: String):
-	# Update StateManager with new name
-	var state = get_node_or_null("/root/StateManager")
-	if state:
-		state.apply_action({"type": "set_player_name", "name": new_name})
-	print("[HUD] Player name changed to: %s" % new_name)
 
 ## Toast Notifications
 func show_toast(message: String):
