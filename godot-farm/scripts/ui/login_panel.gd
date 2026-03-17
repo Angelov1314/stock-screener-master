@@ -15,6 +15,7 @@ signal panel_closed
 @onready var status_label: Label = %StatusLabel
 
 var supabase_manager: Node = null
+const LOGIN_CACHE_PATH := "user://login_cache.json"
 
 func _ready():
 	login_button.pressed.connect(_on_login_pressed)
@@ -37,6 +38,9 @@ func _ready():
 		supabase_manager.user_data_loaded.connect(_on_user_data_loaded)
 	else:
 		print("[LoginPanel] Warning: SupabaseManager not found")
+	
+	# Load cached login info
+	_load_login_cache()
 	
 	# Focus email on start
 	if email_edit:
@@ -95,6 +99,7 @@ func _on_signup_pressed():
 
 func _on_supabase_login_success(user_id: String):
 	print("[LoginPanel] Supabase login success: %s" % user_id)
+	_save_login_cache()
 	# Store user_id temporarily in case user_data is empty
 	StateManager.set_data("temp_user_id", user_id)
 	# Load user data from database
@@ -135,6 +140,7 @@ func _on_user_data_loaded(user_data: Dictionary):
 
 func _local_login():
 	# Local fallback without Supabase
+	_save_login_cache()
 	var username = username_edit.text.strip_edges() if username_edit else "农场主"
 	var state = get_node_or_null("/root/StateManager")
 	if state:
@@ -142,6 +148,46 @@ func _local_login():
 	
 	login_successful.emit(username, "local_user")
 	_close_panel()
+
+func _save_login_cache():
+	var cache_data = {
+		"email": email_edit.text.strip_edges() if email_edit else "",
+		"password": password_edit.text if password_edit else ""
+	}
+	
+	var file = FileAccess.open(LOGIN_CACHE_PATH, FileAccess.WRITE)
+	if file:
+		file.store_string(JSON.stringify(cache_data))
+		file.close()
+		print("[LoginPanel] Login cache saved")
+	else:
+		print("[LoginPanel] Failed to save login cache")
+
+func _load_login_cache():
+	if not FileAccess.file_exists(LOGIN_CACHE_PATH):
+		return
+	
+	var file = FileAccess.open(LOGIN_CACHE_PATH, FileAccess.READ)
+	if not file:
+		print("[LoginPanel] Failed to open login cache")
+		return
+	
+	var content = file.get_as_text()
+	file.close()
+	
+	var json = JSON.new()
+	var err = json.parse(content)
+	if err != OK:
+		print("[LoginPanel] Failed to parse login cache")
+		return
+	
+	var cache_data = json.get_data()
+	if cache_data is Dictionary:
+		if email_edit:
+			email_edit.text = cache_data.get("email", "")
+		if password_edit:
+			password_edit.text = cache_data.get("password", "")
+		print("[LoginPanel] Login cache loaded")
 
 func _show_status(message: String):
 	if status_label:
