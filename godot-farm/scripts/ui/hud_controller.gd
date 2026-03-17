@@ -265,15 +265,27 @@ func _output_gold_frame_values():
 	if not gold_frame:
 		return
 	
+	# Calculate the four corner offsets based on position and size
+	var base_width = 100.0
+	var base_height = 40.0
+	
 	var output = """[Gold Frame Values]
-Offset: Vector2(%.1f, %.1f)
+Position: Vector2(%.1f, %.1f)
 Scale: Vector2(%.2f, %.2f)
 
-Code to paste:
+Scene file format (copy to hud.tscn):
+offset_left = %.1f
+offset_top = %.1f
+offset_right = %.1f
+offset_bottom = %.1f
+
+Script format:
 _gold_frame_offset = Vector2(%.1f, %.1f)
 _gold_frame_scale = Vector2(%.2f, %.2f)
 """ % [
 		_gold_frame_offset.x, _gold_frame_offset.y, _gold_frame_scale.x, _gold_frame_scale.y,
+		_gold_frame_offset.x, _gold_frame_offset.y, 
+		_gold_frame_offset.x + base_width, _gold_frame_offset.y + base_height,
 		_gold_frame_offset.x, _gold_frame_offset.y, _gold_frame_scale.x, _gold_frame_scale.y
 	]
 	
@@ -282,5 +294,9 @@ _gold_frame_scale = Vector2(%.2f, %.2f)
 	
 	# Try to copy to clipboard if available
 	if OS.has_feature("pc"):
-		DisplayServer.clipboard_set("_gold_frame_offset = Vector2(%.1f, %.1f)\n_gold_frame_scale = Vector2(%.2f, %.2f)" % [_gold_frame_offset.x, _gold_frame_offset.y, _gold_frame_scale.x, _gold_frame_scale.y])
+		var clipboard_text = """offset_left = %.1f
+offset_top = %.1f
+offset_right = %.1f
+offset_bottom = %.1f""" % [_gold_frame_offset.x, _gold_frame_offset.y, _gold_frame_offset.x + base_width, _gold_frame_offset.y + base_height]
+		DisplayServer.clipboard_set(clipboard_text)
 		print("[HUD] Values also copied to clipboard!")
