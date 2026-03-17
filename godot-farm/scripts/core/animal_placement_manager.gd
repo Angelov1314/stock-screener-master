@@ -233,6 +233,7 @@ func _spawn_animal_at(animal_id: String, world_pos: Vector2, instance_id: String
 	animal.name = "Placed_%s_%s" % [animal_id, instance_id.substr(0, 8)]
 	animal.position = world_pos
 	animal.animal_name = animal_id
+	animal.use_separate_frames = true
 	animal.walk_speed = randf_range(20, 35)
 	animal.scale_factor = randf_range(0.7, 0.9)
 
