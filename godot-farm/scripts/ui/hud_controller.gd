@@ -16,7 +16,6 @@ signal home_requested
 @onready var gold_frame: TextureRect = %GoldFrame
 @onready var player_title_label: Label = %PlayerTitleLabel
 @onready var name_edit: LineEdit = %NameEdit
-@onready var growth_info_label: Label = %GrowthInfoLabel
 @onready var sickle_button: TextureButton = %SickleButton
 @onready var water_button: TextureButton = %WaterButton
 @onready var plant_button: TextureButton = %PlantButton
