@@ -58,7 +58,12 @@ func get_crop_at(position: Vector2i) -> Node2D:
 
 func water_crop(crop_id: String) -> bool:
 	if active_crops.has(crop_id):
-		active_crops[crop_id].water()
+		var crop = active_crops[crop_id]
+		if crop.has_method("can_water") and not crop.can_water():
+			print("[CropManager] Crop cannot be watered anymore: %s" % crop_id)
+			return false
+		crop.water()
+		print("[CropManager] Watered %s (%d/5)" % [crop_id, crop.get_water_count()])
 		return true
 	return false
 

@@ -12,6 +12,9 @@ var is_watered: bool = false
 var total_growth_time: float = 120.0
 var stage_duration: float = 30.0
 var planted_at_unix: float = 0.0
+var water_count: int = 0
+const MAX_WATER_COUNT := 5
+const WATER_GROWTH_BOOST_SECONDS := 5.0
 
 var crop_container: Node2D = null
 var sprites: Array[Sprite2D] = []
@@ -102,6 +105,7 @@ func _plant_animation():
 		tween.tween_property(sprite, "scale", Vector2(0.455, 0.455), 0.4)
 
 func _on_timer_timeout():
+	_sync_stage_from_time()
 	if current_stage < 3:
 		current_stage += 1
 		_growth_animation()
@@ -143,7 +147,32 @@ func harvest() -> Dictionary:
 	return result
 
 func water() -> void:
+	if not can_water():
+		return
 	is_watered = true
+	water_count += 1
+	planted_at_unix -= WATER_GROWTH_BOOST_SECONDS
+	_sync_stage_from_time()
+	update_visual()
+	if can_harvest():
+		became_harvestable.emit()
+
+func can_water() -> bool:
+	return not can_harvest() and water_count < MAX_WATER_COUNT
+
+func get_water_count() -> int:
+	return water_count
+
+func _sync_stage_from_time() -> void:
+	if planted_at_unix <= 0.0:
+		return
+	var elapsed = max(Time.get_unix_time_from_system() - planted_at_unix, 0.0)
+	var computed_stage = int(floor(elapsed / stage_duration))
+	computed_stage = clamp(computed_stage, 0, 3)
+	if computed_stage != current_stage:
+		current_stage = computed_stage
+		if current_stage >= 3:
+			timer.stop()
 
 func get_remaining_time() -> float:
 	if can_harvest():
