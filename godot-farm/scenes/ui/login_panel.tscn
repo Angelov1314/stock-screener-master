@@ -44,12 +44,21 @@ text = "用户登录"
 horizontal_alignment = 1
 
 [node name="Spacer" type="Control" parent="CenterContainer/Panel/VBoxContainer"]
-custom_minimum_size = Vector2(0, 30)
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
+
+[node name="EmailLabel" type="Label" parent="CenterContainer/Panel/VBoxContainer"]
+layout_mode = 2
+text = "邮箱"
+
+[node name="EmailEdit" type="LineEdit" parent="CenterContainer/Panel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "请输入邮箱"
 
 [node name="UsernameLabel" type="Label" parent="CenterContainer/Panel/VBoxContainer"]
 layout_mode = 2
-text = "用户名"
+text = "用户名（新用户填写）"
 
 [node name="UsernameEdit" type="LineEdit" parent="CenterContainer/Panel/VBoxContainer"]
 unique_name_in_owner = true
@@ -63,17 +72,35 @@ text = "密码"
 [node name="PasswordEdit" type="LineEdit" parent="CenterContainer/Panel/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-placeholder_text = "请输入密码"
+placeholder_text = "请输入密码（至少6位）"
 secret = true
 
-[node name="Spacer2" type="Control" parent="CenterContainer/Panel/VBoxContainer"]
-custom_minimum_size = Vector2(0, 20)
-layout_mode = 2
-
-[node name="LoginButton" type="Button" parent="CenterContainer/Panel/VBoxContainer"]
+[node name="StatusLabel" type="Label" parent="CenterContainer/Panel/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = ""
+horizontal_alignment = 1
+
+[node name="Spacer2" type="Control" parent="CenterContainer/Panel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/Panel/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="LoginButton" type="Button" parent="CenterContainer/Panel/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 40)
+layout_mode = 2
 text = "登录"
+
+[node name="SignupButton" type="Button" parent="CenterContainer/Panel/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 40)
+layout_mode = 2
+text = "注册"
 
 [node name="CloseButton" type="Button" parent="CenterContainer/Panel/VBoxContainer"]
 unique_name_in_owner = true
