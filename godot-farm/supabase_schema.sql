@@ -319,3 +319,29 @@ CREATE POLICY "Authed users can read profiles" ON user_data
 
 -- 成功消息
 SELECT 'Database tables and triggers created successfully!' as status;
+
+-- 食物收藏阁表
+CREATE TABLE IF NOT EXISTS food_collection (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    item_id TEXT NOT NULL,
+    level INTEGER DEFAULT 1,
+    fragments INTEGER DEFAULT 0,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(user_id, item_id)
+);
+
+-- RLS for food_collection
+ALTER TABLE food_collection ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own collection" ON food_collection
+    FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert own collection" ON food_collection
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own collection" ON food_collection
+    FOR UPDATE USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete own collection" ON food_collection
+    FOR DELETE USING (auth.uid() = user_id);

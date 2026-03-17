@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🍖 食物收藏阁</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&display=swap');
+  
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  :root {
+    --bg: #1a1a2e;
+    --panel: #16213e;
+    --card: #0f3460;
+    --accent: #e94560;
+    --gold: #ffd700;
+    --silver: #c0c0c0;
+    --bronze: #cd7f32;
+    --common: #8b9dc3;
+    --uncommon: #4ecdc4;
+    --rare: #a855f7;
+    --epic: #f59e0b;
+    --legendary: #ef4444;
+  }
+  
+  body {
+    font-family: 'Noto Sans SC', sans-serif;
+    background: var(--bg);
+    color: #e0e0e0;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #0f3460, #533483);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 20px rgba(0,0,0,.5);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header h1 { font-size: 1.4em; }
+  .coins-display {
+    background: rgba(0,0,0,.3);
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 1.1em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .coins-display .coin-icon { font-size: 1.3em; }
+  
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 0;
+    background: var(--panel);
+    border-bottom: 2px solid rgba(255,255,255,.05);
+  }
+  .tab {
+    flex: 1;
+    padding: 14px;
+    text-align: center;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: .95em;
+    transition: all .2s;
+    border-bottom: 3px solid transparent;
+    user-select: none;
+  }
+  .tab:hover { background: rgba(255,255,255,.05); }
+  .tab.active {
+    border-bottom-color: var(--accent);
+    color: var(--accent);
+    background: rgba(233,69,96,.08);
+  }
+  
+  /* Pages */
+  .page { display: none; padding: 16px; }
+  .page.active { display: block; }
+  
+  /* Collection Grid */
+  .collection-stats {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .stat-badge {
+    background: var(--panel);
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-size: .85em;
+    border: 1px solid rgba(255,255,255,.1);
+  }
+  .filter-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    padding: 6px 14px;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,.15);
+    background: transparent;
+    color: #aaa;
+    cursor: pointer;
+    font-size: .8em;
+    font-family: inherit;
+    transition: all .2s;
+  }
+  .filter-btn.active, .filter-btn:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 10px;
+  }
+  
+  .card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .25s;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.4); }
+  .card.locked { opacity: .35; filter: grayscale(1); }
+  .card.locked:hover { transform: none; }
+  
+  .card[data-rarity="common"] { border-color: var(--common); }
+  .card[data-rarity="uncommon"] { border-color: var(--uncommon); }
+  .card[data-rarity="rare"] { border-color: var(--rare); }
+  .card[data-rarity="epic"] { border-color: var(--epic); }
+  .card[data-rarity="legendary"] { border-color: var(--legendary); }
+  .card.locked { border-color: #333 !important; }
+  
+  .card .rarity-tag {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    font-size: .55em;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .card[data-rarity="common"] .rarity-tag { background: var(--common); color: #1a1a2e; }
+  .card[data-rarity="uncommon"] .rarity-tag { background: var(--uncommon); color: #1a1a2e; }
+  .card[data-rarity="rare"] .rarity-tag { background: var(--rare); color: #fff; }
+  .card[data-rarity="epic"] .rarity-tag { background: var(--epic); color: #1a1a2e; }
+  .card[data-rarity="legendary"] .rarity-tag { background: var(--legendary); color: #fff; }
+  
+  .card img {
+    width: 64px;
+    height: 64px;
+    image-rendering: pixelated;
+    margin: 6px 0;
+  }
+  .card .name {
+    font-size: .7em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .card .level-bar {
+    margin-top: 4px;
+    height: 4px;
+    background: rgba(255,255,255,.1);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .card .level-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width .3s;
+  }
+  .card .level-text {
+    font-size: .6em;
+    color: #888;
+    margin-top: 2px;
+  }
+  
+  /* Shop */
+  .shop-section { margin-bottom: 24px; }
+  .shop-section h2 { margin-bottom: 12px; font-size: 1.1em; }
+  
+  .chest-row {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .chest-card {
+    background: var(--panel);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    width: 180px;
+    cursor: pointer;
+    transition: all .3s;
+    border: 2px solid rgba(255,255,255,.08);
+    position: relative;
+  }
+  .chest-card:hover { transform: scale(1.05); }
+  .chest-card:active { transform: scale(.97); }
+  
+  .chest-card.bronze-chest { border-color: var(--bronze); background: linear-gradient(180deg, rgba(205,127,50,.15), var(--panel)); }
+  .chest-card.silver-chest { border-color: var(--silver); background: linear-gradient(180deg, rgba(192,192,192,.15), var(--panel)); }
+  .chest-card.gold-chest { border-color: var(--gold); background: linear-gradient(180deg, rgba(255,215,0,.15), var(--panel)); }
+  
+  .chest-icon { font-size: 3em; margin-bottom: 8px; }
+  .chest-name { font-weight: 700; margin-bottom: 4px; }
+  .chest-price { font-size: 1.1em; font-weight: 700; }
+  .chest-info { font-size: .7em; color: #999; margin-top: 6px; line-height: 1.4; }
+  .chest-rate { font-size: .65em; color: #777; margin-top: 8px; text-align: left; line-height: 1.6; }
+  
+  /* Gacha Animation Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.85);
+    z-index: 200;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  .modal-overlay.show { display: flex; }
+  
+  .gacha-result {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    max-width: 600px;
+    padding: 24px;
+  }
+  .gacha-item {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 10px;
+    text-align: center;
+    width: 100px;
+    opacity: 0;
+    transform: scale(0) rotate(180deg);
+    animation: revealCard .5s forwards;
+    border: 2px solid transparent;
+  }
+  .gacha-item[data-rarity="common"] { border-color: var(--common); }
+  .gacha-item[data-rarity="uncommon"] { border-color: var(--uncommon); }
+  .gacha-item[data-rarity="rare"] { border-color: var(--rare); }
+  .gacha-item[data-rarity="epic"] { border-color: var(--epic); }
+  .gacha-item[data-rarity="legendary"] { border-color: var(--legendary); }
+  
+  .gacha-item.dupe { position: relative; }
+  .gacha-item.dupe::after {
+    content: '+碎片';
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    font-size: .55em;
+    background: var(--accent);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+  
+  .gacha-item img { width: 48px; height: 48px; image-rendering: pixelated; }
+  .gacha-item .name { font-size: .6em; margin-top: 4px; }
+  
+  @keyframes revealCard {
+    to { opacity: 1; transform: scale(1) rotate(0deg); }
+  }
+  
+  .modal-close {
+    margin-top: 20px;
+    padding: 12px 36px;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 24px;
+    font-size: 1em;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 700;
+  }
+  
+  /* Detail Modal */
+  .detail-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.85);
+    z-index: 200;
+    justify-content: center;
+    align-items: center;
+  }
+  .detail-modal.show { display: flex; }
+  .detail-content {
+    background: var(--panel);
+    border-radius: 20px;
+    padding: 32px;
+    text-align: center;
+    max-width: 320px;
+    width: 90%;
+    position: relative;
+  }
+  .detail-content img { width: 96px; height: 96px; image-rendering: pixelated; }
+  .detail-name { font-size: 1.2em; font-weight: 700; margin: 12px 0 4px; }
+  .detail-rarity { font-size: .8em; margin-bottom: 12px; }
+  .detail-level { font-size: .9em; margin-bottom: 8px; }
+  .detail-fragments { font-size: .8em; color: #aaa; margin-bottom: 16px; }
+  .detail-upgrade {
+    padding: 10px 28px;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: .9em;
+    transition: all .2s;
+  }
+  .detail-upgrade:disabled { opacity: .4; cursor: not-allowed; }
+  .detail-upgrade:not(:disabled):hover { transform: scale(1.05); }
+  .detail-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 1.4em;
+    cursor: pointer;
+  }
+  
+  /* Particles */
+  .particle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 300;
+    font-size: 1.5em;
+    animation: particleFly 1s forwards;
+  }
+  @keyframes particleFly {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-80px) scale(.5); }
+  }
+  
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--accent);
+    color: #fff;
+    padding: 10px 24px;
+    border-radius: 12px;
+    font-weight: 700;
+    z-index: 400;
+    transition: transform .3s;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  
+  /* Earn coins */
+  .earn-btn {
+    background: linear-gradient(135deg, #4ecdc4, #44a08d);
+    border: none;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: .9em;
+    transition: all .2s;
+  }
+  .earn-btn:hover { transform: scale(1.05); }
+  .earn-btn:active { transform: scale(.95); }
+  
+  /* Responsive */
+  @media (max-width: 500px) {
+    .grid { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px; }
+    .chest-card { width: 150px; padding: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🍖 食物收藏阁</h1>
+  <div class="coins-display">
+    <span class="coin-icon">🪙</span>
+    <span id="coinCount">1000</span>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" data-tab="collection">📚 收藏阁</div>
+  <div class="tab" data-tab="shop">🎰 商店</div>
+</div>
+
+<!-- Collection Page -->
+<div class="page active" id="page-collection">
+  <div class="collection-stats">
+    <div class="stat-badge">📖 已收集: <strong id="collectedCount">0</strong> / <span id="totalCount">0</span></div>
+    <div class="stat-badge">⭐ 总等级: <strong id="totalLevel">0</strong></div>
+    <div class="stat-badge">🧩 总碎片: <strong id="totalFragments">0</strong></div>
+  </div>
+  <div class="filter-row">
+    <button class="filter-btn active" data-filter="all">全部</button>
+    <button class="filter-btn" data-filter="owned">已收集</button>
+    <button class="filter-btn" data-filter="locked">未收集</button>
+    <button class="filter-btn" data-filter="common">普通</button>
+    <button class="filter-btn" data-filter="uncommon">优秀</button>
+    <button class="filter-btn" data-filter="rare">稀有</button>
+    <button class="filter-btn" data-filter="epic">史诗</button>
+    <button class="filter-btn" data-filter="legendary">传说</button>
+  </div>
+  <div class="grid" id="collectionGrid"></div>
+</div>
+
+<!-- Shop Page -->
+<div class="page" id="page-shop">
+  <div class="shop-section">
+    <h2>🎰 抽奖宝箱</h2>
+    <p style="font-size:.8em;color:#999;margin-bottom:16px">每个宝箱抽取10张图鉴，重复图鉴自动转化为碎片</p>
+    <div class="chest-row">
+      <div class="chest-card bronze-chest" onclick="openChest('bronze')">
+        <div class="chest-icon">🟤</div>
+        <div class="chest-name">铜宝箱</div>
+        <div class="chest-price">🪙 100</div>
+        <div class="chest-info">基础宝箱，以普通物品为主</div>
+        <div class="chest-rate">
+          普通 60% · 优秀 25%<br>
+          稀有 10% · 史诗 4% · 传说 1%
+        </div>
+      </div>
+      <div class="chest-card silver-chest" onclick="openChest('silver')">
+        <div class="chest-icon">⚪</div>
+        <div class="chest-name">银宝箱</div>
+        <div class="chest-price">🪙 500</div>
+        <div class="chest-info">进阶宝箱，稀有概率提升</div>
+        <div class="chest-rate">
+          普通 30% · 优秀 35%<br>
+          稀有 20% · 史诗 10% · 传说 5%
+        </div>
+      </div>
+      <div class="chest-card gold-chest" onclick="openChest('gold')">
+        <div class="chest-icon">🟡</div>
+        <div class="chest-name">金宝箱</div>
+        <div class="chest-price">🪙 2000</div>
+        <div class="chest-info">至尊宝箱，保底史诗以上</div>
+        <div class="chest-rate">
+          普通 10% · 优秀 20%<br>
+          稀有 30% · 史诗 25% · 传说 15%
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="shop-section" style="text-align:center;margin-top:32px">
+    <h2>💰 赚取金币</h2>
+    <p style="font-size:.8em;color:#999;margin-bottom:12px">测试用：每次点击获得500金币</p>
+    <button class="earn-btn" onclick="earnCoins()">💰 领取金币 +500</button>
+  </div>
+</div>
+
+<!-- Gacha Result Modal -->
+<div class="modal-overlay" id="gachaModal">
+  <div class="gacha-result" id="gachaResult"></div>
+  <button class="modal-close" onclick="closeGacha()">收下！</button>
+</div>
+
+<!-- Detail Modal -->
+<div class="detail-modal" id="detailModal">
+  <div class="detail-content">
+    <button class="detail-close" onclick="closeDetail()">✕</button>
+    <img id="detailImg" src="">
+    <div class="detail-name" id="detailName"></div>
+    <div class="detail-rarity" id="detailRarity"></div>
+    <div class="detail-level" id="detailLevel"></div>
+    <div class="detail-fragments" id="detailFragments"></div>
+    <button class="detail-upgrade" id="detailUpgrade" onclick="upgradeItem()">升级</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============ DATA ============
+const ALL_FOODS = [
+  "apple_juice","apple_pie","bacon_and_eggs","bean_stew","beehive","blue_flowers",
+  "blueberries","bread_loaf","brown_mushroom","brown_onion","butter_block","butter_slices",
+  "carrot","chicken_wing","chocolate_cake","coffee_mug","corn","cranberries","creamy_soup",
+  "dough_bowl_1","dough_bowl_2","dried_herbs","dried_sauces","egg_half","eggplant",
+  "flour_sack","fresh_herbs","green_apple","green_bell_pepper","green_salad","ham",
+  "hearty_stew_pot","herb_jar","herb_oil","honey","honey_bottle","honeycomb","hot_cocoa",
+  "hot_coffee","hot_sauce","jam","ketchup","milk_bottle","mixed_mushrooms","mixed_salad",
+  "mushroom_soup","noodle_soup","orange_juice","orange_pie","orange_tomato","pasta_bowl",
+  "pickle_jar","pie","pie_crust","plain_spaghetti","potato","potato_bowl","pumpkin_pie",
+  "purple_berries","raspberries","red_apple","red_bell_pepper","red_berries","red_flowers",
+  "red_mushroom","rice_bowl","sandwich","sliced_bread","spaghetti_bolognese","steak",
+  "stew_pot","strawberry","sugar_bag","teacup","teapot","tomato","tomato_soup","wheat",
+  "wheat_stalk","white_cheese_wheel","white_onion","wildflowers","wrap_bowl","yeast",
+  "yellow_bell_pepper","yellow_cheese_wheel"
+];
+
+const RARITY_ORDER = ['common','uncommon','rare','epic','legendary'];
+const RARITY_NAMES = { common:'普通', uncommon:'优秀', rare:'稀有', epic:'史诗', legendary:'传说' };
+const RARITY_COLORS = { common:'#8b9dc3', uncommon:'#4ecdc4', rare:'#a855f7', epic:'#f59e0b', legendary:'#ef4444' };
+const UPGRADE_COST = [5, 10, 20, 50]; // fragments needed for level 1→2, 2→3, 3→4, 4→5
+const MAX_LEVEL = 5;
+const FRAGMENTS_PER_DUPE = 3;
+
+// Assign rarity deterministically based on name hash
+function hashStr(s) { let h=0; for(let i=0;i<s.length;i++) h=((h<<5)-h)+s.charCodeAt(i); return Math.abs(h); }
+
+const ITEM_DB = {};
+ALL_FOODS.forEach(id => {
+  const h = hashStr(id) % 100;
+  let rarity;
+  if (h < 45) rarity = 'common';
+  else if (h < 70) rarity = 'uncommon';
+  else if (h < 85) rarity = 'rare';
+  else if (h < 95) rarity = 'epic';
+  else rarity = 'legendary';
+  
+  const name = id.replace(/_/g,' ').replace(/\d+/g,'').trim()
+    .split(' ').map(w=>w[0].toUpperCase()+w.slice(1)).join(' ');
+  
+  ITEM_DB[id] = { id, name, rarity, img: `assets/food/${id}.png` };
+});
+
+// Group by rarity for gacha
+const ITEMS_BY_RARITY = {};
+RARITY_ORDER.forEach(r => ITEMS_BY_RARITY[r] = Object.values(ITEM_DB).filter(i=>i.rarity===r));
+
+// ============ STATE ============
+function loadState() {
+  const saved = localStorage.getItem('foodCollection');
+  if (saved) return JSON.parse(saved);
+  return { coins: 1000, owned: {} }; // owned: { id: { level, fragments } }
+}
+function saveState() { localStorage.setItem('foodCollection', JSON.stringify(state)); }
+
+let state = loadState();
+let currentDetailId = null;
+
+// ============ CHEST CONFIG ============
+const CHESTS = {
+  bronze: { cost: 100, rates: { common:.60, uncommon:.25, rare:.10, epic:.04, legendary:.01 } },
+  silver: { cost: 500, rates: { common:.30, uncommon:.35, rare:.20, epic:.10, legendary:.05 } },
+  gold:   { cost: 2000, rates: { common:.10, uncommon:.20, rare:.30, epic:.25, legendary:.15 } },
+};
+
+// ============ GACHA ============
+function rollRarity(rates) {
+  const r = Math.random();
+  let cum = 0;
+  for (const rarity of RARITY_ORDER) {
+    cum += rates[rarity];
+    if (r < cum) return rarity;
+  }
+  return 'common';
+}
+
+function openChest(tier) {
+  const chest = CHESTS[tier];
+  if (state.coins < chest.cost) { showToast('金币不足！'); return; }
+  
+  state.coins -= chest.cost;
+  const results = [];
+  
+  for (let i = 0; i < 10; i++) {
+    const rarity = rollRarity(chest.rates);
+    const pool = ITEMS_BY_RARITY[rarity];
+    const item = pool[Math.floor(Math.random() * pool.length)];
+    const isDupe = !!state.owned[item.id];
+    
+    if (!state.owned[item.id]) {
+      state.owned[item.id] = { level: 1, fragments: 0 };
+    } else {
+      state.owned[item.id].fragments += FRAGMENTS_PER_DUPE;
+    }
+    
+    results.push({ ...item, isDupe });
+  }
+  
+  saveState();
+  showGachaResults(results);
+  updateUI();
+}
+
+function showGachaResults(results) {
+  const container = document.getElementById('gachaResult');
+  container.innerHTML = '';
+  results.forEach((item, i) => {
+    const el = document.createElement('div');
+    el.className = 'gacha-item' + (item.isDupe ? ' dupe' : '');
+    el.dataset.rarity = item.rarity;
+    el.style.animationDelay = `${i * .1}s`;
+    el.innerHTML = `<img src="${item.img}"><div class="name">${item.name}</div>`;
+    container.appendChild(el);
+  });
+  document.getElementById('gachaModal').classList.add('show');
+  
+  // particles
+  results.forEach((item, i) => {
+    setTimeout(() => spawnParticle(item.rarity), i * 100 + 400);
+  });
+}
+
+function closeGacha() { document.getElementById('gachaModal').classList.remove('show'); }
+
+// ============ COLLECTION GRID ============
+function renderGrid(filter = 'all') {
+  const grid = document.getElementById('collectionGrid');
+  grid.innerHTML = '';
+  
+  let items = Object.values(ITEM_DB);
+  
+  // Sort: owned first, then by rarity (legendary first)
+  items.sort((a, b) => {
+    const aOwned = state.owned[a.id] ? 1 : 0;
+    const bOwned = state.owned[b.id] ? 1 : 0;
+    if (aOwned !== bOwned) return bOwned - aOwned;
+    return RARITY_ORDER.indexOf(b.rarity) - RARITY_ORDER.indexOf(a.rarity);
+  });
+  
+  items.forEach(item => {
+    const owned = state.owned[item.id];
+    
+    // Filter
+    if (filter === 'owned' && !owned) return;
+    if (filter === 'locked' && owned) return;
+    if (RARITY_ORDER.includes(filter) && item.rarity !== filter) return;
+    
+    const card = document.createElement('div');
+    card.className = 'card' + (owned ? '' : ' locked');
+    card.dataset.rarity = item.rarity;
+    
+    const level = owned ? owned.level : 0;
+    const levelPct = owned ? ((level - 1) / (MAX_LEVEL - 1)) * 100 : 0;
+    
+    card.innerHTML = `
+      <span class="rarity-tag">${RARITY_NAMES[item.rarity]}</span>
+      <img src="${item.img}" alt="${item.name}">
+      <div class="name">${item.name}</div>
+      ${owned ? `
+        <div class="level-bar"><div class="level-fill" style="width:${levelPct}%;background:${RARITY_COLORS[item.rarity]}"></div></div>
+        <div class="level-text">Lv.${level} · 碎片:${owned.fragments}</div>
+      ` : '<div class="level-text" style="color:#555">未收集</div>'}
+    `;
+    
+    if (owned) card.onclick = () => showDetail(item.id);
+    grid.appendChild(card);
+  });
+}
+
+// ============ DETAIL ============
+function showDetail(id) {
+  currentDetailId = id;
+  const item = ITEM_DB[id];
+  const owned = state.owned[id];
+  if (!owned) return;
+  
+  document.getElementById('detailImg').src = item.img;
+  document.getElementById('detailName').textContent = item.name;
+  document.getElementById('detailRarity').innerHTML = `<span style="color:${RARITY_COLORS[item.rarity]}">${RARITY_NAMES[item.rarity]}</span>`;
+  
+  updateDetailLevel();
+  document.getElementById('detailModal').classList.add('show');
+}
+
+function updateDetailLevel() {
+  const owned = state.owned[currentDetailId];
+  if (!owned) return;
+  
+  document.getElementById('detailLevel').textContent = `等级: ${'⭐'.repeat(owned.level)} (Lv.${owned.level}/${MAX_LEVEL})`;
+  
+  const btn = document.getElementById('detailUpgrade');
+  if (owned.level >= MAX_LEVEL) {
+    document.getElementById('detailFragments').textContent = `碎片: ${owned.fragments} (已满级)`;
+    btn.disabled = true;
+    btn.textContent = '已满级 ✨';
+  } else {
+    const cost = UPGRADE_COST[owned.level - 1];
+    document.getElementById('detailFragments').textContent = `碎片: ${owned.fragments} / ${cost}`;
+    btn.disabled = owned.fragments < cost;
+    btn.textContent = `升级 (需要${cost}碎片)`;
+  }
+}
+
+function upgradeItem() {
+  const owned = state.owned[currentDetailId];
+  if (!owned || owned.level >= MAX_LEVEL) return;
+  const cost = UPGRADE_COST[owned.level - 1];
+  if (owned.fragments < cost) return;
+  
+  owned.fragments -= cost;
+  owned.level++;
+  saveState();
+  updateDetailLevel();
+  updateUI();
+  showToast(`升级成功！Lv.${owned.level} ⭐`);
+}
+
+function closeDetail() { document.getElementById('detailModal').classList.remove('show'); }
+
+// ============ UI UPDATE ============
+function updateUI() {
+  document.getElementById('coinCount').textContent = state.coins;
+  const ownedCount = Object.keys(state.owned).length;
+  document.getElementById('collectedCount').textContent = ownedCount;
+  document.getElementById('totalCount').textContent = ALL_FOODS.length;
+  
+  let totalLvl = 0, totalFrag = 0;
+  Object.values(state.owned).forEach(o => { totalLvl += o.level; totalFrag += o.fragments; });
+  document.getElementById('totalLevel').textContent = totalLvl;
+  document.getElementById('totalFragments').textContent = totalFrag;
+  
+  const activeFilter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
+  renderGrid(activeFilter);
+}
+
+// ============ MISC ============
+function earnCoins() {
+  state.coins += 500;
+  saveState();
+  updateUI();
+  showToast('+500 🪙');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function spawnParticle(rarity) {
+  const emojis = { common:'⚪', uncommon:'🟢', rare:'🟣', epic:'🟠', legendary:'🔴' };
+  const el = document.createElement('div');
+  el.className = 'particle';
+  el.textContent = emojis[rarity] || '✨';
+  el.style.left = (Math.random()*80+10) + '%';
+  el.style.top = (Math.random()*60+20) + '%';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1000);
+}
+
+// ============ TABS ============
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.onclick = () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('page-' + tab.dataset.tab).classList.add('active');
+  };
+});
+
+// Filters
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderGrid(btn.dataset.filter);
+  };
+});
+
+// Close modals on backdrop click
+document.getElementById('gachaModal').onclick = e => { if (e.target === e.currentTarget) closeGacha(); };
+document.getElementById('detailModal').onclick = e => { if (e.target === e.currentTarget) closeDetail(); };
+
+// Init
+updateUI();
+</script>
+</body>
+</html>

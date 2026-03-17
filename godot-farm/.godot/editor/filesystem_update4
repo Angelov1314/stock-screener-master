@@ -14,3 +14,4 @@ res://scripts/ui/shop_ui.gd
 res://scripts/ui/planting_menu_new.gd
 res://scripts/ui/interactive_animal.gd
 res://scripts/core/animal_placement_manager.gd
+res://scripts/systems/collection_manager.gd

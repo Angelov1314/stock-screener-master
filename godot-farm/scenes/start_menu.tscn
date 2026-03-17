@@ -111,11 +111,14 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 28
 text = "用户登录"
 
-[node name="SettingsButton" type="TextureButton" parent="CenterContainer/VBoxContainer"]
+[node name="SettingsButton" type="TextureButton" parent="."]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(60, 60)
-layout_mode = 2
-size_flags_horizontal = 4
+layout_mode = 1
+anchors_preset = 0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 80.0
+offset_bottom = 80.0
 tooltip_text = "设置"
 texture_normal = ExtResource("settings_icon")
 ignore_texture_size = true

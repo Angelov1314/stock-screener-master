@@ -13,6 +13,7 @@ signal iap_requested
 signal settings_requested
 signal friends_requested
 signal community_requested
+signal collection_requested
 
 # UI References
 @onready var gold_label: Label = %GoldLabel
@@ -27,8 +28,9 @@ signal community_requested
 @onready var iap_button: TextureButton = %IAPButton
 @onready var home_button: TextureButton = %HomeButton
 @onready var settings_button: TextureButton = %SettingsButton
-@onready var friends_button: Button = %FriendsButton
-@onready var community_button: Button = %CommunityButton
+@onready var friends_button: TextureButton = %FriendsButton
+@onready var community_button: TextureButton = %CommunityButton
+@onready var collection_button: TextureButton = %CollectionButton
 @onready var toast_container: VBoxContainer = %ToastContainer
 
 # Player Info UI References
@@ -60,6 +62,7 @@ func _ready():
 	settings_button.pressed.connect(_on_settings_pressed)
 	friends_button.pressed.connect(_on_friends_pressed)
 	community_button.pressed.connect(_on_community_pressed)
+	collection_button.pressed.connect(_on_collection_pressed)
 	
 	# Initial UI update
 	var state = get_node_or_null("/root/StateManager")
@@ -144,6 +147,11 @@ func _on_friends_pressed():
 func _on_community_pressed():
 	community_requested.emit()
 	print("[HUD] Community button pressed")
+
+func _on_collection_pressed():
+	_animate_button(collection_button)
+	collection_requested.emit()
+	print("[HUD] Collection button pressed")
 
 func _update_button_states():
 	# Highlight active button

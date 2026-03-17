@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://collection001"]
+
+[ext_resource type="Script" path="res://scripts/ui/collection_panel.gd" id="1_collection_script"]
+
+[node name="CollectionPanel" type="CanvasLayer"]
+layer = 10
+script = ExtResource("1_collection_script")

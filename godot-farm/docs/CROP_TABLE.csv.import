@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://dhxct4125jsrp"
+
+[deps]
+
+files=["res://docs/CROP_TABLE.种子价格.translation", "res://docs/CROP_TABLE.收获经验.translation", "res://docs/CROP_TABLE.金币.translation", "res://docs/CROP_TABLE.解锁等级.translation", "res://docs/CROP_TABLE.生长时间.translation"]
+
+source_file="res://docs/CROP_TABLE.csv"
+dest_files=["res://docs/CROP_TABLE.种子价格.translation", "res://docs/CROP_TABLE.收获经验.translation", "res://docs/CROP_TABLE.金币.translation", "res://docs/CROP_TABLE.解锁等级.translation", "res://docs/CROP_TABLE.生长时间.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

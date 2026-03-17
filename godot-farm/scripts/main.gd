@@ -79,6 +79,7 @@ func _initialize_game():
 	hud.settings_requested.connect(_on_settings_requested)
 	hud.friends_requested.connect(_on_friends_requested)
 	hud.community_requested.connect(_on_community_requested)
+	hud.collection_requested.connect(_on_collection_requested)
 	
 	# Connect inventory panel close
 	inventory_panel.panel_closed.connect(_on_inventory_closed)
@@ -261,6 +262,11 @@ func _on_user_data_loaded(user_data: Dictionary):
 			supabase_manager.farm_animals_loaded.connect(_on_farm_animals_loaded)
 		supabase_manager.load_farm_animals(current_user_id)
 
+	# Load food collection from Supabase
+	var collection_mgr = get_node_or_null("/root/CollectionManager")
+	if collection_mgr:
+		collection_mgr.load_from_supabase()
+
 func _on_inventory_loaded(inventory_data):
 	print("[Main] Inventory loaded from Supabase: %s" % [str(inventory_data)])
 	
@@ -437,10 +443,13 @@ func _on_inventory_closed():
 
 func _on_home_requested():
 	print("[Main] Returning to start menu...")
-	# Save farm crops and animals before leaving
+	# Save farm crops, animals, and collection before leaving
 	if not current_user_id.is_empty() and supabase_manager:
 		_save_farm_crops()
 		_save_farm_animals()
+		var coll_mgr = get_node_or_null("/root/CollectionManager")
+		if coll_mgr:
+			coll_mgr._save_to_supabase()
 	# Return to level select screen
 	get_tree().change_scene_to_file("res://scenes/start_menu.tscn")
 
@@ -468,6 +477,17 @@ func _on_friends_requested():
 		var panel = scene.instantiate()
 		add_child(panel)
 		panel.panel_closed.connect(func(): pass)
+
+func _on_collection_requested():
+	print("[Main] Opening collection panel...")
+	var audio_mgr = get_node_or_null("/root/AudioManager")
+	if audio_mgr:
+		audio_mgr.play_sfx_path("res://assets/audio/sfx/ui/paper_open.mp3", 0.9)
+	var scene = load("res://scenes/ui/collection_panel.tscn")
+	if scene:
+		var panel = scene.instantiate()
+		add_child(panel)
+		panel.collection_closed.connect(func(): pass)
 
 func _on_community_requested():
 	print("[Main] Opening community panel...")

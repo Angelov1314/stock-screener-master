@@ -400,6 +400,98 @@ func save_farm_animals(user_id: String, animals: Array):
 	del_req.request(delete_url, headers, HTTPClient.METHOD_DELETE)
 
 ## =============================================
+## Food Collection Operations
+## =============================================
+
+signal food_collection_loaded(collection_data: Array)
+signal food_collection_saved(success: bool)
+
+func load_food_collection(user_id: String):
+	"""Load food collection for this user"""
+	var url = SUPABASE_URL + "/rest/v1/food_collection?user_id=eq." + user_id
+	var auth_token = access_token if not access_token.is_empty() else SUPABASE_KEY
+	var headers = [
+		"apikey: " + SUPABASE_KEY,
+		"Authorization: Bearer " + auth_token
+	]
+
+	var req = HTTPRequest.new()
+	add_child(req)
+	req.request_completed.connect(func(result, code, hdrs, body):
+		var body_str = body.get_string_from_utf8()
+		if result == HTTPRequest.RESULT_SUCCESS and (code == 200 or code == 201):
+			var json = JSON.new()
+			if json.parse(body_str) == OK and json.data is Array:
+				print("[SupabaseManager] Food collection loaded: %d items" % json.data.size())
+				food_collection_loaded.emit(json.data)
+			else:
+				food_collection_loaded.emit([])
+		else:
+			print("[SupabaseManager] Food collection load failed: %d" % code)
+			food_collection_loaded.emit([])
+		req.queue_free()
+	)
+	req.request(url, headers, HTTPClient.METHOD_GET)
+
+func save_food_collection(user_id: String, collection: Dictionary):
+	"""Save food collection via upsert (delete all then insert)"""
+	if access_token.is_empty():
+		print("[SupabaseManager] ERROR: No access token for saving food collection!")
+		food_collection_saved.emit(false)
+		return
+
+	# Delete all collection items for this user first
+	var delete_url = SUPABASE_URL + "/rest/v1/food_collection?user_id=eq." + user_id
+	var headers = [
+		"apikey: " + SUPABASE_KEY,
+		"Authorization: Bearer " + access_token,
+		"Content-Type: application/json"
+	]
+
+	var del_req = HTTPRequest.new()
+	add_child(del_req)
+	del_req.request_completed.connect(func(result, code, hdrs, body):
+		del_req.queue_free()
+
+		if collection.size() == 0:
+			print("[SupabaseManager] Food collection empty, cleared")
+			food_collection_saved.emit(true)
+			return
+
+		var insert_url = SUPABASE_URL + "/rest/v1/food_collection"
+		var insert_headers = [
+			"apikey: " + SUPABASE_KEY,
+			"Authorization: Bearer " + access_token,
+			"Content-Type: application/json"
+		]
+
+		var items = []
+		for item_id in collection:
+			items.append({
+				"user_id": user_id,
+				"item_id": item_id,
+				"level": collection[item_id].get("level", 1),
+				"fragments": collection[item_id].get("fragments", 0),
+				"updated_at": Time.get_datetime_string_from_system()
+			})
+
+		var ins_req = HTTPRequest.new()
+		add_child(ins_req)
+		ins_req.request_completed.connect(func(r2, c2, h2, b2):
+			var b2_str = b2.get_string_from_utf8()
+			if r2 == HTTPRequest.RESULT_SUCCESS and (c2 == 200 or c2 == 201):
+				print("[SupabaseManager] Food collection saved: %d items" % items.size())
+				food_collection_saved.emit(true)
+			else:
+				print("[SupabaseManager] Food collection save failed: %d, body: %s" % [c2, b2_str])
+				food_collection_saved.emit(false)
+			ins_req.queue_free()
+		)
+		ins_req.request(insert_url, insert_headers, HTTPClient.METHOD_POST, JSON.stringify(items))
+	)
+	del_req.request(delete_url, headers, HTTPClient.METHOD_DELETE)
+
+## =============================================
 ## Friends & Community API
 ## =============================================
 

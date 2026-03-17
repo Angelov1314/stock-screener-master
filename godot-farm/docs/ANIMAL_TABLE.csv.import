@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://pn7k4rijyd3g"
+
+[deps]
+
+files=["res://docs/ANIMAL_TABLE.购买价格.translation", "res://docs/ANIMAL_TABLE.生产经验.translation", "res://docs/ANIMAL_TABLE.金币.translation", "res://docs/ANIMAL_TABLE.出售金币.translation", "res://docs/ANIMAL_TABLE.收获时间.translation", "res://docs/ANIMAL_TABLE.解锁等级.translation"]
+
+source_file="res://docs/ANIMAL_TABLE.csv"
+dest_files=["res://docs/ANIMAL_TABLE.购买价格.translation", "res://docs/ANIMAL_TABLE.生产经验.translation", "res://docs/ANIMAL_TABLE.金币.translation", "res://docs/ANIMAL_TABLE.出售金币.translation", "res://docs/ANIMAL_TABLE.收获时间.translation", "res://docs/ANIMAL_TABLE.解锁等级.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true
