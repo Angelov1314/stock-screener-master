@@ -35,15 +35,28 @@ func _setup_purchase_grid():
 
 func _create_purchase_card(tier: Dictionary) -> Panel:
 	var card = Panel.new()
-	card.custom_minimum_size = Vector2(150, 180)
+	card.custom_minimum_size = Vector2(160, 200)
 	
-	# Style
+	# Card Style - 低饱和高级感配色
 	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0.95, 0.95, 0.9)
-	style.corner_radius_top_left = 10
-	style.corner_radius_top_right = 10
-	style.corner_radius_bottom_left = 10
-	style.corner_radius_bottom_right = 10
+	if tier.popular:
+		# 热销卡片 - 暖灰色调
+		style.bg_color = Color(0.88, 0.85, 0.80, 0.98)
+		style.border_width_left = 2
+		style.border_width_top = 2
+		style.border_width_right = 2
+		style.border_width_bottom = 2
+		style.border_color = Color(0.75, 0.70, 0.60, 0.8)
+	else:
+		# 普通卡片 - 冷灰色调
+		style.bg_color = Color(0.92, 0.92, 0.94, 0.95)
+	
+	style.corner_radius_top_left = 12
+	style.corner_radius_top_right = 12
+	style.corner_radius_bottom_left = 12
+	style.corner_radius_bottom_right = 12
+	style.shadow_size = 3
+	style.shadow_color = Color(0, 0, 0, 0.15)
 	card.add_theme_stylebox_override("panel", style)
 	
 	# Container
@@ -51,42 +64,97 @@ func _create_purchase_card(tier: Dictionary) -> Panel:
 	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
 	card.add_child(vbox)
 	
-	# Gold amount
+	# Spacer
+	var top_spacer = Control.new()
+	top_spacer.custom_minimum_size = Vector2(0, 10)
+	vbox.add_child(top_spacer)
+	
+	# Gold amount - 深棕色，低饱和
 	var gold_label = Label.new()
 	gold_label.text = "💰 %d" % tier.gold
 	gold_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	gold_label.add_theme_font_size_override("font_size", 24)
-	gold_label.add_theme_color_override("font_color", Color(0.8, 0.6, 0.1))
+	gold_label.add_theme_font_size_override("font_size", 26)
+	gold_label.add_theme_color_override("font_color", Color(0.55, 0.45, 0.30))
 	vbox.add_child(gold_label)
 	
-	# Price
+	# Price - 深灰蓝色，低饱和
 	var price_label = Label.new()
 	price_label.text = tier.price
 	price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	price_label.add_theme_font_size_override("font_size", 20)
-	price_label.add_theme_color_override("font_color", Color(0.2, 0.6, 0.2))
+	price_label.add_theme_font_size_override("font_size", 22)
+	price_label.add_theme_color_override("font_color", Color(0.35, 0.38, 0.45))
 	vbox.add_child(price_label)
 	
-	# Popular badge
+	# Popular badge - 柔和的暖色调
 	if tier.popular:
-		var badge = Label.new()
-		badge.text = "🔥 热销"
-		badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		badge.add_theme_font_size_override("font_size", 14)
-		badge.add_theme_color_override("font_color", Color(0.9, 0.3, 0.1))
-		vbox.add_child(badge)
+		var badge_bg = Panel.new()
+		badge_bg.custom_minimum_size = Vector2(80, 26)
+		
+		var badge_style = StyleBoxFlat.new()
+		badge_style.bg_color = Color(0.85, 0.60, 0.35, 0.9)
+		badge_style.corner_radius_top_left = 13
+		badge_style.corner_radius_top_right = 13
+		badge_style.corner_radius_bottom_left = 13
+		badge_style.corner_radius_bottom_right = 13
+		badge_bg.add_theme_stylebox_override("panel", badge_style)
+		
+		var badge_label = Label.new()
+		badge_label.text = "✦ 热销"
+		badge_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		badge_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		badge_label.add_theme_font_size_override("font_size", 13)
+		badge_label.add_theme_color_override("font_color", Color(0.98, 0.96, 0.94))
+		badge_bg.add_child(badge_label)
+		
+		vbox.add_child(badge_bg)
+	else:
+		# Spacer for non-popular items
+		var badge_spacer = Control.new()
+		badge_spacer.custom_minimum_size = Vector2(0, 26)
+		vbox.add_child(badge_spacer)
 	
-	# Buy button
+	# Buy button - 低饱和高级感配色
 	var buy_btn = Button.new()
 	buy_btn.text = "购买"
-	buy_btn.custom_minimum_size = Vector2(100, 40)
-	var btn_style = StyleBoxFlat.new()
-	btn_style.bg_color = Color(0.3, 0.7, 0.3)
-	btn_style.corner_radius_top_left = 5
-	btn_style.corner_radius_top_right = 5
-	btn_style.corner_radius_bottom_left = 5
-	btn_style.corner_radius_bottom_right = 5
-	buy_btn.add_theme_stylebox_override("normal", btn_style)
+	buy_btn.custom_minimum_size = Vector2(100, 44)
+	
+	# Normal state - 深灰蓝色，低饱和
+	var btn_normal = StyleBoxFlat.new()
+	btn_normal.bg_color = Color(0.25, 0.28, 0.35, 0.95)
+	btn_normal.corner_radius_top_left = 8
+	btn_normal.corner_radius_top_right = 8
+	btn_normal.corner_radius_bottom_left = 8
+	btn_normal.corner_radius_bottom_right = 8
+	btn_normal.shadow_size = 2
+	btn_normal.shadow_color = Color(0, 0, 0, 0.3)
+	buy_btn.add_theme_stylebox_override("normal", btn_normal)
+	
+	# Hover state - 稍亮的灰蓝色
+	var btn_hover = StyleBoxFlat.new()
+	btn_hover.bg_color = Color(0.32, 0.35, 0.42, 0.98)
+	btn_hover.corner_radius_top_left = 8
+	btn_hover.corner_radius_top_right = 8
+	btn_hover.corner_radius_bottom_left = 8
+	btn_hover.corner_radius_bottom_right = 8
+	btn_hover.shadow_size = 4
+	btn_hover.shadow_color = Color(0, 0, 0, 0.4)
+	buy_btn.add_theme_stylebox_override("hover", btn_hover)
+	
+	# Pressed state - 更深的灰蓝色
+	var btn_pressed = StyleBoxFlat.new()
+	btn_pressed.bg_color = Color(0.18, 0.21, 0.28, 1.0)
+	btn_pressed.corner_radius_top_left = 8
+	btn_pressed.corner_radius_top_right = 8
+	btn_pressed.corner_radius_bottom_left = 8
+	btn_pressed.corner_radius_bottom_right = 8
+	buy_btn.add_theme_stylebox_override("pressed", btn_pressed)
+	
+	# 文字颜色 - 米白色
+	buy_btn.add_theme_color_override("font_color", Color(0.95, 0.94, 0.92))
+	buy_btn.add_theme_color_override("font_hover_color", Color(1.0, 1.0, 1.0))
+	buy_btn.add_theme_color_override("font_pressed_color", Color(0.85, 0.84, 0.82))
+	buy_btn.add_theme_font_size_override("font_size", 16)
+	
 	buy_btn.pressed.connect(_on_purchase_pressed.bind(tier.gold, tier.price))
 	vbox.add_child(buy_btn)
 	
