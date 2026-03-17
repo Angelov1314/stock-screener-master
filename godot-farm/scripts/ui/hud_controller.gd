@@ -33,9 +33,10 @@ signal water_mode_toggled(active: bool)
 var _sickle_active: bool = false
 var _water_active: bool = false
 
-# Debug mode for gold frame positioning
+# Gold frame positioning (tuned values)
+var _gold_frame_offset: Vector2 = Vector2(-26.0, -11.0)
+var _gold_frame_scale: Vector2 = Vector2(1.65, 1.65)
 var _gold_frame_debug_mode: bool = false
-var _gold_frame_offset: Vector2 = Vector2.ZERO
 
 func _ready():
 	print("[HUDController] Initializing...")
@@ -63,9 +64,12 @@ func _ready():
 		_update_player_name("农场主")
 		_update_player_info("农场主", 1, 0, 100, 0.0)
 	
-	# Load gold frame texture
+	# Load gold frame texture and apply tuned position
 	if gold_frame:
 		gold_frame.texture = load("res://assets/ui/gold_frame.png")
+		gold_frame.position = _gold_frame_offset
+		gold_frame.scale = _gold_frame_scale
+		print("[HUDController] Gold frame positioned at %s with scale %s" % [_gold_frame_offset, _gold_frame_scale])
 	
 	print("[HUDController] Initialized")
 
@@ -234,14 +238,14 @@ func _input(event):
 				_gold_frame_offset.x += move_speed
 				changed = true
 			KEY_EQUAL, KEY_KP_ADD:
-				gold_frame.scale += Vector2(scale_speed, scale_speed)
+				_gold_frame_scale += Vector2(scale_speed, scale_speed)
 				changed = true
 			KEY_MINUS, KEY_KP_SUBTRACT:
-				gold_frame.scale -= Vector2(scale_speed, scale_speed)
+				_gold_frame_scale -= Vector2(scale_speed, scale_speed)
 				changed = true
 			KEY_R:
-				_gold_frame_offset = Vector2.ZERO
-				gold_frame.scale = Vector2.ONE
+				_gold_frame_offset = Vector2(-26.0, -11.0)
+				_gold_frame_scale = Vector2(1.65, 1.65)
 				changed = true
 	
 	if changed:
@@ -251,10 +255,11 @@ func _update_gold_frame_position():
 	if not gold_frame:
 		return
 	
-	# Apply offset to the gold frame
+	# Apply offset and scale to the gold frame
 	gold_frame.position = _gold_frame_offset
+	gold_frame.scale = _gold_frame_scale
 	
-	print("[HUD Debug] Gold frame offset: %s, scale: %s" % [_gold_frame_offset, gold_frame.scale])
+	print("[HUD Debug] Gold frame offset: %s, scale: %s" % [_gold_frame_offset, _gold_frame_scale])
 
 func _output_gold_frame_values():
 	if not gold_frame:
@@ -266,10 +271,10 @@ Scale: Vector2(%.2f, %.2f)
 
 Code to paste:
 _gold_frame_offset = Vector2(%.1f, %.1f)
-gold_frame.scale = Vector2(%.2f, %.2f)
+_gold_frame_scale = Vector2(%.2f, %.2f)
 """ % [
-		_gold_frame_offset.x, _gold_frame_offset.y, gold_frame.scale.x, gold_frame.scale.y,
-		_gold_frame_offset.x, _gold_frame_offset.y, gold_frame.scale.x, gold_frame.scale.y
+		_gold_frame_offset.x, _gold_frame_offset.y, _gold_frame_scale.x, _gold_frame_scale.y,
+		_gold_frame_offset.x, _gold_frame_offset.y, _gold_frame_scale.x, _gold_frame_scale.y
 	]
 	
 	print(output)
@@ -277,5 +282,5 @@ gold_frame.scale = Vector2(%.2f, %.2f)
 	
 	# Try to copy to clipboard if available
 	if OS.has_feature("pc"):
-		DisplayServer.clipboard_set("_gold_frame_offset = Vector2(%.1f, %.1f)\ngold_frame.scale = Vector2(%.2f, %.2f)" % [_gold_frame_offset.x, _gold_frame_offset.y, gold_frame.scale.x, gold_frame.scale.y])
+		DisplayServer.clipboard_set("_gold_frame_offset = Vector2(%.1f, %.1f)\n_gold_frame_scale = Vector2(%.2f, %.2f)" % [_gold_frame_offset.x, _gold_frame_offset.y, _gold_frame_scale.x, _gold_frame_scale.y])
 		print("[HUD] Values also copied to clipboard!")
