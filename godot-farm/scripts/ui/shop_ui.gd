@@ -18,33 +18,40 @@ var buy_button: Button
 
 var shop_data: Dictionary = {}
 var selected_item: Dictionary = {}
-var sell_mode: bool = false  # true when viewing inventory to sell
+var sell_mode: bool = false
 
 const REFRESH_COST: int = 50
-const UI_WOOD := Color(0.34, 0.28, 0.22, 0.82)
-const UI_PAPER := Color(0.87, 0.81, 0.71, 0.52)
-const UI_PAPER_HOVER := Color(0.92, 0.87, 0.78, 0.62)
-const UI_BORDER := Color(0.53, 0.43, 0.33, 0.55)
-const UI_TEXT := Color(0.28, 0.22, 0.18)
-const UI_ACCENT := Color(0.63, 0.52, 0.39)
+
+# Cozy farm palette - soft, low-contrast, warm
+const COL_BG_DEEP := Color(0.26, 0.22, 0.17, 0.92)
+const COL_PAPER := Color(0.88, 0.83, 0.74, 0.45)
+const COL_PAPER_HOVER := Color(0.92, 0.87, 0.78, 0.55)
+const COL_SEED := Color(0.82, 0.78, 0.66, 0.42)
+const COL_SEED_HOVER := Color(0.87, 0.83, 0.72, 0.55)
+const COL_SEED_BORDER := Color(0.62, 0.55, 0.40, 0.40)
+const COL_BORDER := Color(0.50, 0.42, 0.32, 0.45)
+const COL_TEXT := Color(0.30, 0.24, 0.18)
+const COL_TEXT_MUTED := Color(0.48, 0.40, 0.30, 0.85)
+const COL_ACCENT := Color(0.63, 0.52, 0.39)
+const COL_ACCENT_GREEN := Color(0.42, 0.56, 0.36, 0.85)
+const COL_BTN := Color(0.58, 0.48, 0.36, 0.72)
+const COL_BTN_SELL := Color(0.52, 0.46, 0.38, 0.72)
 
 func _ready():
-	# Get nodes
 	gold_label = get_node_or_null("%GoldLabel")
 	animals_grid = get_node_or_null("%AnimalsGrid")
 	plants_grid = get_node_or_null("%PlantsGrid")
 	inventory_grid = get_node_or_null("%InventoryGrid")
 	refresh_button = get_node_or_null("%RefreshButton")
 	item_panel = get_node_or_null("MainContainer/ItemPanel")
-	
+
 	if refresh_button:
 		refresh_button.pressed.connect(_on_refresh_pressed)
-	
+
 	var close_button = get_node_or_null("MainContainer/BottomBar/CloseButton")
 	if close_button:
 		close_button.pressed.connect(_on_close_pressed)
-	
-	# Item panel children
+
 	if item_panel:
 		var item_vbox = item_panel.get_node_or_null("ItemVBox")
 		if item_vbox:
@@ -56,56 +63,61 @@ func _ready():
 			if buy_button:
 				buy_button.pressed.connect(_on_buy_pressed)
 		item_panel.visible = false
-	
+
 	_apply_cozy_theme()
 	_load_shop_data()
 	_populate_shop()
 	_update_gold_display()
 
+# ── Theme ────────────────────────────────────────────────────────────────
+
 func _apply_cozy_theme():
+	# Main container panel
 	var main_container = get_node_or_null("MainContainer") as Panel
 	if main_container:
-		var panel_style = StyleBoxFlat.new()
-		panel_style.bg_color = UI_WOOD
-		panel_style.border_color = Color(0.46, 0.37, 0.28, 0.72)
-		panel_style.border_width_left = 2
-		panel_style.border_width_top = 2
-		panel_style.border_width_right = 2
-		panel_style.border_width_bottom = 3
-		panel_style.corner_radius_top_left = 22
-		panel_style.corner_radius_top_right = 22
-		panel_style.corner_radius_bottom_left = 22
-		panel_style.corner_radius_bottom_right = 22
-		panel_style.shadow_color = Color(0.18, 0.12, 0.08, 0.18)
-		panel_style.shadow_size = 12
-		main_container.add_theme_stylebox_override("panel", panel_style)
-	
-	var item_panel_node = get_node_or_null("MainContainer/ItemPanel") as Panel
-	if item_panel_node:
-		var item_style = StyleBoxFlat.new()
-		item_style.bg_color = Color(0.84, 0.78, 0.68, 0.72)
-		item_style.border_color = UI_BORDER
-		item_style.border_width_left = 1
-		item_style.border_width_top = 1
-		item_style.border_width_right = 1
-		item_style.border_width_bottom = 2
-		item_style.corner_radius_top_left = 18
-		item_style.corner_radius_top_right = 18
-		item_style.corner_radius_bottom_left = 18
-		item_style.corner_radius_bottom_right = 18
-		item_panel_node.add_theme_stylebox_override("panel", item_style)
-	
+		var s = StyleBoxFlat.new()
+		s.bg_color = COL_BG_DEEP
+		s.border_color = Color(0.46, 0.37, 0.28, 0.65)
+		s.set_border_width_all(2)
+		s.border_width_bottom = 3
+		s.set_corner_radius_all(22)
+		s.shadow_color = Color(0.14, 0.10, 0.06, 0.22)
+		s.shadow_size = 14
+		main_container.add_theme_stylebox_override("panel", s)
+
+	# Item detail panel
+	var ip = get_node_or_null("MainContainer/ItemPanel") as Panel
+	if ip:
+		var s = StyleBoxFlat.new()
+		s.bg_color = Color(0.82, 0.76, 0.66, 0.78)
+		s.border_color = COL_BORDER
+		s.set_border_width_all(1)
+		s.border_width_bottom = 2
+		s.set_corner_radius_all(18)
+		s.shadow_color = Color(0.18, 0.12, 0.06, 0.25)
+		s.shadow_size = 8
+		ip.add_theme_stylebox_override("panel", s)
+
+	# Title & gold label colours
 	for path in [
 		"MainContainer/VBoxContainer/TitleLabel",
 		"MainContainer/VBoxContainer/GoldDisplay/GoldLabel",
+	]:
+		var lbl = get_node_or_null(path) as Label
+		if lbl:
+			lbl.add_theme_color_override("font_color", Color(0.94, 0.90, 0.82))
+
+	# Item panel labels
+	for path in [
 		"MainContainer/ItemPanel/ItemVBox/ItemName",
 		"MainContainer/ItemPanel/ItemVBox/ItemDesc",
 		"MainContainer/ItemPanel/ItemVBox/ItemPrice"
 	]:
-		var label = get_node_or_null(path)
-		if label and label is Label:
-			label.add_theme_color_override("font_color", UI_TEXT)
-	
+		var lbl = get_node_or_null(path) as Label
+		if lbl:
+			lbl.add_theme_color_override("font_color", COL_TEXT)
+
+	# Buttons
 	for btn_path in [
 		"MainContainer/VBoxContainer/BottomBar/RefreshButton",
 		"MainContainer/VBoxContainer/BottomBar/CloseButton",
@@ -113,26 +125,108 @@ func _apply_cozy_theme():
 	]:
 		var btn = get_node_or_null(btn_path) as Button
 		if btn:
-			_apply_soft_button_theme(btn)
+			_style_button(btn, COL_BTN)
 
-func _apply_soft_button_theme(btn: Button, base_color: Color = Color(0.63, 0.52, 0.39, 0.72)):
+	# Tab container styling
+	_style_tab_container()
+
+func _style_tab_container():
+	var tc = get_node_or_null("MainContainer/VBoxContainer/TabContainer") as TabContainer
+	if not tc:
+		return
+
+	# Tab panel (content area) – transparent so scroll containers show cards nicely
+	var panel_style = StyleBoxFlat.new()
+	panel_style.bg_color = Color(0.22, 0.18, 0.14, 0.35)
+	panel_style.set_corner_radius_all(0)
+	panel_style.corner_radius_bottom_left = 14
+	panel_style.corner_radius_bottom_right = 14
+	panel_style.set_border_width_all(0)
+	tc.add_theme_stylebox_override("panel", panel_style)
+
+	# Tab bar styles
+	var tab_sel = StyleBoxFlat.new()
+	tab_sel.bg_color = Color(0.72, 0.64, 0.50, 0.65)
+	tab_sel.set_corner_radius_all(0)
+	tab_sel.corner_radius_top_left = 12
+	tab_sel.corner_radius_top_right = 12
+	tab_sel.set_border_width_all(0)
+	tab_sel.content_margin_left = 14
+	tab_sel.content_margin_right = 14
+	tab_sel.content_margin_top = 6
+	tab_sel.content_margin_bottom = 6
+	tc.add_theme_stylebox_override("tab_selected", tab_sel)
+
+	var tab_unsel = StyleBoxFlat.new()
+	tab_unsel.bg_color = Color(0.42, 0.36, 0.28, 0.40)
+	tab_unsel.set_corner_radius_all(0)
+	tab_unsel.corner_radius_top_left = 10
+	tab_unsel.corner_radius_top_right = 10
+	tab_unsel.content_margin_left = 12
+	tab_unsel.content_margin_right = 12
+	tab_unsel.content_margin_top = 5
+	tab_unsel.content_margin_bottom = 5
+	tc.add_theme_stylebox_override("tab_unselected", tab_unsel)
+
+	var tab_hover = tab_unsel.duplicate()
+	tab_hover.bg_color = Color(0.52, 0.44, 0.34, 0.50)
+	tc.add_theme_stylebox_override("tab_hovered", tab_hover)
+
+	tc.add_theme_color_override("font_selected_color", Color(0.96, 0.93, 0.86))
+	tc.add_theme_color_override("font_unselected_color", Color(0.78, 0.72, 0.62))
+	tc.add_theme_color_override("font_hovered_color", Color(0.90, 0.85, 0.76))
+
+func _style_button(btn: Button, base: Color = COL_BTN):
 	var normal = StyleBoxFlat.new()
-	normal.bg_color = base_color
-	normal.border_color = Color(0.42, 0.33, 0.25, 0.42)
+	normal.bg_color = base
+	normal.border_color = Color(base.r - 0.12, base.g - 0.12, base.b - 0.12, 0.40)
 	normal.border_width_bottom = 2
-	normal.corner_radius_top_left = 14
-	normal.corner_radius_top_right = 14
-	normal.corner_radius_bottom_left = 14
-	normal.corner_radius_bottom_right = 14
+	normal.set_corner_radius_all(14)
+	normal.content_margin_left = 10
+	normal.content_margin_right = 10
+	normal.content_margin_top = 4
+	normal.content_margin_bottom = 4
 	var hover = normal.duplicate()
-	hover.bg_color = Color(base_color.r + 0.05, base_color.g + 0.05, base_color.b + 0.05, base_color.a)
+	hover.bg_color = Color(base.r + 0.06, base.g + 0.06, base.b + 0.06, base.a)
 	var pressed = normal.duplicate()
-	pressed.bg_color = Color(base_color.r - 0.04, base_color.g - 0.04, base_color.b - 0.04, base_color.a)
+	pressed.bg_color = Color(base.r - 0.05, base.g - 0.05, base.b - 0.05, base.a)
+	pressed.border_width_bottom = 1
 	btn.add_theme_stylebox_override("normal", normal)
 	btn.add_theme_stylebox_override("hover", hover)
 	btn.add_theme_stylebox_override("pressed", pressed)
-	btn.add_theme_color_override("font_color", Color(0.98, 0.96, 0.92))
+	btn.add_theme_color_override("font_color", Color(0.96, 0.93, 0.88))
 	btn.add_theme_color_override("font_hover_color", Color(1, 1, 1))
+	btn.add_theme_color_override("font_pressed_color", Color(0.90, 0.86, 0.78))
+
+# ── Card helpers ─────────────────────────────────────────────────────────
+
+func _make_card_style(bg: Color, border: Color, radius: int = 18) -> StyleBoxFlat:
+	var s = StyleBoxFlat.new()
+	s.bg_color = bg
+	s.border_color = border
+	s.set_border_width_all(1)
+	s.border_width_bottom = 2
+	s.set_corner_radius_all(radius)
+	s.content_margin_left = 6
+	s.content_margin_right = 6
+	s.content_margin_top = 8
+	s.content_margin_bottom = 8
+	return s
+
+func _make_card_base(min_size: Vector2, normal_style: StyleBoxFlat, hover_style: StyleBoxFlat) -> Button:
+	var card = Button.new()
+	card.custom_minimum_size = min_size
+	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	card.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	card.add_theme_stylebox_override("normal", normal_style)
+	card.add_theme_stylebox_override("hover", hover_style)
+	# Pressed = slightly darker hover
+	var ps = hover_style.duplicate()
+	ps.bg_color.a = min(ps.bg_color.a + 0.08, 1.0)
+	card.add_theme_stylebox_override("pressed", ps)
+	return card
+
+# ── Data ─────────────────────────────────────────────────────────────────
 
 func _load_shop_data():
 	var file_path = "res://data/shop_items.json"
@@ -145,46 +239,116 @@ func _load_shop_data():
 func _populate_shop():
 	if not animals_grid or not plants_grid or not inventory_grid:
 		return
-	
-	# Clear
 	for child in animals_grid.get_children():
 		child.queue_free()
 	for child in plants_grid.get_children():
 		child.queue_free()
 	for child in inventory_grid.get_children():
 		child.queue_free()
-	
-	# Create animal cards
 	for animal in shop_data.get("animals", []):
 		_create_card(animals_grid, animal, "animal")
-	
-	# Create plant cards
 	for plant in shop_data.get("plants", []):
 		_create_card(plants_grid, plant, "plant")
-	
-	# Populate inventory
 	_populate_inventory()
+
+# ── Shop cards ───────────────────────────────────────────────────────────
+
+func _create_card(parent: GridContainer, item: Dictionary, item_type: String):
+	var is_seed = item_type == "plant"
+
+	var bg = COL_SEED if is_seed else COL_PAPER
+	var bg_h = COL_SEED_HOVER if is_seed else COL_PAPER_HOVER
+	var bdr = COL_SEED_BORDER if is_seed else COL_BORDER
+	var radius = 22 if is_seed else 18
+
+	var ns = _make_card_style(bg, bdr, radius)
+	var hs = _make_card_style(bg_h, bdr, radius)
+	hs.border_width_bottom = 3
+
+	var card = _make_card_base(Vector2(140, 185), ns, hs)
+
+	# Inner vbox
+	var vbox = VBoxContainer.new()
+	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	vbox.add_theme_constant_override("separation", 4)
+	vbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	vbox.offset_left = 6; vbox.offset_right = -6
+	vbox.offset_top = 8; vbox.offset_bottom = -8
+	card.add_child(vbox)
+
+	# Seed packet label at top
+	if is_seed:
+		var tag = Label.new()
+		tag.text = "🌱 SEED"
+		tag.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		tag.add_theme_color_override("font_color", COL_ACCENT_GREEN)
+		tag.add_theme_font_size_override("font_size", 11)
+		vbox.add_child(tag)
+
+	# Icon
+	var icon = TextureRect.new()
+	icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon.custom_minimum_size = Vector2(68, 68)
+	icon.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	var icon_path = _get_icon_path(item.id, item_type)
+	if ResourceLoader.exists(icon_path):
+		icon.texture = load(icon_path)
+	vbox.add_child(icon)
+
+	# Divider line for seeds
+	if is_seed:
+		var sep = HSeparator.new()
+		sep.add_theme_stylebox_override("separator", _thin_separator())
+		vbox.add_child(sep)
+
+	# Name
+	var name_lbl = Label.new()
+	name_lbl.text = item.name
+	name_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	name_lbl.add_theme_color_override("font_color", COL_TEXT)
+	name_lbl.add_theme_font_size_override("font_size", 15)
+	vbox.add_child(name_lbl)
+
+	# Price
+	var price_lbl = Label.new()
+	price_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	price_lbl.add_theme_font_size_override("font_size", 13)
+	if is_seed:
+		price_lbl.text = "🌱 %d 金" % item.price
+		price_lbl.add_theme_color_override("font_color", COL_ACCENT_GREEN)
+	else:
+		price_lbl.text = "💰 %d" % item.price
+		price_lbl.add_theme_color_override("font_color", COL_TEXT_MUTED)
+	vbox.add_child(price_lbl)
+
+	card.pressed.connect(_on_card_clicked.bind(item, item_type))
+	parent.add_child(card)
+
+func _thin_separator() -> StyleBoxFlat:
+	var s = StyleBoxFlat.new()
+	s.bg_color = COL_SEED_BORDER
+	s.content_margin_top = 1
+	s.content_margin_bottom = 1
+	return s
+
+# ── Inventory cards ──────────────────────────────────────────────────────
 
 func _populate_inventory():
 	var state = get_node_or_null("/root/StateManager")
 	if not state:
 		return
-	
 	var inventory = state.get_inventory()
 	var crop_mgr = get_node_or_null("/root/CropManager")
 	if not crop_mgr:
 		return
-	
 	for item_id in inventory.keys():
 		var count = inventory[item_id]
 		if count <= 0:
 			continue
-		
-		# Get crop data for sell price
 		var crop_data = crop_mgr.crop_database.get(item_id, {})
 		var sell_price = crop_data.get("sell_price", 10)
 		var display_name = crop_data.get("name", item_id)
-		
 		var item = {
 			"id": item_id,
 			"name": display_name,
@@ -194,360 +358,254 @@ func _populate_inventory():
 		_create_inventory_card(item)
 
 func _create_inventory_card(item: Dictionary):
-	var card = Button.new()
-	card.custom_minimum_size = Vector2(140, 180)
-	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	
-	# Style
-	var style = StyleBoxFlat.new()
-	style.bg_color = UI_PAPER
-	style.border_color = UI_BORDER
-	style.border_width_left = 1
-	style.border_width_top = 1
-	style.border_width_right = 1
-	style.border_width_bottom = 2
-	style.corner_radius_top_left = 18
-	style.corner_radius_top_right = 18
-	style.corner_radius_bottom_left = 18
-	style.corner_radius_bottom_right = 18
-	card.add_theme_stylebox_override("normal", style)
-	
-	var hover_style = style.duplicate()
-	hover_style.bg_color = UI_PAPER_HOVER
-	hover_style.border_width_bottom = 3
-	card.add_theme_stylebox_override("hover", hover_style)
-	
-	# Container
+	var ns = _make_card_style(COL_PAPER, COL_BORDER, 18)
+	var hs = _make_card_style(COL_PAPER_HOVER, COL_BORDER, 18)
+	hs.border_width_bottom = 3
+	var card = _make_card_base(Vector2(140, 185), ns, hs)
+
 	var vbox = VBoxContainer.new()
 	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	vbox.add_theme_constant_override("separation", 3)
+	vbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	vbox.offset_left = 6; vbox.offset_right = -6
+	vbox.offset_top = 8; vbox.offset_bottom = -8
 	card.add_child(vbox)
-	
+
 	# Icon
 	var icon = TextureRect.new()
 	icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	icon.custom_minimum_size = Vector2(80, 80)
-	
+	icon.custom_minimum_size = Vector2(64, 64)
+	icon.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	var icon_path = "res://assets/crops/%s/%s_mature.png" % [item.id, item.id]
 	if ResourceLoader.exists(icon_path):
 		icon.texture = load(icon_path)
-	
 	vbox.add_child(icon)
-	
+
 	# Name
-	var name_label = Label.new()
-	name_label.text = item.name
-	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	vbox.add_child(name_label)
-	
+	var name_lbl = Label.new()
+	name_lbl.text = item.name
+	name_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	name_lbl.add_theme_color_override("font_color", COL_TEXT)
+	name_lbl.add_theme_font_size_override("font_size", 14)
+	vbox.add_child(name_lbl)
+
 	# Count
-	var count_label = Label.new()
-	count_label.text = "拥有: %d" % item.count
-	count_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	vbox.add_child(count_label)
-	
+	var count_lbl = Label.new()
+	count_lbl.text = "× %d" % item.count
+	count_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	count_lbl.add_theme_color_override("font_color", COL_TEXT_MUTED)
+	count_lbl.add_theme_font_size_override("font_size", 13)
+	vbox.add_child(count_lbl)
+
 	# Sell price
-	var price_label = Label.new()
-	price_label.text = "出售 💰 %d" % item.sell_price
-	price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	price_label.add_theme_color_override("font_color", Color(0.2, 0.6, 0.2))
-	vbox.add_child(price_label)
-	
-	# Buttons container
+	var price_lbl = Label.new()
+	price_lbl.text = "💰 %d / 个" % item.sell_price
+	price_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	price_lbl.add_theme_color_override("font_color", COL_ACCENT_GREEN)
+	price_lbl.add_theme_font_size_override("font_size", 12)
+	vbox.add_child(price_lbl)
+
+	# Action buttons
 	var btn_hbox = HBoxContainer.new()
 	btn_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	btn_hbox.add_theme_constant_override("separation", 6)
 	vbox.add_child(btn_hbox)
-	
-	# Place button (for animals)
+
 	if item.id in ["cow", "pig", "sheep", "zebra", "shiba", "koala", "cat", "capybara", "alpaca"]:
 		var place_btn = Button.new()
 		place_btn.text = "放置"
-		place_btn.custom_minimum_size = Vector2(60, 30)
-		_apply_soft_button_theme(place_btn, Color(0.56, 0.52, 0.44, 0.74))
+		place_btn.custom_minimum_size = Vector2(52, 28)
+		_style_button(place_btn, Color(0.50, 0.48, 0.40, 0.72))
+		place_btn.add_theme_font_size_override("font_size", 12)
 		place_btn.pressed.connect(_place_animal.bind(item))
 		btn_hbox.add_child(place_btn)
-	
-	# Sell button
+
 	var sell_btn = Button.new()
 	sell_btn.text = "出售"
-	sell_btn.custom_minimum_size = Vector2(60, 30)
-	_apply_soft_button_theme(sell_btn, Color(0.55, 0.47, 0.36, 0.78))
+	sell_btn.custom_minimum_size = Vector2(52, 28)
+	_style_button(sell_btn, COL_BTN_SELL)
+	sell_btn.add_theme_font_size_override("font_size", 12)
 	sell_btn.pressed.connect(_sell_item_direct.bind(item))
 	btn_hbox.add_child(sell_btn)
-	
-	# Click card for details
+
 	card.pressed.connect(_on_inventory_card_clicked.bind(item))
-	
 	inventory_grid.add_child(card)
 
-func _place_animal(item: Dictionary):
-	"""Place animal from inventory onto the farm map"""
-	_play_ui_click()
-	var state = get_node_or_null("/root/StateManager")
-	if not state:
-		return
-	
-	# Check if we have the animal
-	var inventory = state.get_inventory()
-	if inventory.get(item.id, 0) <= 0:
-		print("[ShopUI] No %s to place" % item.id)
-		return
-	
-	# Remove from inventory
-	var success = state.apply_action({"type": "remove_item", "item_id": item.id, "amount": 1})
-	if not success:
-		return
-	
-	# Spawn animal on farm
-	var farm = get_node_or_null("/root/Main/Farm")
-	if farm and farm.has_method("spawn_animal"):
-		farm.spawn_animal(item.id)
-		print("[ShopUI] Placed %s on farm" % item.id)
-		_populate_inventory()  # Refresh display
-	else:
-		print("[ShopUI] ERROR: Cannot spawn animal, farm not found")
-
-func _sell_item_direct(item: Dictionary):
-	"""Sell item directly from inventory card"""
-	_play_ui_click()
-	var crop_mgr = get_node_or_null("/root/CropManager")
-	if not crop_mgr:
-		return
-	
-	var gold_earned = crop_mgr.sell_crop(item.id, 1)
-	if gold_earned > 0:
-		print("[ShopUI] Sold %s for %d gold" % [item.id, gold_earned])
-		_update_gold_display()
-		_populate_inventory()  # Refresh display
-	else:
-		print("[ShopUI] Failed to sell %s" % item.id)
-
-func _play_ui_click():
-	var audio_mgr = get_node_or_null("/root/AudioManager")
-	if audio_mgr:
-		audio_mgr.play_sfx_path("res://assets/audio/sfx/ui/ui_click.mp3", 0.8)
-
-func _on_inventory_card_clicked(item: Dictionary):
-	_play_ui_click()
-	selected_item = item.duplicate()
-	sell_mode = true
-	
-	if item_name:
-		item_name.text = item.name
-	if item_desc:
-		item_desc.text = "拥有数量: %d" % item.count
-	if item_price:
-		item_price.text = "出售价格: 💰 %d/个" % item.sell_price
-	
-	var icon_path = "res://assets/crops/%s/%s_mature.png" % [item.id, item.id]
-	if item_icon:
-		if ResourceLoader.exists(icon_path):
-			item_icon.texture = load(icon_path)
-		else:
-			item_icon.texture = null
-	
-	if buy_button:
-		buy_button.disabled = false
-		buy_button.text = "出售"
-	
-	if item_panel:
-		item_panel.visible = true
-
-func _create_card(parent: GridContainer, item: Dictionary, item_type: String):
-	var card = Button.new()
-	card.custom_minimum_size = Vector2(140, 180)
-	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	card.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	
-	# Style
-	var style = StyleBoxFlat.new()
-	style.bg_color = UI_PAPER
-	style.border_color = UI_BORDER
-	style.border_width_left = 1
-	style.border_width_top = 1
-	style.border_width_right = 1
-	style.border_width_bottom = 2
-	style.corner_radius_top_left = 18
-	style.corner_radius_top_right = 18
-	style.corner_radius_bottom_left = 18
-	style.corner_radius_bottom_right = 18
-	card.add_theme_stylebox_override("normal", style)
-	
-	var hover_style = style.duplicate()
-	hover_style.bg_color = UI_PAPER_HOVER
-	hover_style.border_width_bottom = 3
-	card.add_theme_stylebox_override("hover", hover_style)
-	
-	# Container
-	var vbox = VBoxContainer.new()
-	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
-	card.add_child(vbox)
-	
-	# Icon
-	var icon = TextureRect.new()
-	icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
-	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	icon.custom_minimum_size = Vector2(80, 80)
-	
-	var icon_path = _get_icon_path(item.id, item_type)
-	if ResourceLoader.exists(icon_path):
-		icon.texture = load(icon_path)
-	
-	vbox.add_child(icon)
-	
-	# Name
-	var name_label = Label.new()
-	name_label.text = item.name
-	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	vbox.add_child(name_label)
-	
-	# Price
-	var price_label = Label.new()
-	price_label.text = "💰 %d" % item.price
-	price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	vbox.add_child(price_label)
-	
-	# Click
-	card.pressed.connect(_on_card_clicked.bind(item, item_type))
-	
-	parent.add_child(card)
+# ── Icon path resolution ────────────────────────────────────────────────
 
 func _get_icon_path(id: String, item_type: String) -> String:
 	if item_type == "animal":
-		var paths = [
-			"res://assets/characters/%s/idle/%s_idle_01.png" % [id, id],  # capybara_idle_01.png
-			"res://assets/characters/%s/idle/%s_idle_0.png" % [id, id],   # cow_idle_0.png
-			"res://assets/characters/%s/idle/%s_idle_1.png" % [id, id],   # cow_idle_1.png
-			"res://assets/characters/%s/idle/idle_0.png" % [id],          # pig/idle_0.png (no prefix)
-			"res://assets/characters/%s/idle/idle_1.png" % [id],          # pig/idle_1.png (no prefix)
-		]
-		for path in paths:
+		for path in [
+			"res://assets/characters/%s/idle/%s_idle_01.png" % [id, id],
+			"res://assets/characters/%s/idle/%s_idle_0.png" % [id, id],
+			"res://assets/characters/%s/idle/%s_idle_1.png" % [id, id],
+			"res://assets/characters/%s/idle/idle_0.png" % [id],
+			"res://assets/characters/%s/idle/idle_1.png" % [id],
+		]:
 			if ResourceLoader.exists(path):
 				return path
 	else:
-		var paths = [
+		# Prefer seed image for shop plant cards
+		for path in [
 			"res://assets/crops/%s/%s_seed.png" % [id, id],
 			"res://assets/crops/%s/%s_seeds.png" % [id, id],
 			"res://assets/crops/%s/seed.png" % [id],
 			"res://assets/crops/%s/%s_mature.png" % [id, id]
-		]
-		for path in paths:
+		]:
 			if ResourceLoader.exists(path):
 				return path
 	return ""
+
+# ── Card click handlers ─────────────────────────────────────────────────
 
 func _on_card_clicked(item: Dictionary, item_type: String):
 	_play_ui_click()
 	if not item_name or not buy_button:
 		return
-	
 	selected_item = item.duplicate()
 	selected_item["type"] = item_type
-	
+	sell_mode = false
+
 	item_name.text = item.name
-	item_desc.text = item.description
-	item_price.text = "💰 %d" % item.price
-	
+	if item_desc:
+		item_desc.text = item.description
+	if item_price:
+		item_price.text = "💰 %d 金" % item.price
+
 	var icon_path = _get_icon_path(item.id, item_type)
-	if ResourceLoader.exists(icon_path):
-		item_icon.texture = load(icon_path)
-	else:
-		item_icon.texture = null
-	
+	if item_icon:
+		item_icon.texture = load(icon_path) if ResourceLoader.exists(icon_path) else null
+
 	var gold = _get_current_gold()
 	buy_button.disabled = gold < item.price
 	buy_button.text = "金币不足" if buy_button.disabled else "购买"
-	
-	item_panel.visible = true
+	_style_button(buy_button, COL_ACCENT_GREEN if not buy_button.disabled else Color(0.5, 0.45, 0.38, 0.6))
+
+	if item_panel:
+		item_panel.visible = true
+
+func _on_inventory_card_clicked(item: Dictionary):
+	_play_ui_click()
+	selected_item = item.duplicate()
+	sell_mode = true
+
+	if item_name:
+		item_name.text = item.name
+	if item_desc:
+		item_desc.text = "拥有数量: %d" % item.count
+	if item_price:
+		item_price.text = "出售价: 💰 %d / 个" % item.sell_price
+
+	var icon_path = "res://assets/crops/%s/%s_mature.png" % [item.id, item.id]
+	if item_icon:
+		item_icon.texture = load(icon_path) if ResourceLoader.exists(icon_path) else null
+
+	if buy_button:
+		buy_button.disabled = false
+		buy_button.text = "出售"
+		_style_button(buy_button, COL_BTN_SELL)
+
+	if item_panel:
+		item_panel.visible = true
+
+# ── Buy / sell ───────────────────────────────────────────────────────────
 
 func _on_buy_pressed():
 	_play_ui_click()
 	if selected_item.is_empty():
 		return
-	
+
 	if sell_mode:
-		# Sell the crop
 		_sell_crop(selected_item.id, 1)
 	else:
-		# Buy from shop
 		var price = selected_item.price
 		var state = get_node_or_null("/root/StateManager")
-		
 		if not state:
 			return
-		
 		var gold = state.get_gold()
 		if gold < price:
 			return
-		
-		# Deduct gold via StateManager
 		var success = state.apply_action({"type": "remove_gold", "amount": price})
 		if not success:
-			print("[ShopUI] Failed to deduct gold")
 			return
-		
+
 		var audio_mgr = get_node_or_null("/root/AudioManager")
 		if audio_mgr:
 			audio_mgr.play_sfx_path("res://assets/audio/sfx/ui/coin_asmr.mp3", 0.85)
-		print("[ShopUI] Bought %s for %d gold" % [selected_item.id, price])
 		item_purchased.emit(selected_item.id, selected_item.type)
-		
+
 		if selected_item.type == "animal":
 			animal_purchased.emit(selected_item.id)
-			# Add animal to inventory
 			state.apply_action({"type": "add_item", "item_id": selected_item.id, "amount": 1})
-			# Add experience for purchasing animal
 			state.apply_action({"type": "add_experience", "amount": 25})
 			if audio_mgr:
 				audio_mgr.play_sfx_path("res://assets/audio/sfx/ui/xp_gain.mp3", 0.9)
-			print("[ShopUI] Added animal to inventory: %s" % selected_item.id)
 		elif selected_item.type == "plant":
-
 			_give_seed(selected_item.id)
-	
+
 	_update_gold_display()
-	_populate_shop()  # Refresh inventory display
+	_populate_shop()
 	item_panel.visible = false
-	
-	# Reset sell mode
 	sell_mode = false
 
 func _sell_crop(crop_id: String, amount: int):
 	var crop_mgr = get_node_or_null("/root/CropManager")
 	if not crop_mgr:
 		return
-	
 	var gold_earned = crop_mgr.sell_crop(crop_id, amount)
 	if gold_earned > 0:
 		var audio_mgr = get_node_or_null("/root/AudioManager")
 		if audio_mgr:
 			audio_mgr.play_sfx_path("res://assets/audio/sfx/ui/coin_asmr.mp3", 0.85)
-		print("[ShopUI] Sold %s for %d gold" % [crop_id, gold_earned])
-
-func _spawn_animal(animal_id: String):
-	var farm = get_node_or_null("/root/Main/Farm")
-	if farm and farm.has_method("spawn_animal"):
-		farm.spawn_animal(animal_id)
 
 func _give_seed(plant_id: String):
 	var state = get_node_or_null("/root/StateManager")
 	if state:
 		state.apply_action({"type": "add_item", "item_id": plant_id + "_seed", "amount": 1})
-		# Add experience for purchasing seeds
-		var xp_amount = 10  # XP for buying seeds
-		state.apply_action({"type": "add_experience", "amount": xp_amount})
-		print("[ShopUI] Added seed to inventory: %s, gained %d XP" % [plant_id, xp_amount])
+		state.apply_action({"type": "add_experience", "amount": 10})
+
+func _place_animal(item: Dictionary):
+	_play_ui_click()
+	var state = get_node_or_null("/root/StateManager")
+	if not state:
+		return
+	var inventory = state.get_inventory()
+	if inventory.get(item.id, 0) <= 0:
+		return
+	var success = state.apply_action({"type": "remove_item", "item_id": item.id, "amount": 1})
+	if not success:
+		return
+	var farm = get_node_or_null("/root/Main/Farm")
+	if farm and farm.has_method("spawn_animal"):
+		farm.spawn_animal(item.id)
+		_populate_inventory()
+
+func _sell_item_direct(item: Dictionary):
+	_play_ui_click()
+	var crop_mgr = get_node_or_null("/root/CropManager")
+	if not crop_mgr:
+		return
+	var gold_earned = crop_mgr.sell_crop(item.id, 1)
+	if gold_earned > 0:
+		_update_gold_display()
+		_populate_inventory()
+
+# ── Misc ─────────────────────────────────────────────────────────────────
+
+func _play_ui_click():
+	var audio_mgr = get_node_or_null("/root/AudioManager")
+	if audio_mgr:
+		audio_mgr.play_sfx_path("res://assets/audio/sfx/ui/ui_click.mp3", 0.8)
 
 func _on_refresh_pressed():
 	_play_ui_click()
 	var gold = _get_current_gold()
 	if gold < REFRESH_COST:
 		return
-	
 	var eco_mgr = get_node_or_null("/root/EconomyManager")
 	if eco_mgr:
 		eco_mgr.remove_gold(REFRESH_COST, "shop_refresh")
-	
 	_populate_shop()
 	_update_gold_display()
 
