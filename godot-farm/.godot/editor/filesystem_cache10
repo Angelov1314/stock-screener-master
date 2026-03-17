@@ -54,7 +54,7 @@ shiba.mp3::AudioStreamMP3::8916343629483035346::1773723631::1773723799::1::::<><
 shiba_walk.mp3::AudioStreamMP3::4229215597534308113::1773676277::1773677224::1::::<><><>0<>0<>32079cc15cf07fa20505b21dfb14eaaf<>res://.godot/imported/shiba_walk.mp3-f2b67fdd021d39b761212a3298bf57b1.mp3str::
 ::res://assets/audio/sfx/watering/::1773677226
 Firefly_audio_Create_a_relaxing_sound_for_watering_plants,_for_a_variation4.wav::AudioStreamWAV::2489843384807091894::1773096555::1773677226::1::::<><><>0<>0<>61e056cde60df5cef543485eb53a7fa9<>res://.godot/imported/Firefly_audio_Create_a_relaxing_sound_for_watering_plants,_for_a_variation4.wav-0b885a08bb198a8c54e8fc8915cce380.sample::
-::res://assets/audio/sfx/zebra/::1773724826
+::res://assets/audio/sfx/zebra/::1773724827
 zebra.mp3::AudioStreamMP3::6704289096827783437::1773724826::1773724827::1::::<><><>0<>0<>5cc8803ef9e7a5ba069b6e053803c34c<>res://.godot/imported/zebra.mp3-71f0c272b9ee2e815a81d66edb732f70.mp3str::
 zebra_walk.mp3::AudioStreamMP3::2360759954162751696::1773594232::1773724195::1::::<><><>0<>0<>c538ac160d8960c67972a2ab67358c94<>res://.godot/imported/zebra_walk.mp3-0671bf3ca7d39d848214b05e5a59ddc6.mp3str::
 ::res://assets/backgrounds/::1773677226
@@ -314,7 +314,7 @@ farm_loading.png::CompressedTexture2D::941226673034977168::1772874692::177364121
 level2_background.jpg::CompressedTexture2D::243158320006307829::1773665510::1773665784::1::::<><><>0<>0<>2165a206d830d71dfc9130d4777de67d<>res://.godot/imported/level2_background.jpg-a0ce42280778a266bd5f9cdc0b5df08c.ctex::
 level3_background.png::CompressedTexture2D::5705849783215826283::1773676918::1773677224::0::::<><><>0<>0<>e41b26f04ffd9e27586d2ac1b4cb972e<>::
 ::res://assets/props/::1772928181
-::res://assets/ui/::1773689477
+::res://assets/ui/::1773725921
 agent_system_diagram.png::CompressedTexture2D::824692422392932260::1772801907::1773641209::1::::<><><>0<>0<>7472f5b03357b0eb4109251bd4432bf0<>res://.godot/imported/agent_system_diagram.png-7434d9a321240a6142994e4f317941bc.ctex::
 button_backpack.png::CompressedTexture2D::6525040734835933652::1772869123::1773641209::1::::<><><>0<>0<>afec4ad91f14f4e4f1df26eb9a7d7cf2<>res://.godot/imported/button_backpack.png-8e4285c3500c47eaff6771d9d451038a.ctex::
 button_hoe.png::CompressedTexture2D::1696869569601324851::1772869123::1773641209::1::::<><><>0<>0<>240fb1abd5864f29572deaf5a58378d2<>res://.godot/imported/button_hoe.png-11c1e8db82645873d93690fd7542a47c.ctex::
@@ -322,6 +322,7 @@ button_seed.png::CompressedTexture2D::2965121949131466011::1772869123::177364120
 button_shop.png::CompressedTexture2D::1396042522078760032::1772869123::1773641209::1::::<><><>0<>0<>9882884d6c6843aca19f4b9ce445ba0b<>res://.godot/imported/button_shop.png-c15f4527c02fb83f3261e185c0c208b3.ctex::
 button_sickle.png::CompressedTexture2D::5489936654149165161::1772869123::1773641209::1::::<><><>0<>0<>48bafbed61bc9c26b096d2a920ed7f6d<>res://.godot/imported/button_sickle.png-77d009d4d8f30ee405c7aec05e6fc18a.ctex::
 button_water.png::CompressedTexture2D::5615024294020347807::1772869123::1773641209::1::::<><><>0<>0<>e00f43cfdc6b89bd13a92fd2a7fc7571<>res://.godot/imported/button_water.png-efb9eac7e5b871bfb302f473b483cbab.ctex::
+gold_frame.png::CompressedTexture2D::6797616641152359368::1773725921::1773725963::1::::<><><>0<>0<>727265c227588fdd798b6867f111d8ba<>res://.godot/imported/gold_frame.png-a5df11f24950c5bf516ba3595111fd9c.ctex::
 icon.png::CompressedTexture2D::4056035753995141363::1772837386::1773641209::1::::<><><>0<>0<>1d970d2b411aadc6945a967232d4676c<>res://.godot/imported/icon.png-b2186b5b4a56bd57079f80a9dcb82304.ctex::
 icon_coin_large.png::CompressedTexture2D::3261147209638126386::1773597962::1773641209::1::::<><><>0<>0<>88bcffa4dd21887ca7315c4a29cad81f<>res://.godot/imported/icon_coin_large.png-37a985ff8c8dc53efa7c900f7aea8242.ctex::
 icon_exp_large.png::CompressedTexture2D::8981826491374881609::1773597986::1773641209::1::::<><><>0<>0<>623acb22257f2edd377bfe3cdd54684e<>res://.godot/imported/icon_exp_large.png-0b5d6a0c623896022457774fa9cefc64.ctex::
@@ -443,7 +444,7 @@ alpaca.tscn::PackedScene::600931620272::1773670504::0::1::::<><><>0<>0<><>::res:
 ::res://scenes/demo/::1773017393
 animal_demo.tscn::PackedScene::-1::1773017393::0::1::::<><><>0<>0<><>::res://assets/characters/cow/cow_idle.png<>res://assets/characters/cow/cow_walk.png<>res://assets/characters/cow/cow_happy.png<>res://assets/characters/cow/cow_sleep.png<>res://assets/characters/cow/cow_carried.png<>res://assets/characters/sheep/sheep_idle.png<>res://assets/characters/sheep/sheep_walk.png<>res://assets/characters/sheep/sheep_happy.png<>res://assets/characters/sheep/sheep_sleep.png<>res://assets/characters/sheep/sheep_carried.png<>res://scripts/demo/animal_demo.gd
 ::res://scenes/ui/::1773693803
-hud.tscn::PackedScene::15671290224674880::1773677949::0::1::::<><><>0<>0<><>::res://scripts/ui/hud_controller.gd
+hud.tscn::PackedScene::15671290224674880::1773725954::0::1::::<><><>0<>0<><>::res://scripts/ui/hud_controller.gd
 inventory_panel.tscn::PackedScene::-1::1773675410::0::1::::<><><>0<>0<><>::
 planting_menu.tscn::PackedScene::-1::1773650833::0::1::::<><><>0<>0<><>::
 planting_menu_new.tscn::PackedScene::-1::1773678017::0::1::::<><><>0<>0<><>::
@@ -490,7 +491,7 @@ draggable_camera.gd::GDScript::3838063003728511712::1773651332::0::1::::Draggabl
 dynamic_background.gd::GDScript::4131130134834181413::1773677042::0::1::::<>Node2D<><>0<>0<><>::
 farm_controller.gd::GDScript::4428520479176883368::1773692302::0::1::::FarmController<>Node2D<><>0<>0<><>::
 hud_controller.gd::GDScript::9081744454399963342::1773682200::0::1::::HUDController<>CanvasLayer<><>0<>0<><>::
-interactive_animal.gd::GDScript::2517276577378463575::1773724374::0::1::::<>Node2D<><>0<>0<><>::
+interactive_animal.gd::GDScript::2517276577378463575::1773725476::0::1::::<>Node2D<><>0<>0<><>::
 inventory_controller.gd::GDScript::3011258356131126342::1773686953::0::1::::InventoryController<>CanvasLayer<><>0<>0<><>::
 level2_music.gd::GDScript::3879853963590655221::1773666817::0::1::::<>AudioStreamPlayer<><>0<>0<><>::
 light_manager.gd::GDScript::8263672306061906130::1773595616::0::1::::LightManager<>Node2D<><>0<>0<><>::
@@ -500,7 +501,7 @@ particle_effects.gd::GDScript::2836889632185725751::1773597582::0::1::::Particle
 particle_manager.gd::GDScript::2169369030608160051::1773597575::0::1::::ParticleManager<>Node2D<><>0<>0<><>::
 planting_menu.gd::GDScript::6449868125698838239::1773650209::0::1::::<>Control<><>0<>0<><>::
 planting_menu_new.gd::GDScript::1358085357335976848::1773679388::0::1::::<>CanvasLayer<><>0<>0<><>::
-shop_ui.gd::GDScript::5903617818756173081::1773724795::0::1::::<>CanvasLayer<><>0<>0<><>::
+shop_ui.gd::GDScript::5903617818756173081::1773724996::0::1::::<>CanvasLayer<><>0<>0<><>::
 sickle_harvest_tool.gd::GDScript::4051626458266146264::1773667154::0::1::::SickleHarvestTool<>Node2D<><>0<>0<><>::
 simple_inventory.gd::GDScript::3478129706359223798::1773675835::0::1::::<>CanvasLayer<><>0<>0<><>::
 start_menu.gd::GDScript::477336749048974179::1773098477::0::1::::<>Control<><>0<>0<><>::

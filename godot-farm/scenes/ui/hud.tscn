@@ -106,16 +106,16 @@ size_flags_horizontal = 3
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="DayLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/LeftSection"]
+[node name="PlayerTitleLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/LeftSection"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Day 1"
+text = "农场主："
 label_settings = SubResource("LabelSettings_gold")
 
-[node name="SeasonLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/LeftSection"]
+[node name="NameLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/LeftSection"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Spring"
+text = "农场主"
 label_settings = SubResource("LabelSettings_gold")
 
 [node name="GrowthInfoLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/LeftSection"]
@@ -124,23 +124,34 @@ layout_mode = 2
 text = ""
 label_settings = SubResource("LabelSettings_gold")
 
-[node name="RightSection" type="HBoxContainer" parent="MarginContainer/VBoxContainer/TopBar"]
+[node name="RightSection" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TopBar"]
 layout_mode = 2
 size_flags_horizontal = 10
 alignment = 2
 
-[node name="GoldIcon" type="TextureRect" parent="MarginContainer/VBoxContainer/TopBar/RightSection"]
+[node name="GoldSection" type="HBoxContainer" parent="MarginContainer/VBoxContainer/TopBar/RightSection"]
+layout_mode = 2
+alignment = 2
+
+[node name="GoldIcon" type="TextureRect" parent="MarginContainer/VBoxContainer/TopBar/RightSection/GoldSection"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="GoldLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/RightSection"]
+[node name="GoldLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/RightSection/GoldSection"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "0"
 label_settings = SubResource("LabelSettings_gold")
+
+[node name="GoldFrame" type="TextureRect" parent="MarginContainer/VBoxContainer/TopBar/RightSection"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 40)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
 
 [node name="Spacer" type="Control" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2

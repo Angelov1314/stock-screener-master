@@ -12,8 +12,8 @@ signal water_mode_toggled(active: bool)
 # UI References
 @onready var gold_label: Label = %GoldLabel
 @onready var gold_icon: TextureRect = %GoldIcon
-@onready var day_label: Label = %DayLabel
-@onready var season_label: Label = %SeasonLabel
+@onready var gold_frame: TextureRect = %GoldFrame
+@onready var player_title_label: Label = %PlayerTitleLabel
 @onready var growth_info_label: Label = %GrowthInfoLabel
 @onready var sickle_button: TextureButton = %SickleButton
 @onready var water_button: TextureButton = %WaterButton
@@ -46,14 +46,17 @@ func _ready():
 	var state = get_node_or_null("/root/StateManager")
 	if state:
 		_update_gold_display(state.get_gold())
-		_update_day_display(state.current_day)
+		_update_player_name(state.get_player_name())
 		_update_player_info(state.get_player_name(), state.get_player_level(), state.get_experience(), state.get_xp_for_next_level(), state.get_xp_progress())
 		state.state_changed.connect(_on_state_changed)
 	else:
-		_update_gold_display(100)  # Starting gold
-		_update_day_display(1)
+		_update_gold_display(300)  # Starting gold
+		_update_player_name("农场主")
 		_update_player_info("农场主", 1, 0, 100, 0.0)
-	_update_season_display("Spring")
+	
+	# Load gold frame texture
+	if gold_frame:
+		gold_frame.texture = load("res://assets/ui/gold_frame.png")
 	
 	print("[HUDController] Initialized")
 
@@ -115,11 +118,9 @@ func update_gold(amount: int):
 	_update_gold_display(amount)
 
 ## Day/Season Display
-func _update_day_display(day: int):
-	day_label.text = "Day " + str(day)
-
-func _update_season_display(season: String):
-	season_label.text = season
+func _update_player_name(name: String):
+	if player_title_label:
+		player_title_label.text = "农场主：" + name
 
 ## Toast Notifications
 func show_toast(message: String):
@@ -171,5 +172,5 @@ func _on_state_changed(action: Dictionary):
 			_update_gold_display(state.get_gold())
 		"add_experience", "harvest_crop":
 			_update_player_info(state.get_player_name(), state.get_player_level(), state.get_experience(), state.get_xp_for_next_level(), state.get_xp_progress())
-		"advance_time":
-			_update_day_display(state.current_day)
+		"set_player_name":
+			_update_player_name(state.get_player_name())
