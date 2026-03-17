@@ -201,8 +201,16 @@ func _input(event):
 		_gold_frame_debug_mode = !_gold_frame_debug_mode
 		print("[HUD] Gold frame debug mode: %s" % _gold_frame_debug_mode)
 		if _gold_frame_debug_mode:
-			show_toast("Gold Frame Debug: ON (WASD/Arrows to move, +/- to scale)")
+			show_toast("Gold Frame Debug: ON (WASD/Arrows to move, +/- to scale, C to copy)")
+		else:
+			_output_gold_frame_values()
 		return
+	
+	# Output values with F11 or C in debug mode
+	if event is InputEventKey and event.pressed:
+		if event.keycode == KEY_F11 or (_gold_frame_debug_mode and event.keycode == KEY_C):
+			_output_gold_frame_values()
+			return
 	
 	if not _gold_frame_debug_mode or not gold_frame:
 		return
@@ -247,3 +255,27 @@ func _update_gold_frame_position():
 	gold_frame.position = _gold_frame_offset
 	
 	print("[HUD Debug] Gold frame offset: %s, scale: %s" % [_gold_frame_offset, gold_frame.scale])
+
+func _output_gold_frame_values():
+	if not gold_frame:
+		return
+	
+	var output = """[Gold Frame Values]
+Offset: Vector2(%.1f, %.1f)
+Scale: Vector2(%.2f, %.2f)
+
+Code to paste:
+_gold_frame_offset = Vector2(%.1f, %.1f)
+gold_frame.scale = Vector2(%.2f, %.2f)
+""" % [
+		_gold_frame_offset.x, _gold_frame_offset.y, gold_frame.scale.x, gold_frame.scale.y,
+		_gold_frame_offset.x, _gold_frame_offset.y, gold_frame.scale.x, gold_frame.scale.y
+	]
+	
+	print(output)
+	show_toast("Gold frame values copied to console!")
+	
+	# Try to copy to clipboard if available
+	if OS.has_feature("pc"):
+		DisplayServer.clipboard_set("_gold_frame_offset = Vector2(%.1f, %.1f)\ngold_frame.scale = Vector2(%.2f, %.2f)" % [_gold_frame_offset.x, _gold_frame_offset.y, gold_frame.scale.x, gold_frame.scale.y])
+		print("[HUD] Values also copied to clipboard!")
