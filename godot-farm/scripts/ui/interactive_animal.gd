@@ -419,17 +419,15 @@ func _play_animal_sound(sound_type: String = "idle"):
 	
 	print("[InteractiveAnimal] Trying to play: %s" % sound_path)
 	
-	if ResourceLoader.exists(sound_path):
-		var stream = load(sound_path)
-		if stream:
-			_audio_player.stream = stream
-			_audio_player.volume_db = 0.0  # Full volume for testing
-			_audio_player.play()
-			print("[InteractiveAnimal] Playing sound: %s" % sound_path)
-		else:
-			print("[InteractiveAnimal] Failed to load stream: %s" % sound_path)
+	# Try to load the sound file
+	var stream = load(sound_path)
+	if stream:
+		_audio_player.stream = stream
+		_audio_player.volume_db = 0.0
+		_audio_player.play()
+		print("[InteractiveAnimal] Playing sound: %s" % sound_path)
 	else:
-		print("[InteractiveAnimal] Sound file not found: %s" % sound_path)
+		print("[InteractiveAnimal] Failed to load sound: %s" % sound_path)
 
 func _play_footstep():
 	if current_state != State.WALKING:
