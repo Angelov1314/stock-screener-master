@@ -161,9 +161,14 @@ func _on_user_data_loaded(user_data: Dictionary):
 			state.apply_action({"type": "remove_gold", "amount": current_gold})
 		state.apply_action({"type": "add_gold", "amount": remote_gold})
 		
-		# Store level/xp for reference
+		# IMPORTANT: Apply level and XP to state
+		# Store in session data first
 		StateManager.set_data("remote_level", remote_level)
 		StateManager.set_data("remote_xp", remote_xp)
+		
+		# Directly set the level and experience in StateManager
+		state.player_level = remote_level
+		state.experience = remote_xp
 		
 		print("[Main] Updated local state - Gold: %d, Level: %d, XP: %d" % [remote_gold, remote_level, remote_xp])
 	
