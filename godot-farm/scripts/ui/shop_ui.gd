@@ -212,6 +212,7 @@ func _create_inventory_card(item: Dictionary):
 
 func _place_animal(item: Dictionary):
 	"""Place animal from inventory onto the farm map"""
+	_play_ui_click()
 	var state = get_node_or_null("/root/StateManager")
 	if not state:
 		return
@@ -238,6 +239,7 @@ func _place_animal(item: Dictionary):
 
 func _sell_item_direct(item: Dictionary):
 	"""Sell item directly from inventory card"""
+	_play_ui_click()
 	var crop_mgr = get_node_or_null("/root/CropManager")
 	if not crop_mgr:
 		return
@@ -250,7 +252,13 @@ func _sell_item_direct(item: Dictionary):
 	else:
 		print("[ShopUI] Failed to sell %s" % item.id)
 
+func _play_ui_click():
+	var audio_mgr = get_node_or_null("/root/AudioManager")
+	if audio_mgr:
+		audio_mgr.play_sfx_path("res://assets/audio/sfx/ui/ui_click.mp3", 0.8)
+
 func _on_inventory_card_clicked(item: Dictionary):
+	_play_ui_click()
 	selected_item = item.duplicate()
 	sell_mode = true
 	
@@ -350,6 +358,7 @@ func _get_icon_path(id: String, item_type: String) -> String:
 	return ""
 
 func _on_card_clicked(item: Dictionary, item_type: String):
+	_play_ui_click()
 	if not item_name or not buy_button:
 		return
 	
@@ -373,6 +382,7 @@ func _on_card_clicked(item: Dictionary, item_type: String):
 	item_panel.visible = true
 
 func _on_buy_pressed():
+	_play_ui_click()
 	if selected_item.is_empty():
 		return
 	
@@ -448,6 +458,7 @@ func _give_seed(plant_id: String):
 		print("[ShopUI] Added seed to inventory: %s, gained %d XP" % [plant_id, xp_amount])
 
 func _on_refresh_pressed():
+	_play_ui_click()
 	var gold = _get_current_gold()
 	if gold < REFRESH_COST:
 		return
@@ -460,6 +471,7 @@ func _on_refresh_pressed():
 	_update_gold_display()
 
 func _on_close_pressed():
+	_play_ui_click()
 	shop_closed.emit()
 	queue_free()
 
