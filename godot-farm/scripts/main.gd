@@ -137,11 +137,10 @@ func _save_inventory():
 		return
 	
 	var inventory = state.get_inventory()
-	print("[Main] Auto-saving inventory...")
+	print("[Main] Auto-saving inventory: ", inventory.keys().size(), " items")
 	
-	for item_id in inventory.keys():
-		var quantity = inventory[item_id]
-		supabase_manager.save_inventory_item(current_user_id, item_id, quantity)
+	# Use batch save for all items at once
+	supabase_manager.save_inventory_batch(current_user_id, inventory)
 
 func _on_user_data_loaded(user_data: Dictionary):
 	print("[Main] Data loaded from Supabase: %s" % user_data)

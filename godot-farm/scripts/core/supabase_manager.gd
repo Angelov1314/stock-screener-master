@@ -36,7 +36,7 @@ func login(email: String, password: String):
 		"email": email,
 		"password": password
 	})
-	
+
 	var error = http_request.request(url, headers, HTTPClient.METHOD_POST, body)
 	if error != OK:
 		login_failed.emit("Request failed")
@@ -57,7 +57,7 @@ func signup(email: String, password: String, username: String):
 			"xp": 0
 		}
 	})
-	
+
 	http_request.request(url, headers, HTTPClient.METHOD_POST, body)
 
 ## Social Login (OAuth)
@@ -65,7 +65,7 @@ func signup(email: String, password: String, username: String):
 func sign_in_with_google():
 	var redirect_to = "http://localhost:8080/auth/callback"
 	var url = SUPABASE_URL + "/auth/v1/authorize?provider=google&redirect_to=" + redirect_to.uri_encode()
-	
+
 	print("[SupabaseManager] Opening Google OAuth: " + url)
 	OS.shell_open(url)
 	show_toast("请在浏览器中完成登录")
@@ -73,7 +73,7 @@ func sign_in_with_google():
 func sign_in_with_facebook():
 	var redirect_to = "http://localhost:8080/auth/callback"
 	var url = SUPABASE_URL + "/auth/v1/authorize?provider=facebook&redirect_to=" + redirect_to.uri_encode()
-	
+
 	print("[SupabaseManager] Opening Facebook OAuth: " + url)
 	OS.shell_open(url)
 	show_toast("请在浏览器中完成登录")
@@ -85,90 +85,124 @@ func show_toast(message: String):
 
 func load_user_data(user_id: String):
 	var url = SUPABASE_URL + "/rest/v1/user_data?user_id=eq." + user_id + "&limit=1"
-	
+
 	# Use access token for RLS if available
 	var auth_token = access_token if not access_token.is_empty() else SUPABASE_KEY
-	
+
 	var headers = [
 		"apikey: " + SUPABASE_KEY,
 		"Authorization: Bearer " + auth_token,
 		"Content-Type: application/json"
 	]
-	
+
 	print("[SupabaseManager] Loading user data with token type: ", "access_token" if not access_token.is_empty() else "anon_key")
 	http_request.request(url, headers, HTTPClient.METHOD_GET)
 
 func save_user_data(user_id: String, data: Dictionary):
-	# First check if record exists
-	var check_url = SUPABASE_URL + "/rest/v1/user_data?user_id=eq." + user_id + "&limit=1"
-	var auth_token = access_token if not access_token.is_empty() else SUPABASE_KEY
+	"""Save user data to Supabase with proper RLS authentication"""
 	
-	var headers = [
-		"apikey: " + SUPABASE_KEY,
-		"Authorization: Bearer " + auth_token,
-		"Content-Type: application/json"
-	]
-	
-	print("[SupabaseManager] Checking if user_data exists for user: ", user_id)
-	
-	# Store data for use in response handler
-	var save_data = data.duplicate()
-	save_data["user_id"] = user_id
-	save_data["updated_at"] = Time.get_datetime_string_from_system()
-	
-	# We'll do a simple POST with upsert - but let's verify the token first
 	if access_token.is_empty():
 		print("[SupabaseManager] ERROR: No access token available for saving!")
 		user_data_saved.emit(false)
 		return
 	
+	# Prepare save data
+	var save_data = data.duplicate()
+	save_data["user_id"] = user_id
+	save_data["updated_at"] = Time.get_datetime_string_from_system()
+	
+	# Use POST with on_conflict for upsert
 	var url = SUPABASE_URL + "/rest/v1/user_data?on_conflict=user_id"
 	var upsert_headers = [
 		"apikey: " + SUPABASE_KEY,
-		"Authorization: Bearer " + access_token,  # Must use access_token for RLS
+		"Authorization: Bearer " + access_token,
 		"Content-Type: application/json",
-		"Prefer: resolution=merge-duplicates,return=representation"
+		"Prefer: resolution=merge-duplicates"
 	]
 	
-	print("[SupabaseManager] Upserting user data: gold=", save_data.get("gold"), ", level=", save_data.get("level"), ", xp=", save_data.get("xp"))
-	http_request.request(url, upsert_headers, HTTPClient.METHOD_POST, JSON.stringify(save_data))
+	print("[SupabaseManager] Saving user data: gold=", save_data.get("gold"), ", level=", save_data.get("level"), ", xp=", save_data.get("xp"))
+	
+	# Create new HTTPRequest to avoid conflicts with other operations
+	var req = HTTPRequest.new()
+	add_child(req)
+	
+	# Connect response handler
+	req.request_completed.connect(func(result, code, hdrs, body):
+		if result == HTTPRequest.RESULT_SUCCESS and (code == 200 or code == 201):
+			print("[SupabaseManager] User data saved successfully")
+			user_data_saved.emit(true)
+		else:
+			var body_str = body.get_string_from_utf8()
+			print("[SupabaseManager] User data save failed: ", code, ", body: ", body_str)
+			user_data_saved.emit(false)
+		req.queue_free()
+	)
+	
+	req.request(url, upsert_headers, HTTPClient.METHOD_POST, JSON.stringify(save_data))
 
 ## Inventory Operations
 
 func load_inventory(user_id: String):
 	var url = SUPABASE_URL + "/rest/v1/inventory?user_id=eq." + user_id
-	
+
 	var auth_token = access_token if not access_token.is_empty() else SUPABASE_KEY
-	
+
 	var headers = [
 		"apikey: " + SUPABASE_KEY,
 		"Authorization: Bearer " + auth_token
 	]
-	
+
 	http_request.request(url, headers, HTTPClient.METHOD_GET)
 
-func save_inventory_item(user_id: String, item_id: String, quantity: int):
-	# Use upsert with on_conflict parameter
-	var url = SUPABASE_URL + "/rest/v1/inventory?on_conflict=user_id,item_id"
-	
-	var auth_token = access_token if not access_token.is_empty() else SUPABASE_KEY
-	
+func save_inventory_batch(user_id: String, inventory: Dictionary):
+	"""Save all inventory items in batch"""
+	if access_token.is_empty():
+		print("[SupabaseManager] ERROR: No access token for saving inventory!")
+		return
+
+	# Build batch insert/update
+	var url = SUPABASE_URL + "/rest/v1/inventory"
+
 	var headers = [
 		"apikey: " + SUPABASE_KEY,
-		"Authorization: Bearer " + auth_token,
+		"Authorization: Bearer " + access_token,
 		"Content-Type: application/json",
 		"Prefer: resolution=merge-duplicates"
 	]
-	
-	var body = JSON.stringify({
-		"user_id": user_id,
-		"item_id": item_id,
-		"quantity": quantity,
-		"updated_at": Time.get_datetime_string_from_system()
-	})
-	
-	print("[SupabaseManager] Saving inventory item: ", item_id, " x", quantity)
-	http_request.request(url, headers, HTTPClient.METHOD_POST, body)
+
+	# Create array of all inventory items
+	var items = []
+	for item_id in inventory.keys():
+		items.append({
+			"user_id": user_id,
+			"item_id": item_id,
+			"quantity": inventory[item_id],
+			"updated_at": Time.get_datetime_string_from_system()
+		})
+
+	if items.size() == 0:
+		return
+
+	print("[SupabaseManager] Saving inventory batch: ", items.size(), " items")
+
+	# Create a new HTTPRequest for this call to avoid conflicts
+	var req = HTTPRequest.new()
+	add_child(req)
+	req.request_completed.connect(func(result, code, hdrs, body):
+		if result == HTTPRequest.RESULT_SUCCESS and (code == 200 or code == 201):
+			print("[SupabaseManager] Inventory batch saved successfully")
+		else:
+			print("[SupabaseManager] Inventory batch save failed: ", code, ", body: ", body.get_string_from_utf8())
+		req.queue_free()
+	)
+
+	req.request(url, headers, HTTPClient.METHOD_POST, JSON.stringify(items))
+
+func save_inventory_item(user_id: String, item_id: String, quantity: int):
+	# DEPRECATED: Use save_inventory_batch instead
+	# Keep for compatibility but use batch internally
+	var temp_inventory = {item_id: quantity}
+	save_inventory_batch(user_id, temp_inventory)
 
 ## HTTP Response Handler
 
@@ -176,13 +210,13 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 	if result != HTTPRequest.RESULT_SUCCESS:
 		print("[SupabaseManager] Request failed: ", result)
 		return
-	
+
 	var body_string = body.get_string_from_utf8()
 	print("[SupabaseManager] Raw response body: ", body_string if body_string.length() < 500 else body_string.substr(0, 500) + "...")
-	
+
 	var json = JSON.new()
 	var error = json.parse(body_string)
-	
+
 	if error != OK:
 		# Empty response is OK for successful POST/PUT operations
 		if body_string.is_empty() and (response_code == 200 or response_code == 201):
@@ -192,10 +226,10 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 			print("[SupabaseManager] JSON parse error, body: ", body_string)
 			user_data_saved.emit(false)
 		return
-	
+
 	var data = json.get_data()
 	print("[SupabaseManager] Parsed response: ", data)
-	
+
 	match response_code:
 		200, 201:
 			if data is Array:
@@ -229,12 +263,12 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 					access_token = data["access_token"]
 					current_user_id = data["user"]["id"]
 					var username = data["user"]["user_metadata"].get("username", "农场主") if data["user"].has("user_metadata") else "农场主"
-					
+
 					print("[SupabaseManager] Access token saved: ", access_token.substr(0, 20), "...")
-					
+
 					login_success.emit(current_user_id)
 					print("[SupabaseManager] Login successful: ", current_user_id, " username: ", username)
-					
+
 					load_user_data(current_user_id)
 				elif data.has("id") and data.has("item_id"):
 					# Single inventory item
@@ -263,12 +297,12 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 					var username = "农场主"
 					if data.has("user_metadata") and data["user_metadata"].has("username"):
 						username = data["user_metadata"]["username"]
-					
+
 					print("[SupabaseManager] WARNING: No access_token in login response!")
-					
+
 					login_success.emit(current_user_id)
 					print("[SupabaseManager] Login successful: ", current_user_id, " username: ", username)
-					
+
 					load_user_data(current_user_id)
 				else:
 					user_data_saved.emit(true)
@@ -283,7 +317,7 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 				error_msg = data["error_description"]
 			elif data.has("error"):
 				error_msg = data["error"]
-			
+
 			if "validation_failed" in str(data):
 				error_msg = "邮箱格式无效，请使用正确的邮箱地址"
 			elif "Invalid login credentials" in error_msg:
@@ -297,7 +331,7 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 				# This is actually fine for upsert operations
 				print("[SupabaseManager] Duplicate key error (upsert), ignoring...")
 				return
-			
+
 			login_failed.emit(error_msg)
 			print("[SupabaseManager] Error: ", error_msg, " | Raw: ", data)
 			user_data_saved.emit(false)

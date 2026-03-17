@@ -61,12 +61,16 @@ DROP POLICY IF EXISTS "Users can only access their own inventory" ON inventory;
 DROP POLICY IF EXISTS "Users can only access their own crops" ON farm_crops;
 DROP POLICY IF EXISTS "Users can only access their own animals" ON farm_animals;
 
--- 创建策略：用户只能访问自己的数据
+-- 创建策略：用户只能访问自己的数据 (允许所有操作包括 INSERT/UPDATE/DELETE)
 CREATE POLICY "Users can only access their own data" ON user_data
-    FOR ALL USING (auth.uid() = user_id);
+    FOR ALL 
+    USING (auth.uid() = user_id)
+    WITH CHECK (auth.uid() = user_id);
 
 CREATE POLICY "Users can only access their own inventory" ON inventory
-    FOR ALL USING (auth.uid() = user_id);
+    FOR ALL 
+    USING (auth.uid() = user_id)
+    WITH CHECK (auth.uid() = user_id);
 
 CREATE POLICY "Users can only access their own crops" ON farm_crops
     FOR ALL USING (auth.uid() = user_id);
