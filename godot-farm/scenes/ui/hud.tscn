@@ -36,6 +36,19 @@ corner_radius_bottom_left = 4
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_abc12")
 
+[node name="GoldFrame" type="TextureRect" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 40)
+anchors_preset = -1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -124.0
+offset_top = 82.0
+offset_right = -24.0
+offset_bottom = 122.0
+expand_mode = 1
+stretch_mode = 5
+
 [node name="MarginContainer" type="MarginContainer" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
@@ -131,17 +144,6 @@ label_settings = SubResource("LabelSettings_gold")
 layout_mode = 2
 size_flags_horizontal = 10
 alignment = 0
-
-[node name="GoldFrame" type="TextureRect" parent="MarginContainer/VBoxContainer/TopBar/RightSection"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(100, 40)
-layout_mode = 0
-offset_left = -44.0
-offset_top = 22.0
-offset_right = 56.0
-offset_bottom = 62.0
-expand_mode = 1
-stretch_mode = 5
 
 [node name="GoldSection" type="HBoxContainer" parent="MarginContainer/VBoxContainer/TopBar/RightSection"]
 layout_mode = 2
