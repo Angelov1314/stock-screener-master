@@ -10,6 +10,15 @@ extends Node2D
 @onready var plots_container: Node2D = %PlotsContainer
 @onready var farm_camera: Camera2D
 
+var _water_combo_count := 0
+var _harvest_combo_count := 0
+var _weather_overlay: CanvasModulate
+var _rain_particles: GPUParticles2D
+var _fog_layer: ColorRect
+var _weather_reset_timer: Timer
+const WEATHER_TRIGGER_COUNT := 10
+const WEATHER_DURATION := 12.0
+
 # Reference image size (user provided coordinates based on this)
 const REF_WIDTH := 1143.0
 const REF_HEIGHT := 2048.0
@@ -207,6 +216,7 @@ func _ready():
 	# Build custom farm plots
 	_build_custom_plots()
 	_create_plot_timer_bubble()
+	_setup_weather_effects()
 	
 	# Load existing crops from state
 	_load_existing_crops()
@@ -744,6 +754,7 @@ func _try_water_crop(plot_id: String):
 	if success:
 		_animate_plot_action(plot_id, "water")
 		_play_sfx("water")
+		_register_combo_action("water")
 
 func _try_harvest_crop(plot_id: String):
 	var rect = _plot_rects.get(plot_id, Rect2())
@@ -753,6 +764,97 @@ func _try_harvest_crop(plot_id: String):
 	if success:
 		_animate_plot_action(plot_id, "harvest")
 		_play_sfx("harvest")
+		_register_combo_action("harvest")
+
+func _setup_weather_effects():
+	_weather_overlay = CanvasModulate.new()
+	_weather_overlay.color = Color(1, 1, 1, 1)
+	add_child(_weather_overlay)
+	
+	_rain_particles = GPUParticles2D.new()
+	_rain_particles.visible = false
+	_rain_particles.emitting = false
+	_rain_particles.z_index = 3000
+	_rain_particles.amount = 220
+	_rain_particles.lifetime = 1.4
+	_rain_particles.position = Vector2(BG_WIDTH * 2.0, 0)
+	var rain_mat := ParticleProcessMaterial.new()
+	rain_mat.direction = Vector3(-0.15, 1.0, 0.0)
+	rain_mat.initial_velocity_min = 900.0
+	rain_mat.initial_velocity_max = 1200.0
+	rain_mat.gravity = Vector3(0, 1800, 0)
+	rain_mat.scale_min = 1.0
+	rain_mat.scale_max = 1.6
+	rain_mat.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
+	rain_mat.emission_box_extents = Vector3(BG_WIDTH * 2.0, 20.0, 1.0)
+	_rain_particles.process_material = rain_mat
+	var rain_gradient := Gradient.new()
+	rain_gradient.colors = PackedColorArray([Color(0.75, 0.85, 1.0, 0.0), Color(0.75, 0.85, 1.0, 0.7), Color(0.75, 0.85, 1.0, 0.0)])
+	var rain_tex := GradientTexture1D.new()
+	rain_tex.gradient = rain_gradient
+	var rain_line := CurveTexture.new()
+	_rain_particles.texture = rain_tex
+	add_child(_rain_particles)
+	
+	_fog_layer = ColorRect.new()
+	_fog_layer.color = Color(0.92, 0.94, 0.96, 0.0)
+	_fog_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_fog_layer.z_index = 2900
+	_fog_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(_fog_layer)
+	
+	_weather_reset_timer = Timer.new()
+	_weather_reset_timer.one_shot = true
+	_weather_reset_timer.wait_time = WEATHER_DURATION
+	_weather_reset_timer.timeout.connect(_clear_weather_effects)
+	add_child(_weather_reset_timer)
+
+func _register_combo_action(action_type: String):
+	if action_type == "water":
+		_water_combo_count += 1
+		_harvest_combo_count = 0
+		print("[FarmController] Water combo: %d/%d" % [_water_combo_count, WEATHER_TRIGGER_COUNT])
+		if _water_combo_count >= WEATHER_TRIGGER_COUNT:
+			_trigger_rain_weather()
+			_water_combo_count = 0
+	elif action_type == "harvest":
+		_harvest_combo_count += 1
+		_water_combo_count = 0
+		print("[FarmController] Harvest combo: %d/%d" % [_harvest_combo_count, WEATHER_TRIGGER_COUNT])
+		if _harvest_combo_count >= WEATHER_TRIGGER_COUNT:
+			_trigger_fog_weather()
+			_harvest_combo_count = 0
+
+func _trigger_rain_weather():
+	_clear_weather_effects()
+	_weather_overlay.color = Color(0.82, 0.88, 0.96, 1.0)
+	_rain_particles.visible = true
+	_rain_particles.emitting = true
+	_play_ui_weather_sfx("res://assets/audio/sfx/ui/rain_trigger.mp3")
+	show_toast("连续浇水10次，触发下雨！")
+	_weather_reset_timer.start()
+
+func _trigger_fog_weather():
+	_clear_weather_effects()
+	_weather_overlay.color = Color(0.9, 0.9, 0.92, 1.0)
+	_fog_layer.color = Color(0.92, 0.94, 0.96, 0.35)
+	_play_ui_weather_sfx("res://assets/audio/sfx/ui/fog_trigger.mp3")
+	show_toast("连续收割10次，触发大雾！")
+	_weather_reset_timer.start()
+
+func _clear_weather_effects():
+	if _weather_overlay:
+		_weather_overlay.color = Color(1, 1, 1, 1)
+	if _rain_particles:
+		_rain_particles.emitting = false
+		_rain_particles.visible = false
+	if _fog_layer:
+		_fog_layer.color = Color(0.92, 0.94, 0.96, 0.0)
+
+func _play_ui_weather_sfx(path: String):
+	var audio_mgr = get_node_or_null("/root/AudioManager")
+	if audio_mgr:
+		audio_mgr.play_sfx_path(path, 0.95)
 
 ## Signal Handlers
 func _on_crop_planted(coord: Vector2i, crop_id: String):
