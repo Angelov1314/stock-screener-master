@@ -9,9 +9,9 @@
 
 [sub_resource type="LabelSettings" id="LabelSettings_gold"]
 font_size = 24
-font_color = Color(1, 0.85, 0.2, 1)
+font_color = Color(0.6, 0.4, 0.2, 1)
 outline_size = 2
-outline_color = Color(0.2, 0.15, 0.05, 1)
+outline_color = Color(0.3, 0.2, 0.1, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_player"]
 font_size = 20
@@ -112,11 +112,14 @@ layout_mode = 2
 text = "农场主："
 label_settings = SubResource("LabelSettings_gold")
 
-[node name="NameLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/LeftSection"]
+[node name="NameEdit" type="LineEdit" parent="MarginContainer/VBoxContainer/TopBar/LeftSection"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "农场主"
-label_settings = SubResource("LabelSettings_gold")
+expand_to_text_length = true
+flat = true
+alignment = 0
+max_length = 10
 
 [node name="GrowthInfoLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/LeftSection"]
 unique_name_in_owner = true
