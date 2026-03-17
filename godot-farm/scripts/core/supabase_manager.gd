@@ -60,19 +60,13 @@ func signup(email: String, password: String, username: String):
 	http_request.request(url, headers, HTTPClient.METHOD_POST, body)
 
 ## Social Login (OAuth)
-# Note: For mobile/desktop games, you need to configure OAuth providers in Supabase Dashboard
-# and set up deep linking or a local redirect URL
 
 func sign_in_with_google():
-	# For web builds, this redirects to Google OAuth
-	# For mobile/desktop, you need to configure deep linking
-	var redirect_to = "http://localhost:8080/auth/callback"  # Change to your game URL
+	var redirect_to = "http://localhost:8080/auth/callback"
 	var url = SUPABASE_URL + "/auth/v1/authorize?provider=google&redirect_to=" + redirect_to.uri_encode()
 	
 	print("[SupabaseManager] Opening Google OAuth: " + url)
 	OS.shell_open(url)
-	
-	# Show instructions to user
 	show_toast("请在浏览器中完成登录")
 
 func sign_in_with_facebook():
@@ -81,7 +75,6 @@ func sign_in_with_facebook():
 	
 	print("[SupabaseManager] Opening Facebook OAuth: " + url)
 	OS.shell_open(url)
-	
 	show_toast("请在浏览器中完成登录")
 
 func show_toast(message: String):
@@ -92,7 +85,7 @@ func show_toast(message: String):
 func load_user_data(user_id: String):
 	var url = SUPABASE_URL + "/rest/v1/user_data?user_id=eq." + user_id + "&limit=1"
 	
-	# Use access token for RLS if available, otherwise use anon key
+	# Use access token for RLS if available
 	var auth_token = access_token if not access_token.is_empty() else SUPABASE_KEY
 	
 	var headers = [
@@ -101,13 +94,13 @@ func load_user_data(user_id: String):
 		"Content-Type: application/json"
 	]
 	
-	print("[SupabaseManager] Loading user data with auth token: ", "access_token" if not access_token.is_empty() else "anon_key")
+	print("[SupabaseManager] Loading user data with token type: ", "access_token" if not access_token.is_empty() else "anon_key")
 	http_request.request(url, headers, HTTPClient.METHOD_GET)
 
 func save_user_data(user_id: String, data: Dictionary):
 	var url = SUPABASE_URL + "/rest/v1/user_data"
 	
-	# Use access token for RLS if available, otherwise use anon key
+	# Use access token for RLS if available
 	var auth_token = access_token if not access_token.is_empty() else SUPABASE_KEY
 	
 	var headers = [
@@ -121,7 +114,7 @@ func save_user_data(user_id: String, data: Dictionary):
 	save_data["user_id"] = user_id
 	save_data["updated_at"] = Time.get_datetime_string_from_system()
 	
-	print("[SupabaseManager] Saving user data with auth token: ", "access_token" if not access_token.is_empty() else "anon_key")
+	print("[SupabaseManager] Saving user data with token type: ", "access_token" if not access_token.is_empty() else "anon_key")
 	http_request.request(url, headers, HTTPClient.METHOD_POST, JSON.stringify(save_data))
 
 ## Inventory Operations
@@ -129,7 +122,6 @@ func save_user_data(user_id: String, data: Dictionary):
 func load_inventory(user_id: String):
 	var url = SUPABASE_URL + "/rest/v1/inventory?user_id=eq." + user_id
 	
-	# Use access token for RLS if available, otherwise use anon key
 	var auth_token = access_token if not access_token.is_empty() else SUPABASE_KEY
 	
 	var headers = [
@@ -142,7 +134,6 @@ func load_inventory(user_id: String):
 func save_inventory_item(user_id: String, item_id: String, quantity: int):
 	var url = SUPABASE_URL + "/rest/v1/inventory"
 	
-	# Use access token for RLS if available, otherwise use anon key
 	var auth_token = access_token if not access_token.is_empty() else SUPABASE_KEY
 	
 	var headers = [
@@ -194,26 +185,29 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 						"xp": 0
 					})
 			elif data is Dictionary:
-				if data.has("id"):
-					# Login/signup success - data contains user object directly
-					current_user_id = data["id"]
-				
-					var username = "农场主"
-					if data.has("user_metadata") and data["user_metadata"].has("username"):
-						username = data["user_metadata"]["username"]
+				if data.has("access_token"):
+					# Login/signup success - has access token
+					access_token = data["access_token"]
+					current_user_id = data["user"]["id"]
+					var username = data["user"]["user_metadata"].get("username", "农场主") if data["user"].has("user_metadata") else "农场主"
+					
+					print("[SupabaseManager] Access token saved: ", access_token.substr(0, 20), "...")
 					
 					login_success.emit(current_user_id)
 					print("[SupabaseManager] Login successful: ", current_user_id, " username: ", username)
 					
-					# Auto-create user_data if not exists (trigger should handle this, but backup here)
 					load_user_data(current_user_id)
-				elif data.has("access_token"):
-					# Alternative format with access_token
-					var user_id = data["user"]["id"]
-					var username = data["user"]["user_metadata"].get("username", "农场主") if data["user"].has("user_metadata") else "农场主"
+				elif data.has("id"):
+					# User object directly (may not have access_token in some cases)
+					current_user_id = data["id"]
+					var username = "农场主"
+					if data.has("user_metadata") and data["user_metadata"].has("username"):
+						username = data["user_metadata"]["username"]
+					
+					print("[SupabaseManager] WARNING: No access_token in login response!")
 					
 					login_success.emit(current_user_id)
-					print("[SupabaseManager] Login successful: ", current_user_id)
+					print("[SupabaseManager] Login successful: ", current_user_id, " username: ", username)
 					
 					load_user_data(current_user_id)
 				else:
@@ -230,13 +224,14 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 			elif data.has("error"):
 				error_msg = data["error"]
 			
-			# 友好的错误提示
 			if "validation_failed" in str(data):
 				error_msg = "邮箱格式无效，请使用正确的邮箱地址"
 			elif "Invalid login credentials" in error_msg:
 				error_msg = "邮箱或密码错误"
 			elif "Email not confirmed" in error_msg:
 				error_msg = "邮箱未验证，请检查邮件"
+			elif "row-level security" in error_msg:
+				error_msg = "权限验证失败，请重新登录"
 			
 			login_failed.emit(error_msg)
 			print("[SupabaseManager] Error: ", error_msg, " | Raw: ", data)
