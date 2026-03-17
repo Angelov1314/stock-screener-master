@@ -271,6 +271,9 @@ func _load_level(level_id: int):
 
 func _on_inventory_requested():
 	print("[Main] Opening simple inventory...")
+	var audio_mgr = get_node_or_null("/root/AudioManager")
+	if audio_mgr:
+		audio_mgr.play_sfx_path("res://assets/audio/sfx/ui/paper_open.mp3", 0.9)
 	var inv_scene = load("res://scenes/ui/simple_inventory.tscn")
 	if inv_scene:
 		var inv = inv_scene.instantiate()
@@ -291,6 +294,9 @@ func _on_shop_requested():
 	_open_shop()
 
 func _open_shop():
+	var audio_mgr = get_node_or_null("/root/AudioManager")
+	if audio_mgr:
+		audio_mgr.play_sfx_path("res://assets/audio/sfx/ui/paper_open.mp3", 0.9)
 	var shop_scene = load("res://scenes/ui/shop_ui.tscn")
 	if shop_scene:
 		var shop = shop_scene.instantiate()

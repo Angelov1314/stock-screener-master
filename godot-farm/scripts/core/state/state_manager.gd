@@ -17,8 +17,9 @@ var current_day: int = 1
 var current_time: float = 6.0  # 24h format
 var planted_crops: Dictionary = {}  # tile_coord -> crop_data
 
-# Experience required for each level
-const XP_PER_LEVEL: Array = [0, 100, 250, 500, 1000, 2000, 4000, 8000, 15000, 30000]
+# Experience required for each level (incremental curve: +25 XP each level)
+const BASE_XP_PER_LEVEL := 100
+const XP_INCREMENT_PER_LEVEL := 25
 
 # Session data storage (for passing data between scenes)
 var _session_data: Dictionary = {}
@@ -60,13 +61,19 @@ func get_player_level() -> int:
 func get_crop_at(coord: Vector2i) -> Dictionary:
     return planted_crops.get(coord, {})
 
+func _get_total_xp_required_for_level(level: int) -> int:
+    if level <= 1:
+        return 0
+    var total := 0
+    for l in range(1, level):
+        total += BASE_XP_PER_LEVEL + (l - 1) * XP_INCREMENT_PER_LEVEL
+    return total
+
 func get_xp_for_next_level() -> int:
-    if player_level < XP_PER_LEVEL.size():
-        return XP_PER_LEVEL[player_level]
-    return XP_PER_LEVEL[XP_PER_LEVEL.size() - 1] * 2
+    return _get_total_xp_required_for_level(player_level + 1)
 
 func get_xp_progress() -> float:
-    var current_level_xp = XP_PER_LEVEL[player_level - 1] if player_level > 1 else 0
+    var current_level_xp = _get_total_xp_required_for_level(player_level)
     var next_level_xp = get_xp_for_next_level()
     var xp_in_level = experience - current_level_xp
     var xp_needed = next_level_xp - current_level_xp
@@ -155,11 +162,16 @@ func _apply_internal(action: Dictionary) -> bool:
     return true
 
 func _check_level_up():
+    var audio_mgr = get_node_or_null("/root/AudioManager")
+    var leveled_up = false
     var next_level_xp = get_xp_for_next_level()
-    while experience >= next_level_xp and player_level < XP_PER_LEVEL.size():
+    while experience >= next_level_xp:
         player_level += 1
+        leveled_up = true
         print("[StateManager] Level up! Now level %d" % player_level)
         next_level_xp = get_xp_for_next_level()
+    if leveled_up and audio_mgr:
+        audio_mgr.play_sfx_path("res://assets/audio/sfx/ui/level_up.mp3", 1.0)
 
 func _validate_action(action: Dictionary) -> bool:
     if not action.has("type"):

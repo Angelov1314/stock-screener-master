@@ -406,8 +406,12 @@ func _on_buy_pressed():
 			state.apply_action({"type": "add_item", "item_id": selected_item.id, "amount": 1})
 			# Add experience for purchasing animal
 			state.apply_action({"type": "add_experience", "amount": 25})
+			var audio_mgr = get_node_or_null("/root/AudioManager")
+			if audio_mgr:
+				audio_mgr.play_sfx_path("res://assets/audio/sfx/ui/xp_gain.mp3", 0.9)
 			print("[ShopUI] Added animal to inventory: %s" % selected_item.id)
 		elif selected_item.type == "plant":
+
 			_give_seed(selected_item.id)
 	
 	_update_gold_display()
@@ -424,6 +428,9 @@ func _sell_crop(crop_id: String, amount: int):
 	
 	var gold_earned = crop_mgr.sell_crop(crop_id, amount)
 	if gold_earned > 0:
+		var audio_mgr = get_node_or_null("/root/AudioManager")
+		if audio_mgr:
+			audio_mgr.play_sfx_path("res://assets/audio/sfx/ui/gold_gain.mp3", 0.9)
 		print("[ShopUI] Sold %s for %d gold" % [crop_id, gold_earned])
 
 func _spawn_animal(animal_id: String):
