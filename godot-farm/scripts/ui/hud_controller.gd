@@ -159,7 +159,10 @@ func _update_player_info(name: String, level: int, xp: int, xp_next: int, xp_pro
 	if player_xp_label:
 		player_xp_label.text = "XP: %d/%d" % [xp, xp_next]
 	if player_xp_bar:
-		player_xp_bar.value = xp_progress * 100
+		# Animate XP bar with tween
+		var target_value = xp_progress * 100
+		var tween = create_tween()
+		tween.tween_property(player_xp_bar, "value", target_value, 0.5).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
 
 ## State Change Handler
 func _on_state_changed(action: Dictionary):
