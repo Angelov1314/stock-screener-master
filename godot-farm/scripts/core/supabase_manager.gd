@@ -227,13 +227,27 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 					print("[SupabaseManager] Login successful: ", current_user_id, " username: ", username)
 					
 					load_user_data(current_user_id)
-				elif data.has("id") and data.has("gold"):
-					# User data object with gold
-					user_data_loaded.emit(data)
 				elif data.has("id") and data.has("item_id"):
 					# Single inventory item
 					print("[SupabaseManager] Single inventory item loaded")
 					inventory_loaded.emit(data)
+				elif data.has("id") and data.has("user_id") and data.has("gold"):
+					# This could be user_data from a save response
+					# Check if this is a save response (has updated_at)
+					if data.has("updated_at"):
+						# Likely a save response
+						print("[SupabaseManager] User data saved successfully: gold=", data.get("gold"), ", level=", data.get("level"))
+						user_data_saved.emit(true)
+					else:
+						# User data loaded
+						user_data_loaded.emit(data)
+				elif data.has("id") and data.has("user_id"):
+					# Could be user_data without gold field or other data
+					print("[SupabaseManager] Data with user_id: ", data)
+					if data.has("gold"):
+						user_data_loaded.emit(data)
+					else:
+						user_data_saved.emit(true)
 				elif data.has("id"):
 					# User object directly (may not have access_token in some cases)
 					current_user_id = data["id"]
