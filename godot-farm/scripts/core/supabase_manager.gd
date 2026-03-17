@@ -90,7 +90,7 @@ func load_user_data(user_id: String):
 	var headers = [
 		"apikey: " + SUPABASE_KEY,
 		"Authorization: Bearer " + SUPABASE_KEY,
-		"Content-Type: application/json"
+		"Content-Type: " + "application/json"
 	]
 	
 	http_request.request(url, headers, HTTPClient.METHOD_GET)
@@ -172,15 +172,26 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 						"xp": 0
 					})
 			elif data is Dictionary:
-				if data.has("access_token"):
-					# Login/signup success
+				if data.has("id"):
+					# Login/signup success - data contains user object directly
+					var user_id = data["id"]
+					var username = "农场主"
+					if data.has("user_metadata") and data["user_metadata"].has("username"):
+						username = data["user_metadata"]["username"]
+					
+					login_success.emit(user_id)
+					print("[SupabaseManager] Login successful: ", user_id, " username: ", username)
+					
+					# Auto-create user_data if not exists (trigger should handle this, but backup here)
+					load_user_data(user_id)
+				elif data.has("access_token"):
+					# Alternative format with access_token
 					var user_id = data["user"]["id"]
 					var username = data["user"]["user_metadata"].get("username", "农场主") if data["user"].has("user_metadata") else "农场主"
 					
 					login_success.emit(user_id)
 					print("[SupabaseManager] Login successful: ", user_id)
 					
-					# Auto-create user_data if not exists (trigger should handle this, but backup here)
 					load_user_data(user_id)
 				else:
 					user_data_saved.emit(true)
