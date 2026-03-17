@@ -1,11 +1,21 @@
 extends CanvasLayer
 
-## Shop Panel - In-app purchase for gold
+## IAP Shop - In-app purchase for gold (cozy farm theme)
 
 signal shop_closed
 signal gold_purchased(amount: int)
 
 @onready var close_button: Button = %CloseButton
+
+# Cozy farm palette (shared with shop_ui)
+const COL_BG_DEEP := Color(0.26, 0.22, 0.17, 0.92)
+const COL_PAPER := Color(0.88, 0.83, 0.74, 0.45)
+const COL_PAPER_HOVER := Color(0.92, 0.87, 0.78, 0.55)
+const COL_BORDER := Color(0.50, 0.42, 0.32, 0.45)
+const COL_TEXT := Color(0.30, 0.24, 0.18)
+const COL_TEXT_MUTED := Color(0.48, 0.40, 0.30, 0.85)
+const COL_BTN := Color(0.58, 0.48, 0.36, 0.72)
+const COL_ACCENT_GOLD := Color(0.72, 0.60, 0.32, 0.90)
 
 # Purchase tiers
 var purchase_tiers = [
@@ -20,169 +30,160 @@ var purchase_tiers = [
 
 func _ready():
 	close_button.pressed.connect(_on_close_pressed)
+	_apply_cozy_theme()
 	_setup_purchase_grid()
-	
-	# Close on escape - handled by _input() function
+
+func _apply_cozy_theme():
+	# Background overlay
+	var bg = get_node_or_null("Background") as ColorRect
+	if bg:
+		bg.color = Color(0.12, 0.10, 0.07, 0.75)
+
+	# Main panel
+	var panel = get_node_or_null("CenterContainer/Panel") as Panel
+	if panel:
+		var s = StyleBoxFlat.new()
+		s.bg_color = COL_BG_DEEP
+		s.border_color = Color(0.46, 0.37, 0.28, 0.65)
+		s.set_border_width_all(2)
+		s.border_width_bottom = 3
+		s.set_corner_radius_all(22)
+		s.shadow_color = Color(0.14, 0.10, 0.06, 0.22)
+		s.shadow_size = 14
+		panel.add_theme_stylebox_override("panel", s)
+
+	# Title label
+	var title = get_node_or_null("CenterContainer/Panel/VBoxContainer/TitleLabel") as Label
+	if title:
+		title.add_theme_color_override("font_color", Color(0.94, 0.90, 0.82))
+
+	# Subtitle
+	var sub = get_node_or_null("CenterContainer/Panel/VBoxContainer/SubtitleLabel") as Label
+	if sub:
+		sub.add_theme_color_override("font_color", COL_TEXT_MUTED)
+
+	# Close button
+	_style_button(close_button, COL_BTN)
+
+func _style_button(btn: Button, base: Color):
+	var normal = StyleBoxFlat.new()
+	normal.bg_color = base
+	normal.border_color = Color(base.r - 0.12, base.g - 0.12, base.b - 0.12, 0.40)
+	normal.border_width_bottom = 2
+	normal.set_corner_radius_all(14)
+	normal.content_margin_left = 10
+	normal.content_margin_right = 10
+	normal.content_margin_top = 4
+	normal.content_margin_bottom = 4
+	var hover = normal.duplicate()
+	hover.bg_color = Color(base.r + 0.06, base.g + 0.06, base.b + 0.06, base.a)
+	var pressed = normal.duplicate()
+	pressed.bg_color = Color(base.r - 0.05, base.g - 0.05, base.b - 0.05, base.a)
+	pressed.border_width_bottom = 1
+	btn.add_theme_stylebox_override("normal", normal)
+	btn.add_theme_stylebox_override("hover", hover)
+	btn.add_theme_stylebox_override("pressed", pressed)
+	btn.add_theme_color_override("font_color", Color(0.96, 0.93, 0.88))
+	btn.add_theme_color_override("font_hover_color", Color(1, 1, 1))
+	btn.add_theme_color_override("font_pressed_color", Color(0.90, 0.86, 0.78))
 
 func _setup_purchase_grid():
 	var grid = get_node_or_null("CenterContainer/Panel/VBoxContainer/ScrollContainer/PurchaseGrid")
 	if not grid:
 		return
-	
 	for tier in purchase_tiers:
 		var card = _create_purchase_card(tier)
 		grid.add_child(card)
 
 func _create_purchase_card(tier: Dictionary) -> Panel:
 	var card = Panel.new()
-	card.custom_minimum_size = Vector2(160, 200)
-	
-	# Card Style - 低饱和高级感配色
+	card.custom_minimum_size = Vector2(155, 195)
+
 	var style = StyleBoxFlat.new()
 	if tier.popular:
-		# 热销卡片 - 暖灰色调
-		style.bg_color = Color(0.88, 0.85, 0.80, 0.98)
-		style.border_width_left = 2
-		style.border_width_top = 2
-		style.border_width_right = 2
-		style.border_width_bottom = 2
-		style.border_color = Color(0.75, 0.70, 0.60, 0.8)
+		style.bg_color = Color(0.82, 0.76, 0.64, 0.72)
+		style.border_color = COL_ACCENT_GOLD
+		style.set_border_width_all(2)
+		style.border_width_bottom = 3
 	else:
-		# 普通卡片 - 冷灰色调
-		style.bg_color = Color(0.92, 0.92, 0.94, 0.95)
-	
-	style.corner_radius_top_left = 12
-	style.corner_radius_top_right = 12
-	style.corner_radius_bottom_left = 12
-	style.corner_radius_bottom_right = 12
-	style.shadow_size = 3
-	style.shadow_color = Color(0, 0, 0, 0.15)
+		style.bg_color = COL_PAPER
+		style.border_color = COL_BORDER
+		style.set_border_width_all(1)
+		style.border_width_bottom = 2
+	style.set_corner_radius_all(18)
+	style.shadow_color = Color(0.14, 0.10, 0.06, 0.18)
+	style.shadow_size = 6
 	card.add_theme_stylebox_override("panel", style)
-	
-	# Container
+
 	var vbox = VBoxContainer.new()
 	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	vbox.add_theme_constant_override("separation", 4)
+	vbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	vbox.offset_left = 8; vbox.offset_right = -8
+	vbox.offset_top = 10; vbox.offset_bottom = -10
 	card.add_child(vbox)
-	
-	# Spacer
-	var top_spacer = Control.new()
-	top_spacer.custom_minimum_size = Vector2(0, 10)
-	vbox.add_child(top_spacer)
-	
-	# Gold amount - 深棕色，低饱和
+
+	# Popular badge
+	if tier.popular:
+		var badge = Label.new()
+		badge.text = "✦ 热销"
+		badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		badge.add_theme_font_size_override("font_size", 12)
+		badge.add_theme_color_override("font_color", COL_ACCENT_GOLD)
+		vbox.add_child(badge)
+	else:
+		var spacer = Control.new()
+		spacer.custom_minimum_size = Vector2(0, 16)
+		vbox.add_child(spacer)
+
+	# Gold amount
 	var gold_label = Label.new()
 	gold_label.text = "💰 %d" % tier.gold
 	gold_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	gold_label.add_theme_font_size_override("font_size", 26)
-	gold_label.add_theme_color_override("font_color", Color(0.55, 0.45, 0.30))
+	gold_label.add_theme_font_size_override("font_size", 24)
+	gold_label.add_theme_color_override("font_color", COL_TEXT)
 	vbox.add_child(gold_label)
-	
-	# Price - 深灰蓝色，低饱和
+
+	# Price
 	var price_label = Label.new()
 	price_label.text = tier.price
 	price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	price_label.add_theme_font_size_override("font_size", 22)
-	price_label.add_theme_color_override("font_color", Color(0.35, 0.38, 0.45))
+	price_label.add_theme_font_size_override("font_size", 18)
+	price_label.add_theme_color_override("font_color", COL_TEXT_MUTED)
 	vbox.add_child(price_label)
-	
-	# Popular badge - 柔和的暖色调
-	if tier.popular:
-		var badge_bg = Panel.new()
-		badge_bg.custom_minimum_size = Vector2(80, 26)
-		
-		var badge_style = StyleBoxFlat.new()
-		badge_style.bg_color = Color(0.85, 0.60, 0.35, 0.9)
-		badge_style.corner_radius_top_left = 13
-		badge_style.corner_radius_top_right = 13
-		badge_style.corner_radius_bottom_left = 13
-		badge_style.corner_radius_bottom_right = 13
-		badge_bg.add_theme_stylebox_override("panel", badge_style)
-		
-		var badge_label = Label.new()
-		badge_label.text = "✦ 热销"
-		badge_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		badge_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		badge_label.add_theme_font_size_override("font_size", 13)
-		badge_label.add_theme_color_override("font_color", Color(0.98, 0.96, 0.94))
-		badge_bg.add_child(badge_label)
-		
-		vbox.add_child(badge_bg)
-	else:
-		# Spacer for non-popular items
-		var badge_spacer = Control.new()
-		badge_spacer.custom_minimum_size = Vector2(0, 26)
-		vbox.add_child(badge_spacer)
-	
-	# Buy button - 低饱和高级感配色
+
+	# Spacer
+	var sp = Control.new()
+	sp.custom_minimum_size = Vector2(0, 6)
+	vbox.add_child(sp)
+
+	# Buy button
 	var buy_btn = Button.new()
 	buy_btn.text = "购买"
-	buy_btn.custom_minimum_size = Vector2(100, 44)
-	
-	# Normal state - 深灰蓝色，低饱和
-	var btn_normal = StyleBoxFlat.new()
-	btn_normal.bg_color = Color(0.25, 0.28, 0.35, 0.95)
-	btn_normal.corner_radius_top_left = 8
-	btn_normal.corner_radius_top_right = 8
-	btn_normal.corner_radius_bottom_left = 8
-	btn_normal.corner_radius_bottom_right = 8
-	btn_normal.shadow_size = 2
-	btn_normal.shadow_color = Color(0, 0, 0, 0.3)
-	buy_btn.add_theme_stylebox_override("normal", btn_normal)
-	
-	# Hover state - 稍亮的灰蓝色
-	var btn_hover = StyleBoxFlat.new()
-	btn_hover.bg_color = Color(0.32, 0.35, 0.42, 0.98)
-	btn_hover.corner_radius_top_left = 8
-	btn_hover.corner_radius_top_right = 8
-	btn_hover.corner_radius_bottom_left = 8
-	btn_hover.corner_radius_bottom_right = 8
-	btn_hover.shadow_size = 4
-	btn_hover.shadow_color = Color(0, 0, 0, 0.4)
-	buy_btn.add_theme_stylebox_override("hover", btn_hover)
-	
-	# Pressed state - 更深的灰蓝色
-	var btn_pressed = StyleBoxFlat.new()
-	btn_pressed.bg_color = Color(0.18, 0.21, 0.28, 1.0)
-	btn_pressed.corner_radius_top_left = 8
-	btn_pressed.corner_radius_top_right = 8
-	btn_pressed.corner_radius_bottom_left = 8
-	btn_pressed.corner_radius_bottom_right = 8
-	buy_btn.add_theme_stylebox_override("pressed", btn_pressed)
-	
-	# 文字颜色 - 米白色
-	buy_btn.add_theme_color_override("font_color", Color(0.95, 0.94, 0.92))
-	buy_btn.add_theme_color_override("font_hover_color", Color(1.0, 1.0, 1.0))
-	buy_btn.add_theme_color_override("font_pressed_color", Color(0.85, 0.84, 0.82))
-	buy_btn.add_theme_font_size_override("font_size", 16)
-	
+	buy_btn.custom_minimum_size = Vector2(90, 38)
+	buy_btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	_style_button(buy_btn, COL_BTN)
+	buy_btn.add_theme_font_size_override("font_size", 15)
 	buy_btn.pressed.connect(_on_purchase_pressed.bind(tier.gold, tier.price))
 	vbox.add_child(buy_btn)
-	
+
 	return card
 
 func _on_purchase_pressed(gold_amount: int, price: String):
 	print("[IAPShop] Purchase requested: %s for %d gold" % [price, gold_amount])
-	
-	# Simulate purchase (in real app, integrate with App Store/Google Play)
 	var confirmed = await _show_confirm_dialog(price, gold_amount)
-	
 	if confirmed:
 		var audio_mgr = get_node_or_null("/root/AudioManager")
 		if audio_mgr:
 			audio_mgr.play_sfx_path("res://assets/audio/sfx/ui/coin_asmr.mp3", 0.85)
-		# Add gold to player
 		var state = get_node_or_null("/root/StateManager")
 		if state:
 			state.apply_action({"type": "add_gold", "amount": gold_amount})
-			print("[IAPShop] Added %d gold to player" % gold_amount)
-		
 		gold_purchased.emit(gold_amount)
 		_show_success_message(gold_amount)
 
 func _show_confirm_dialog(price: String, gold: int) -> bool:
-	# Simple confirmation (in real app, show proper dialog)
 	print("[IAPShop] Confirm purchase: %s -> %d gold" % [price, gold])
-	# For now, auto-confirm in development
 	await get_tree().create_timer(0.5).timeout
 	return true
 
@@ -193,19 +194,17 @@ func _show_success_message(gold: int):
 	toast.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	toast.position = Vector2(get_viewport().size.x / 2 - 150, 100)
 	toast.size = Vector2(300, 50)
-	
 	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0.2, 0.8, 0.2, 0.9)
-	style.corner_radius_top_left = 10
-	style.corner_radius_top_right = 10
-	style.corner_radius_bottom_left = 10
-	style.corner_radius_bottom_right = 10
+	style.bg_color = Color(0.42, 0.56, 0.36, 0.88)
+	style.set_corner_radius_all(14)
+	style.content_margin_left = 12
+	style.content_margin_right = 12
+	style.content_margin_top = 6
+	style.content_margin_bottom = 6
 	toast.add_theme_stylebox_override("normal", style)
-	toast.add_theme_font_size_override("font_size", 20)
-	
+	toast.add_theme_font_size_override("font_size", 18)
+	toast.add_theme_color_override("font_color", Color(0.96, 0.93, 0.88))
 	add_child(toast)
-	
-	# Animate and remove
 	var tween = create_tween()
 	tween.tween_property(toast, "modulate:a", 0, 2.0)
 	await tween.finished

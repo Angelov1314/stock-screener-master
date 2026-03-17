@@ -4,3 +4,10 @@ res://scripts/ui/start_menu.gd
 res://scripts/ui/login_panel.gd
 res://scripts/ui/iap_shop.gd
 res://scripts/core/supabase_manager.gd
+res://scripts/entities/Crop.gd
+res://scripts/ui/farm_controller.gd
+res://scripts/ui/sickle_harvest_tool.gd
+res://scripts/ui/watering_can_tool.gd
+res://scripts/simulation/crop_manager.gd
+res://scripts/core/state/state_manager.gd
+res://scripts/ui/shop_ui.gd

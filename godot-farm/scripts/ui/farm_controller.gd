@@ -14,10 +14,13 @@ var _water_combo_count := 0
 var _harvest_combo_count := 0
 var _weather_overlay: CanvasModulate
 var _rain_particles: GPUParticles2D
-var _fog_layer: ColorRect
+var _rain_splash_particles: GPUParticles2D
+var _fog_layer: Node2D
+var _fog_clouds: Array[Sprite2D] = []
 var _weather_reset_timer: Timer
+var _rain_audio_player: AudioStreamPlayer
 const WEATHER_TRIGGER_COUNT := 10
-const WEATHER_DURATION := 12.0
+const WEATHER_DURATION := 7.0
 
 # Reference image size (user provided coordinates based on this)
 const REF_WIDTH := 1143.0
@@ -775,39 +778,93 @@ func _setup_weather_effects():
 	_rain_particles.visible = false
 	_rain_particles.emitting = false
 	_rain_particles.z_index = 3000
-	_rain_particles.amount = 220
-	_rain_particles.lifetime = 1.4
-	_rain_particles.position = Vector2(BG_WIDTH * 2.0, 0)
+	_rain_particles.amount = 620
+	_rain_particles.lifetime = 1.6
+	_rain_particles.position = Vector2((BG_WIDTH * WORLD_SCALE) * 0.5, (BG_HEIGHT * WORLD_SCALE) * 0.5)
 	var rain_mat := ParticleProcessMaterial.new()
-	rain_mat.direction = Vector3(-0.15, 1.0, 0.0)
-	rain_mat.initial_velocity_min = 900.0
-	rain_mat.initial_velocity_max = 1200.0
-	rain_mat.gravity = Vector3(0, 1800, 0)
-	rain_mat.scale_min = 1.0
-	rain_mat.scale_max = 1.6
+	rain_mat.direction = Vector3(0.0, 1.0, 0.0)
+	rain_mat.initial_velocity_min = 1500.0
+	rain_mat.initial_velocity_max = 1850.0
+	rain_mat.gravity = Vector3(0, 2600, 0)
+	rain_mat.scale_min = 1.2
+	rain_mat.scale_max = 1.8
 	rain_mat.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
-	rain_mat.emission_box_extents = Vector3(BG_WIDTH * 2.0, 20.0, 1.0)
+	rain_mat.emission_box_extents = Vector3((BG_WIDTH * WORLD_SCALE), (BG_HEIGHT * WORLD_SCALE), 1.0)
 	_rain_particles.process_material = rain_mat
-	var rain_gradient := Gradient.new()
-	rain_gradient.colors = PackedColorArray([Color(0.75, 0.85, 1.0, 0.0), Color(0.75, 0.85, 1.0, 0.7), Color(0.75, 0.85, 1.0, 0.0)])
-	var rain_tex := GradientTexture1D.new()
-	rain_tex.gradient = rain_gradient
-	var rain_line := CurveTexture.new()
-	_rain_particles.texture = rain_tex
+	var rain_img := Image.create(8, 72, false, Image.FORMAT_RGBA8)
+	rain_img.fill(Color(0, 0, 0, 0))
+	for x in range(8):
+		for y in range(72):
+			var center_fade = 1.0 - abs(float(x - 3.5) / 3.5)
+			var vertical_fade = sin((float(y) / 71.0) * PI)
+			var alpha = 0.95 * center_fade * vertical_fade
+			rain_img.set_pixel(x, y, Color(0.82, 0.9, 1.0, alpha))
+	_rain_particles.texture = ImageTexture.create_from_image(rain_img)
 	add_child(_rain_particles)
 	
-	_fog_layer = ColorRect.new()
-	_fog_layer.color = Color(0.92, 0.94, 0.96, 0.0)
-	_fog_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_rain_splash_particles = GPUParticles2D.new()
+	_rain_splash_particles.visible = false
+	_rain_splash_particles.emitting = false
+	_rain_splash_particles.z_index = 2995
+	_rain_splash_particles.amount = 220
+	_rain_splash_particles.lifetime = 0.42
+	_rain_splash_particles.position = Vector2((BG_WIDTH * WORLD_SCALE) * 0.5, (BG_HEIGHT * WORLD_SCALE) * 0.5)
+	var splash_mat := ParticleProcessMaterial.new()
+	splash_mat.direction = Vector3(0.0, -1.0, 0.0)
+	splash_mat.initial_velocity_min = 18.0
+	splash_mat.initial_velocity_max = 42.0
+	splash_mat.gravity = Vector3(0, 140, 0)
+	splash_mat.scale_min = 0.7
+	splash_mat.scale_max = 1.4
+	splash_mat.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
+	splash_mat.emission_box_extents = Vector3((BG_WIDTH * WORLD_SCALE), (BG_HEIGHT * WORLD_SCALE), 1.0)
+	_rain_splash_particles.process_material = splash_mat
+	var splash_gradient := Gradient.new()
+	splash_gradient.colors = PackedColorArray([Color(0.9, 0.96, 1.0, 0.0), Color(0.94, 0.98, 1.0, 0.95), Color(0.9, 0.96, 1.0, 0.0)])
+	var splash_tex := GradientTexture1D.new()
+	splash_tex.gradient = splash_gradient
+	_rain_splash_particles.texture = splash_tex
+	add_child(_rain_splash_particles)
+	
+	_fog_layer = Node2D.new()
 	_fog_layer.z_index = 2900
-	_fog_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(_fog_layer)
+	_fog_clouds.clear()
+	for i in range(5):
+		var cloud = Sprite2D.new()
+		cloud.texture = _create_fog_cloud_texture()
+		cloud.modulate = Color(0.94, 0.96, 0.98, 0.0)
+		cloud.position = Vector2(500 + i * 850, BG_HEIGHT * 1.9 + (i % 3) * 180)
+		cloud.scale = Vector2(4.5 + randf() * 1.8, 2.8 + randf() * 0.8)
+		_fog_layer.add_child(cloud)
+		_fog_clouds.append(cloud)
 	
 	_weather_reset_timer = Timer.new()
 	_weather_reset_timer.one_shot = true
 	_weather_reset_timer.wait_time = WEATHER_DURATION
 	_weather_reset_timer.timeout.connect(_clear_weather_effects)
 	add_child(_weather_reset_timer)
+	
+	_rain_audio_player = AudioStreamPlayer.new()
+	add_child(_rain_audio_player)
+
+func _create_fog_cloud_texture() -> ImageTexture:
+	var width = 320
+	var height = 140
+	var img = Image.create(width, height, false, Image.FORMAT_RGBA8)
+	img.fill(Color(1, 1, 1, 0))
+	var centers = [Vector2(70, 78), Vector2(140, 60), Vector2(215, 82), Vector2(270, 68)]
+	var radii = [52.0, 68.0, 58.0, 42.0]
+	for x in range(width):
+		for y in range(height):
+			var max_alpha = 0.0
+			for i in range(centers.size()):
+				var dist = Vector2(x, y).distance_to(centers[i])
+				if dist < radii[i]:
+					var alpha = 0.4 * (1.0 - dist / radii[i])
+					max_alpha = max(max_alpha, alpha)
+			img.set_pixel(x, y, Color(1, 1, 1, max_alpha))
+	return ImageTexture.create_from_image(img)
 
 func _register_combo_action(action_type: String):
 	if action_type == "water":
@@ -820,8 +877,8 @@ func _register_combo_action(action_type: String):
 	elif action_type == "harvest":
 		_harvest_combo_count += 1
 		_water_combo_count = 0
-		print("[FarmController] Harvest combo: %d/%d" % [_harvest_combo_count, WEATHER_TRIGGER_COUNT])
-		if _harvest_combo_count >= WEATHER_TRIGGER_COUNT:
+		print("[FarmController] Harvest combo: %d/5" % _harvest_combo_count)
+		if _harvest_combo_count >= 5:
 			_trigger_fog_weather()
 			_harvest_combo_count = 0
 
@@ -830,16 +887,26 @@ func _trigger_rain_weather():
 	_weather_overlay.color = Color(0.82, 0.88, 0.96, 1.0)
 	_rain_particles.visible = true
 	_rain_particles.emitting = true
+	if _rain_splash_particles:
+		_rain_splash_particles.visible = true
+		_rain_splash_particles.emitting = true
 	_play_ui_weather_sfx("res://assets/audio/sfx/ui/rain_trigger.mp3")
-	show_toast("连续浇水10次，触发下雨！")
+	_play_rain_ambience()
+	_show_weather_toast("连续浇水10次，触发下雨！")
 	_weather_reset_timer.start()
 
 func _trigger_fog_weather():
 	_clear_weather_effects()
 	_weather_overlay.color = Color(0.9, 0.9, 0.92, 1.0)
-	_fog_layer.color = Color(0.92, 0.94, 0.96, 0.35)
+	for i in range(_fog_clouds.size()):
+		var cloud = _fog_clouds[i]
+		cloud.modulate = Color(0.94, 0.96, 0.98, 0.22 + i * 0.05)
+		cloud.position = Vector2(200 + i * 900, BG_HEIGHT * 1.82 + (i % 3) * 170)
+		var tween = create_tween().set_loops()
+		tween.tween_property(cloud, "position:x", cloud.position.x + 420, 14.0 + i * 1.8)
+		tween.tween_property(cloud, "position:x", cloud.position.x - 260, 11.0 + i * 1.5)
 	_play_ui_weather_sfx("res://assets/audio/sfx/ui/fog_trigger.mp3")
-	show_toast("连续收割10次，触发大雾！")
+	_show_weather_toast("连续收割5次，触发大雾！")
 	_weather_reset_timer.start()
 
 func _clear_weather_effects():
@@ -848,13 +915,37 @@ func _clear_weather_effects():
 	if _rain_particles:
 		_rain_particles.emitting = false
 		_rain_particles.visible = false
-	if _fog_layer:
-		_fog_layer.color = Color(0.92, 0.94, 0.96, 0.0)
+	if _rain_splash_particles:
+		_rain_splash_particles.emitting = false
+		_rain_splash_particles.visible = false
+	if _rain_audio_player:
+		_rain_audio_player.stop()
+	if _fog_clouds.size() > 0:
+		for i in range(_fog_clouds.size()):
+			var cloud = _fog_clouds[i]
+			cloud.modulate = Color(0.94, 0.96, 0.98, 0.0)
+			cloud.position = Vector2(500 + i * 850, BG_HEIGHT * 1.9 + (i % 3) * 180)
 
 func _play_ui_weather_sfx(path: String):
 	var audio_mgr = get_node_or_null("/root/AudioManager")
 	if audio_mgr:
 		audio_mgr.play_sfx_path(path, 0.95)
+
+func _play_rain_ambience():
+	if not _rain_audio_player:
+		return
+	var path = "res://assets/audio/sfx/ui/rain_ambience_7s.mp3"
+	if ResourceLoader.exists(path):
+		_rain_audio_player.stream = load(path)
+		_rain_audio_player.volume_db = -6.0
+		_rain_audio_player.play()
+
+func _show_weather_toast(message: String):
+	var hud = get_node_or_null("/root/Main/HUD")
+	if hud and hud.has_method("show_toast"):
+		hud.show_toast(message)
+	else:
+		print("[FarmController] %s" % message)
 
 ## Signal Handlers
 func _on_crop_planted(coord: Vector2i, crop_id: String):

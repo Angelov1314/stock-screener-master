@@ -48,13 +48,13 @@ theme_override_constants/separation = 20
 [node name="TitleLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 56
-text = "Cozy Farm"
+text = "Another Farm"
 horizontal_alignment = 1
 
 [node name="SubtitleLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
-text = "选择你的农场关卡"
+text = "JY2026™"
 horizontal_alignment = 1
 
 [node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer"]
@@ -63,7 +63,7 @@ layout_mode = 2
 
 [node name="LevelSelectLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
-text = "选择关卡："
+text = "选择你的农场"
 horizontal_alignment = 1
 
 [node name="LevelButtons" type="HBoxContainer" parent="CenterContainer/VBoxContainer"]
@@ -75,22 +75,19 @@ alignment = 1
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
-text = "关卡 1
-新手农场"
+text = "春日风浴"
 
 [node name="Level2" type="Button" parent="CenterContainer/VBoxContainer/LevelButtons"]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
-text = "关卡 2
-阳光牧场"
+text = "秋日私语"
 
 [node name="Level3" type="Button" parent="CenterContainer/VBoxContainer/LevelButtons"]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
-text = "关卡 3
-高山农庄"
+text = "仲夏夜之梦"
 
 [node name="Spacer2" type="Control" parent="CenterContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 20)

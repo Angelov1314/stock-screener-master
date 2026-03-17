@@ -9,9 +9,9 @@ const LOADING_SCENE := "res://scenes/loading_screen.tscn"
 
 var selected_level: int = 1
 var level_configs = {
-	1: {"name": "新手农场", "difficulty": "easy", "starting_gold": 100},
-	2: {"name": "阳光牧场", "difficulty": "normal", "starting_gold": 80},
-	3: {"name": "高山农庄", "difficulty": "hard", "starting_gold": 50}
+	1: {"name": "春日风浴", "difficulty": "easy", "starting_gold": 100},
+	2: {"name": "秋日私语", "difficulty": "normal", "starting_gold": 80},
+	3: {"name": "仲夏夜之梦", "difficulty": "hard", "starting_gold": 50}
 }
 
 func _ready():

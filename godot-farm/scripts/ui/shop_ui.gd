@@ -440,8 +440,10 @@ func _get_icon_path(id: String, item_type: String) -> String:
 			"res://assets/characters/%s/idle/%s_idle_01.png" % [id, id],
 			"res://assets/characters/%s/idle/%s_idle_0.png" % [id, id],
 			"res://assets/characters/%s/idle/%s_idle_1.png" % [id, id],
+			"res://assets/characters/%s/idle/idle_01.png" % [id],
 			"res://assets/characters/%s/idle/idle_0.png" % [id],
 			"res://assets/characters/%s/idle/idle_1.png" % [id],
+			"res://assets/characters/%s/idle/01.png" % [id],
 		]:
 			if ResourceLoader.exists(path):
 				return path
