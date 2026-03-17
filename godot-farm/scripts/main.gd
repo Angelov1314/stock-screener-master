@@ -210,8 +210,7 @@ func _on_user_data_loaded(user_data: Dictionary):
 		supabase_manager.load_inventory(current_user_id)
 
 func _on_inventory_loaded(inventory_data):
-	"""Handle inventory data loaded from Supabase"""
-	print("[Main] Inventory loaded from Supabase: %s" % inventory_data)
+	print("[Main] Inventory loaded from Supabase: %s" % [str(inventory_data)])
 	
 	var state = get_node_or_null("/root/StateManager")
 	if not state:

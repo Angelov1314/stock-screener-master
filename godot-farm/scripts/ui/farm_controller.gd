@@ -650,7 +650,7 @@ func _create_plot_timer_bubble():
 	_plot_timer_bubble = Node2D.new()
 	_plot_timer_bubble.name = "PlotTimerBubble"
 	_plot_timer_bubble.visible = false
-	_plot_timer_bubble.z_index = 5000
+	_plot_timer_bubble.z_index = 4000
 	add_child(_plot_timer_bubble)
 	
 	var bg = ColorRect.new()
