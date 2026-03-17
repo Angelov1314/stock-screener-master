@@ -29,6 +29,7 @@ func _ready():
 	hud.planting_menu_requested.connect(_on_planting_menu_requested)
 	hud.sickle_mode_toggled.connect(_on_sickle_mode_toggled)
 	hud.water_mode_toggled.connect(_on_water_mode_toggled)
+	hud.login_requested.connect(_on_login_requested)
 	
 	# Connect inventory panel close
 	inventory_panel.panel_closed.connect(_on_inventory_closed)
@@ -177,6 +178,21 @@ func _on_water_mode_toggled(active: bool):
 
 func _on_inventory_closed():
 	print("[Main] Inventory closed")
+
+func _on_login_requested():
+	print("[Main] Opening login panel...")
+	var login_scene = load("res://scenes/ui/login_panel.tscn")
+	if login_scene:
+		var login_panel = login_scene.instantiate()
+		add_child(login_panel)
+		login_panel.login_successful.connect(_on_login_successful)
+		login_panel.panel_closed.connect(func(): login_panel.queue_free())
+
+func _on_login_successful(username: String):
+	print("[Main] Login successful: %s" % username)
+	# Update HUD player name
+	if hud:
+		hud._update_player_name(username)
 
 func _on_seed_selected(seed_id: String):
 	print("[Main] Seed selected: %s" % seed_id)
