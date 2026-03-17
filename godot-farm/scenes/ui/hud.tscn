@@ -135,7 +135,11 @@ alignment = 0
 [node name="GoldFrame" type="TextureRect" parent="MarginContainer/VBoxContainer/TopBar/RightSection"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(100, 40)
-layout_mode = 2
+layout_mode = 0
+offset_left = -44.0
+offset_top = 21.0
+offset_right = 56.0
+offset_bottom = 61.0
 expand_mode = 1
 stretch_mode = 5
 

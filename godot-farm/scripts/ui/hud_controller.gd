@@ -64,14 +64,12 @@ func _ready():
 		_update_player_name("农场主")
 		_update_player_info("农场主", 1, 0, 100, 0.0)
 	
-	# Load gold frame texture and apply tuned position
+	# Load gold frame texture and apply scale
+	# GoldFrame position is set directly in scene file with absolute coordinates
 	if gold_frame:
 		gold_frame.texture = load("res://assets/ui/gold_frame.png")
 		gold_frame.scale = _gold_frame_scale
-		# Wait for container layout to fully settle before setting position
-		await get_tree().create_timer(0.3).timeout
-		gold_frame.position = _gold_frame_offset
-		print("[HUDController] Gold frame positioned at %s with scale %s" % [_gold_frame_offset, _gold_frame_scale])
+		print("[HUDController] Gold frame scale: %s (position set in scene)" % [_gold_frame_scale])
 	
 	print("[HUDController] Initialized")
 
