@@ -132,6 +132,13 @@ layout_mode = 2
 size_flags_horizontal = 10
 alignment = 0
 
+[node name="GoldFrame" type="TextureRect" parent="MarginContainer/VBoxContainer/TopBar/RightSection"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 40)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
 [node name="GoldSection" type="HBoxContainer" parent="MarginContainer/VBoxContainer/TopBar/RightSection"]
 layout_mode = 2
 alignment = 2
@@ -148,17 +155,6 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "0"
 label_settings = SubResource("LabelSettings_gold")
-
-[node name="GoldFrame" type="TextureRect" parent="."]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(100, 40)
-layout_mode = 0
-offset_left = 1100.0
-offset_top = 80.0
-offset_right = 1200.0
-offset_bottom = 120.0
-expand_mode = 1
-stretch_mode = 5
 
 [node name="Spacer" type="Control" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
