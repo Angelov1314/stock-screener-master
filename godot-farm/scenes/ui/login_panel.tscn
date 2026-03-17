@@ -4,6 +4,7 @@
 
 [node name="LoginPanel" type="CanvasLayer"]
 layer = 10
+script = ExtResource("1_login_script")
 
 [node name="Background" type="ColorRect" parent="."]
 anchors_preset = 15
@@ -78,6 +79,3 @@ text = "登录"
 unique_name_in_owner = true
 layout_mode = 2
 text = "关闭"
-
-[node name="LoginPanel" type="Node" parent="."]
-script = ExtResource("1_login_script")
