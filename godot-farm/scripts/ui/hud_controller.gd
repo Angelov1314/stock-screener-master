@@ -34,8 +34,8 @@ var _sickle_active: bool = false
 var _water_active: bool = false
 
 # Gold frame positioning (tuned values)
-var _gold_frame_offset: Vector2 = Vector2(-26.0, -11.0)
-var _gold_frame_scale: Vector2 = Vector2(1.65, 1.65)
+var _gold_frame_offset: Vector2 = Vector2(-40.0, -17.0)
+var _gold_frame_scale: Vector2 = Vector2(1.95, 1.95)
 var _gold_frame_debug_mode: bool = false
 
 func _ready():
@@ -244,8 +244,8 @@ func _input(event):
 				_gold_frame_scale -= Vector2(scale_speed, scale_speed)
 				changed = true
 			KEY_R:
-				_gold_frame_offset = Vector2(-26.0, -11.0)
-				_gold_frame_scale = Vector2(1.65, 1.65)
+				_gold_frame_offset = Vector2(-40.0, -17.0)
+				_gold_frame_scale = Vector2(1.95, 1.95)
 				changed = true
 	
 	if changed:
