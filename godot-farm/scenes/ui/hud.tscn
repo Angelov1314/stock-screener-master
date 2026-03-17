@@ -42,10 +42,10 @@ custom_minimum_size = Vector2(100, 40)
 anchors_preset = -1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -224.0
-offset_top = 82.0
-offset_right = -124.0
-offset_bottom = 122.0
+offset_left = -194.0
+offset_top = 52.0
+offset_right = -94.0
+offset_bottom = 92.0
 expand_mode = 1
 stretch_mode = 5
 
