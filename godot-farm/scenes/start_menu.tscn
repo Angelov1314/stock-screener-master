@@ -96,7 +96,7 @@ layout_mode = 2
 [node name="SelectedLevelLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "当前选择：关卡 1"
+text = "当前选择：农场 1"
 horizontal_alignment = 1
 
 [node name="Spacer3" type="Control" parent="CenterContainer/VBoxContainer"]

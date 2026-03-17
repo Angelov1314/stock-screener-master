@@ -42,7 +42,7 @@ func _ready():
 func _on_level_selected(level: int):
 	selected_level = level
 	var config = level_configs[level]
-	selected_label.text = "当前选择：关卡 %d - %s" % [level, config.name]
+	selected_label.text = "当前选择：农场 %d - %s" % [level, config.name]
 	print("[StartMenu] Level %d selected: %s" % [level, config.name])
 
 func _on_start_game():

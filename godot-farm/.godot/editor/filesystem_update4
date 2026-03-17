@@ -11,3 +11,4 @@ res://scripts/ui/watering_can_tool.gd
 res://scripts/simulation/crop_manager.gd
 res://scripts/core/state/state_manager.gd
 res://scripts/ui/shop_ui.gd
+res://scripts/ui/planting_menu_new.gd
