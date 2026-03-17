@@ -22,8 +22,7 @@ func _ready():
 	close_button.pressed.connect(_on_close_pressed)
 	_setup_purchase_grid()
 	
-	# Close on escape
-	_input_event_check()
+	# Close on escape - handled by _input() function
 
 func _setup_purchase_grid():
 	var grid = get_node_or_null("CenterContainer/Panel/VBoxContainer/ScrollContainer/PurchaseGrid")

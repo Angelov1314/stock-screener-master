@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://iapshop001"]
+[gd_scene format=3 uid="uid://iapshop001"]
 
 [ext_resource type="Script" path="res://scripts/ui/iap_shop.gd" id="1_iap_script"]
 
