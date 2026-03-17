@@ -75,17 +75,21 @@ func _ready():
 
 ## Button Handlers
 func _on_sickle_pressed():
+	_animate_button(sickle_button)
 	_sickle_active = !_sickle_active
 	_water_active = false
 	_update_button_states()
 	sickle_mode_toggled.emit(_sickle_active)
+	water_mode_toggled.emit(false)
 	print("[HUD] Sickle mode: %s" % _sickle_active)
 
 func _on_water_pressed():
+	_animate_button(water_button)
 	_water_active = !_water_active
 	_sickle_active = false
 	_update_button_states()
 	water_mode_toggled.emit(_water_active)
+	sickle_mode_toggled.emit(false)
 	print("[HUD] Water mode: %s" % _water_active)
 
 func _on_plant_pressed():
