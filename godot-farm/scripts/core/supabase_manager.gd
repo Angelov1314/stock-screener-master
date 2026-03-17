@@ -155,13 +155,13 @@ func load_inventory(user_id: String):
 	http_request.request(url, headers, HTTPClient.METHOD_GET)
 
 func save_inventory_batch(user_id: String, inventory: Dictionary):
-	"""Save all inventory items in batch"""
+	"""Save all inventory items in batch using real upsert"""
 	if access_token.is_empty():
 		print("[SupabaseManager] ERROR: No access token for saving inventory!")
 		return
 
-	# Build batch insert/update
-	var url = SUPABASE_URL + "/rest/v1/inventory"
+	# IMPORTANT: on_conflict is required, otherwise batch POST becomes plain INSERT
+	var url = SUPABASE_URL + "/rest/v1/inventory?on_conflict=user_id,item_id"
 
 	var headers = [
 		"apikey: " + SUPABASE_KEY,
@@ -172,7 +172,14 @@ func save_inventory_batch(user_id: String, inventory: Dictionary):
 
 	# Create array of all inventory items
 	var items = []
+	var seen_keys = {}
 	for item_id in inventory.keys():
+		var unique_key = user_id + ":" + str(item_id)
+		if seen_keys.has(unique_key):
+			print("[SupabaseManager] WARNING duplicate item in same batch: ", unique_key)
+			continue
+		seen_keys[unique_key] = true
+
 		items.append({
 			"user_id": user_id,
 			"item_id": item_id,
@@ -181,22 +188,33 @@ func save_inventory_batch(user_id: String, inventory: Dictionary):
 		})
 
 	if items.size() == 0:
+		print("[SupabaseManager] Inventory batch empty, nothing to save")
 		return
 
-	print("[SupabaseManager] Saving inventory batch: ", items.size(), " items")
+	print("[SupabaseManager] Inventory batch URL: ", url)
+	print("[SupabaseManager] Inventory batch Prefer header: resolution=merge-duplicates")
+	print("[SupabaseManager] Inventory batch count: ", items.size())
+	for item in items:
+		print("[SupabaseManager] Inventory batch item: ", item.get("item_id"), " x", item.get("quantity"))
+	print("[SupabaseManager] Inventory batch payload: ", JSON.stringify(items))
 
 	# Create a new HTTPRequest for this call to avoid conflicts
 	var req = HTTPRequest.new()
 	add_child(req)
 	req.request_completed.connect(func(result, code, hdrs, body):
+		var body_str = body.get_string_from_utf8()
 		if result == HTTPRequest.RESULT_SUCCESS and (code == 200 or code == 201):
 			print("[SupabaseManager] Inventory batch saved successfully")
+			print("[SupabaseManager] Inventory batch response: ", body_str)
 		else:
-			print("[SupabaseManager] Inventory batch save failed: ", code, ", body: ", body.get_string_from_utf8())
+			print("[SupabaseManager] Inventory batch save failed: ", code, ", body: ", body_str)
 		req.queue_free()
 	)
 
-	req.request(url, headers, HTTPClient.METHOD_POST, JSON.stringify(items))
+	var request_error = req.request(url, headers, HTTPClient.METHOD_POST, JSON.stringify(items))
+	if request_error != OK:
+		print("[SupabaseManager] Inventory batch request failed to start: ", request_error)
+		req.queue_free()
 
 func save_inventory_item(user_id: String, item_id: String, quantity: int):
 	# DEPRECATED: Use save_inventory_batch instead
