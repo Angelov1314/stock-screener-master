@@ -3,3 +3,4 @@ res://scripts/main.gd
 res://scripts/ui/start_menu.gd
 res://scripts/ui/login_panel.gd
 res://scripts/ui/iap_shop.gd
+res://scripts/core/supabase_manager.gd

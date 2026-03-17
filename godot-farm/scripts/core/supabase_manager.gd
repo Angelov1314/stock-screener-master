@@ -185,7 +185,9 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 				else:
 					user_data_saved.emit(true)
 					print("[SupabaseManager] Data saved successfully")
-		else:
+			else:
+				print("[SupabaseManager] Unknown data type: ", typeof(data))
+		_:
 			if data.has("error"):
 				login_failed.emit(data["error_description"])
 				print("[SupabaseManager] Error: ", data["error_description"])
