@@ -1,2 +1,3 @@
 res://scripts/ui/hud_controller.gd
 res://scripts/main.gd
+res://scripts/ui/start_menu.gd

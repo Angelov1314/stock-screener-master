@@ -29,6 +29,9 @@ func _ready():
 	# Connect start button
 	$CenterContainer/VBoxContainer/StartButton.pressed.connect(_on_start_game)
 	
+	# Connect login button
+	$CenterContainer/VBoxContainer/LoginButton.pressed.connect(_on_login_pressed)
+	
 	# Animate cow icon
 	var anim_timer = Timer.new()
 	anim_timer.wait_time = 0.125
@@ -56,6 +59,20 @@ func _on_start_game():
 	
 	# Go to loading screen
 	get_tree().change_scene_to_file(LOADING_SCENE)
+
+func _on_login_pressed():
+	print("[StartMenu] Opening login panel...")
+	var login_scene = load("res://scenes/ui/login_panel.tscn")
+	if login_scene:
+		var login_panel = login_scene.instantiate()
+		add_child(login_panel)
+		login_panel.login_successful.connect(_on_login_successful)
+		login_panel.panel_closed.connect(func(): login_panel.queue_free())
+
+func _on_login_successful(username: String):
+	print("[StartMenu] Login successful: %s" % username)
+	# Update UI or show logged-in state
+	$CenterContainer/VBoxContainer/LoginButton.text = "已登录: %s" % username
 
 func _on_cow_anim():
 	cow_icon.frame = (cow_icon.frame + 1) % cow_icon.hframes
