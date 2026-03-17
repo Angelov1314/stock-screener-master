@@ -54,8 +54,8 @@ shiba.mp3::AudioStreamMP3::8916343629483035346::1773723631::1773723799::1::::<><
 shiba_walk.mp3::AudioStreamMP3::4229215597534308113::1773676277::1773677224::1::::<><><>0<>0<>32079cc15cf07fa20505b21dfb14eaaf<>res://.godot/imported/shiba_walk.mp3-f2b67fdd021d39b761212a3298bf57b1.mp3str::
 ::res://assets/audio/sfx/watering/::1773677226
 Firefly_audio_Create_a_relaxing_sound_for_watering_plants,_for_a_variation4.wav::AudioStreamWAV::2489843384807091894::1773096555::1773677226::1::::<><><>0<>0<>61e056cde60df5cef543485eb53a7fa9<>res://.godot/imported/Firefly_audio_Create_a_relaxing_sound_for_watering_plants,_for_a_variation4.wav-0b885a08bb198a8c54e8fc8915cce380.sample::
-::res://assets/audio/sfx/zebra/::1773724195
-zebra.mp3::AudioStreamMP3::286672173158742953::1773723720::1773724195::1::::<><><>0<>0<>161fdedf96fd4c4abfcb80f879ab8b4d<>res://.godot/imported/zebra.mp3-71f0c272b9ee2e815a81d66edb732f70.mp3str::
+::res://assets/audio/sfx/zebra/::1773724826
+zebra.mp3::AudioStreamMP3::6704289096827783437::1773724826::1773724827::1::::<><><>0<>0<>5cc8803ef9e7a5ba069b6e053803c34c<>res://.godot/imported/zebra.mp3-71f0c272b9ee2e815a81d66edb732f70.mp3str::
 zebra_walk.mp3::AudioStreamMP3::2360759954162751696::1773594232::1773724195::1::::<><><>0<>0<>c538ac160d8960c67972a2ab67358c94<>res://.godot/imported/zebra_walk.mp3-0671bf3ca7d39d848214b05e5a59ddc6.mp3str::
 ::res://assets/backgrounds/::1773677226
 level3_bg.jpg::CompressedTexture2D::7733289486800686723::1773677115::1773677226::1::::<><><>0<>0<>519c2aa3d71097252e1d766c37c8ec9f<>res://.godot/imported/level3_bg.jpg-80f3866c39fb81008d8bc5e0599db486.ctex::
@@ -481,7 +481,7 @@ economy_manager.gd::GDScript::7631160812215007844::1773641289::0::1::::<>Node<><
 player_progress.gd::GDScript::6468008426754205805::1773548502::0::1::::<>Node<><>0<>0<><>::
 save_manager.gd::GDScript::3872420973756149669::1772840337::0::1::::<>Node<><>0<>0<><>::
 user_data_manager.gd::GDScript::3686963699611921557::1773601070::0::1::::<>Node<><>0<>0<><>::
-::res://scripts/ui/::1773693803
+::res://scripts/ui/::1773724608
 ambient_audio_manager.gd::GDScript::3204381110954429004::1773594274::0::1::::AmbientAudioManager<>Node<><>0<>0<><>::
 ambient_particles.gd::GDScript::1020191726506912591::1773595272::0::1::::AmbientParticles<>Node2D<><>0<>0<><>::
 animated_light.gd::GDScript::63602521311234375::1773596216::0::1::::AnimatedLight<>Node2D<><>0<>0<><>::
@@ -490,7 +490,7 @@ draggable_camera.gd::GDScript::3838063003728511712::1773651332::0::1::::Draggabl
 dynamic_background.gd::GDScript::4131130134834181413::1773677042::0::1::::<>Node2D<><>0<>0<><>::
 farm_controller.gd::GDScript::4428520479176883368::1773692302::0::1::::FarmController<>Node2D<><>0<>0<><>::
 hud_controller.gd::GDScript::9081744454399963342::1773682200::0::1::::HUDController<>CanvasLayer<><>0<>0<><>::
-interactive_animal.gd::GDScript::2517276577378463575::1773723967::0::1::::<>Node2D<><>0<>0<><>::
+interactive_animal.gd::GDScript::2517276577378463575::1773724374::0::1::::<>Node2D<><>0<>0<><>::
 inventory_controller.gd::GDScript::3011258356131126342::1773686953::0::1::::InventoryController<>CanvasLayer<><>0<>0<><>::
 level2_music.gd::GDScript::3879853963590655221::1773666817::0::1::::<>AudioStreamPlayer<><>0<>0<><>::
 light_manager.gd::GDScript::8263672306061906130::1773595616::0::1::::LightManager<>Node2D<><>0<>0<><>::
@@ -500,7 +500,7 @@ particle_effects.gd::GDScript::2836889632185725751::1773597582::0::1::::Particle
 particle_manager.gd::GDScript::2169369030608160051::1773597575::0::1::::ParticleManager<>Node2D<><>0<>0<><>::
 planting_menu.gd::GDScript::6449868125698838239::1773650209::0::1::::<>Control<><>0<>0<><>::
 planting_menu_new.gd::GDScript::1358085357335976848::1773679388::0::1::::<>CanvasLayer<><>0<>0<><>::
-shop_ui.gd::GDScript::5903617818756173081::1773696809::0::1::::<>CanvasLayer<><>0<>0<><>::
+shop_ui.gd::GDScript::5903617818756173081::1773724795::0::1::::<>CanvasLayer<><>0<>0<><>::
 sickle_harvest_tool.gd::GDScript::4051626458266146264::1773667154::0::1::::SickleHarvestTool<>Node2D<><>0<>0<><>::
 simple_inventory.gd::GDScript::3478129706359223798::1773675835::0::1::::<>CanvasLayer<><>0<>0<><>::
 start_menu.gd::GDScript::477336749048974179::1773098477::0::1::::<>Control<><>0<>0<><>::

@@ -57,13 +57,6 @@ func _ready():
 	
 	# Start idle
 	_start_idle()
-	
-	# Play initial sound after a short delay
-	var timer = get_tree().create_timer(randf_range(0.5, 2.0))
-	timer.timeout.connect(_play_initial_sound)
-
-func _play_initial_sound():
-	_play_animal_sound("idle")
 
 func _setup_click_area():
 	click_area = Area2D.new()
@@ -339,10 +332,6 @@ func _start_idle():
 	# Stop footsteps
 	_stop_walking_footsteps()
 	
-	# Occasionally play idle sound
-	if randf() < 0.3:
-		_play_animal_sound("idle")
-	
 	var idle_time = randf_range(1.5, 4.0)
 	change_state_timer.start(idle_time)
 
@@ -357,9 +346,6 @@ func _start_resting():
 	# Stop footsteps
 	_stop_walking_footsteps()
 	
-	# Play sleep sound if available
-	_play_animal_sound("idle")
-	
 	# Rest for 10 seconds
 	change_state_timer.start(10.0)
 
@@ -369,8 +355,7 @@ func _start_walking():
 		sprite.play("walk")
 	_pick_new_direction()
 	
-	# Start footstep sounds
-	_start_walking_footsteps()
+	# No automatic footstep sounds (only when picked up)
 	
 	var walk_time = randf_range(2.0, 6.0)
 	change_state_timer.start(walk_time)
