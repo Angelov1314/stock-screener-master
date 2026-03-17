@@ -382,18 +382,16 @@ func _on_change_state():
 		_start_idle()
 
 # Audio
-var _audio_player: AudioStreamPlayer2D
+var _audio_player: AudioStreamPlayer
 var _footstep_timer: Timer
 var _last_footstep_time: float = 0.0
 
 var _drop_hint: Label = null
 
 func _init_audio():
-	# Create audio player
-	_audio_player = AudioStreamPlayer2D.new()
+	# Create audio player (non-positional for consistent volume)
+	_audio_player = AudioStreamPlayer.new()
 	_audio_player.name = "AudioPlayer"
-	_audio_player.max_distance = 500.0
-	_audio_player.attenuation = 1.5
 	add_child(_audio_player)
 	
 	# Create footstep timer
@@ -433,7 +431,7 @@ func _play_animal_sound(sound_type: String = "idle"):
 	var stream = load(sound_path)
 	if stream:
 		_audio_player.stream = stream
-		_audio_player.volume_db = 0.0
+		_audio_player.volume_db = -10.0  #  louder volume
 		_audio_player.bus = "Master"
 		_audio_player.play()
 		print("[InteractiveAnimal] Playing sound: %s (volume: %f, bus: %s)" % [sound_path, _audio_player.volume_db, _audio_player.bus])
