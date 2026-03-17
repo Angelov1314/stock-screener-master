@@ -34,11 +34,11 @@ func _setup_sickle():
 func activate():
 	_is_active = true
 	visible = true
-	z_index = 1000
+	z_index = 4000
 	_update_position()
 	_harvested_this_drag.clear()
 	harvest_started.emit()
-	print("[SickleTool] Activated")
+	print("[SickleTool] Activated - cursor now holds sickle")
 
 func deactivate():
 	_is_active = false

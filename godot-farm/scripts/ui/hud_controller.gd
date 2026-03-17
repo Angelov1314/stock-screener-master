@@ -81,6 +81,10 @@ func _on_sickle_pressed():
 	_update_button_states()
 	sickle_mode_toggled.emit(_sickle_active)
 	water_mode_toggled.emit(false)
+	if _sickle_active:
+		show_toast("已进入收割模式，点击土地进行收割")
+	else:
+		show_toast("已退出收割模式")
 	print("[HUD] Sickle mode: %s" % _sickle_active)
 
 func _on_water_pressed():
@@ -90,6 +94,10 @@ func _on_water_pressed():
 	_update_button_states()
 	water_mode_toggled.emit(_water_active)
 	sickle_mode_toggled.emit(false)
+	if _water_active:
+		show_toast("已进入浇水模式，点击土地进行浇水")
+	else:
+		show_toast("已退出浇水模式")
 	print("[HUD] Water mode: %s" % _water_active)
 
 func _on_plant_pressed():

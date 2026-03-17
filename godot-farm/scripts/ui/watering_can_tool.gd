@@ -33,10 +33,10 @@ func _setup_watering_can():
 func activate():
 	_is_active = true
 	visible = true
-	z_index = 1000
+	z_index = 4000
 	_update_position()
 	watering_started.emit()
-	print("[WateringCanTool] Activated")
+	print("[WateringCanTool] Activated - cursor now holds watering can")
 
 func deactivate():
 	_is_active = false
