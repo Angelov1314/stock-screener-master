@@ -68,8 +68,8 @@ func _ready():
 	if gold_frame:
 		gold_frame.texture = load("res://assets/ui/gold_frame.png")
 		gold_frame.scale = _gold_frame_scale
-		# Set position on next frame to override container layout
-		await get_tree().process_frame
+		# Wait for container layout to fully settle before setting position
+		await get_tree().create_timer(0.3).timeout
 		gold_frame.position = _gold_frame_offset
 		print("[HUDController] Gold frame positioned at %s with scale %s" % [_gold_frame_offset, _gold_frame_scale])
 	
