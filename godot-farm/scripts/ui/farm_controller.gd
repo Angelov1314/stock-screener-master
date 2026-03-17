@@ -603,10 +603,14 @@ func _on_plot_input_event(viewport: Node, event: InputEvent, shape_idx: int, plo
 			_handle_plot_secondary(plot_id)
 
 func _handle_plot_tap(plot_id: String):
-	# Check if tool mode is active - if so, let tools handle it
+	# In tool modes, clicking a plot should directly apply the tool effect
 	if _sickle_tool and _sickle_tool.is_active():
+		_hide_plot_timer_bubble()
+		_try_harvest_crop(plot_id)
 		return
 	if _water_tool and _water_tool.is_active():
+		_hide_plot_timer_bubble()
+		_try_water_crop(plot_id)
 		return
 	
 	var crop_entity = _get_crop_at_plot(plot_id)
@@ -616,8 +620,7 @@ func _handle_plot_tap(plot_id: String):
 		_try_plant_crop(plot_id)
 	else:
 		if crop_entity.can_harvest():
-			_hide_plot_timer_bubble()
-			_try_harvest_crop(plot_id)
+			_show_plot_timer_bubble(plot_id, crop_entity)
 		else:
 			_show_plot_timer_bubble(plot_id, crop_entity)
 
