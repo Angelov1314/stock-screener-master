@@ -191,8 +191,15 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 						# Unknown data type, assume user data
 						user_data_loaded.emit(data[0])
 				else:
-					# Empty array - no data found
-					print("[SupabaseManager] No data found in array")
+					# Empty array - no user data found, emit default
+					print("[SupabaseManager] No user data found, emitting default...")
+					user_data_loaded.emit({
+						"user_id": current_user_id,
+						"username": "农场主",
+						"gold": 300,
+						"level": 1,
+						"xp": 0
+					})
 			elif data is Dictionary:
 				if data.has("access_token"):
 					# Login/signup success - has access token

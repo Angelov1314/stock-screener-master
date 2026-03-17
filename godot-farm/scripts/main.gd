@@ -12,6 +12,7 @@ var farm: Node2D = null
 
 var supabase_manager: Node = null
 var current_user_id: String = ""
+var _game_initialized: bool = false
 
 func _ready():
 	# Set fullscreen on start
@@ -34,15 +35,31 @@ func _ready():
 		print("[Main] User logged in: %s (%s)" % [current_username, current_user_id])
 		# Load user data from Supabase first, then initialize
 		if supabase_manager:
-			supabase_manager.user_data_loaded.connect(_on_user_data_loaded)
+			# Connect signals BEFORE loading data
+			if not supabase_manager.user_data_loaded.is_connected(_on_user_data_loaded):
+				supabase_manager.user_data_loaded.connect(_on_user_data_loaded)
+				print("[Main] Connected user_data_loaded signal")
+			
+			# Load user data
 			supabase_manager.load_user_data(current_user_id)
-			print("[Main] Loading user data from Supabase...")
+			print("[Main] Loading user data from Supabase for user: %s" % current_user_id)
+			
+			# Set a timeout to initialize game even if data loading fails
+			await get_tree().create_timer(5.0).timeout
+			if not _game_initialized:
+				print("[Main] Data loading timeout, initializing with defaults...")
+				_initialize_game()
 		else:
 			print("[Main] SupabaseManager not found, using local data")
 			_initialize_game()
 
 func _initialize_game():
 	"""Initialize game after user data is loaded (or for local play)"""
+	
+	# Prevent double initialization
+	if _game_initialized:
+		return
+	_game_initialized = true
 	
 	# Get selected level from StateManager (set by start menu)
 	var selected_level = StateManager.get_data("selected_level", 1)
@@ -182,9 +199,15 @@ func _on_user_data_loaded(user_data: Dictionary):
 		var xp_progress = state.get_xp_progress()
 		hud._update_player_info(state.get_player_name(), state.get_player_level(), state.get_experience(), state.get_xp_for_next_level(), xp_progress)
 	
+	# If we used default data (no record in database), save it now
+	if not user_data.has("id"):
+		print("[Main] No existing user data record, saving default data to database...")
+		_save_user_data()
+	
 	# Load inventory from Supabase after user data is loaded
 	if supabase_manager:
-		supabase_manager.inventory_loaded.connect(_on_inventory_loaded)
+		if not supabase_manager.inventory_loaded.is_connected(_on_inventory_loaded):
+			supabase_manager.inventory_loaded.connect(_on_inventory_loaded)
 		supabase_manager.load_inventory(current_user_id)
 
 func _on_inventory_loaded(inventory_data):
