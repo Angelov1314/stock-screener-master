@@ -99,25 +99,39 @@ func load_user_data(user_id: String):
 	http_request.request(url, headers, HTTPClient.METHOD_GET)
 
 func save_user_data(user_id: String, data: Dictionary):
-	# Use upsert with on_conflict parameter
-	var url = SUPABASE_URL + "/rest/v1/user_data?on_conflict=user_id"
-	
-	# Use access token for RLS if available
+	# First check if record exists
+	var check_url = SUPABASE_URL + "/rest/v1/user_data?user_id=eq." + user_id + "&limit=1"
 	var auth_token = access_token if not access_token.is_empty() else SUPABASE_KEY
 	
 	var headers = [
 		"apikey: " + SUPABASE_KEY,
 		"Authorization: Bearer " + auth_token,
-		"Content-Type: application/json",
-		"Prefer: resolution=merge-duplicates"
+		"Content-Type: application/json"
 	]
 	
+	print("[SupabaseManager] Checking if user_data exists for user: ", user_id)
+	
+	# Store data for use in response handler
 	var save_data = data.duplicate()
 	save_data["user_id"] = user_id
 	save_data["updated_at"] = Time.get_datetime_string_from_system()
 	
-	print("[SupabaseManager] Saving user data with token type: ", "access_token" if not access_token.is_empty() else "anon_key")
-	http_request.request(url, headers, HTTPClient.METHOD_POST, JSON.stringify(save_data))
+	# We'll do a simple POST with upsert - but let's verify the token first
+	if access_token.is_empty():
+		print("[SupabaseManager] ERROR: No access token available for saving!")
+		user_data_saved.emit(false)
+		return
+	
+	var url = SUPABASE_URL + "/rest/v1/user_data?on_conflict=user_id"
+	var upsert_headers = [
+		"apikey: " + SUPABASE_KEY,
+		"Authorization: Bearer " + access_token,  # Must use access_token for RLS
+		"Content-Type: application/json",
+		"Prefer: resolution=merge-duplicates,return=representation"
+	]
+	
+	print("[SupabaseManager] Upserting user data: gold=", save_data.get("gold"), ", level=", save_data.get("level"), ", xp=", save_data.get("xp"))
+	http_request.request(url, upsert_headers, HTTPClient.METHOD_POST, JSON.stringify(save_data))
 
 ## Inventory Operations
 
