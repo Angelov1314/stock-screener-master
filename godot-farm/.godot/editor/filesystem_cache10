@@ -1,6 +1,7 @@
-63f7b34db8d8cdea90c76aacccf841ec
-::res://::1773724300
+72322a848ab928aa5c89f0cb78209805
+::res://::1773737454
 ALIGN_GUIDE.md::TextFile::-1::1773583327::0::1::::<><><>0<>0<><>::
+export_presets.cfg::TextFile::-1::1773737191::0::1::::<><><>0<>0<><>::
 README.md::TextFile::-1::1772801237::0::1::::<><><>0<>0<><>::
 test_carrot.png::CompressedTexture2D::5410700001675323707::1772804835::1773641209::1::::<><><>0<>0<>cf96cc66148b429d1fce6c76e6022e02<>res://.godot/imported/test_carrot.png-a1ed1ede3939e57e744507fdb1b4828d.ctex::
 test_nano_carrot.png::CompressedTexture2D::8246381810631192922::1772805599::1773641210::1::::<><><>0<>0<>0114784f8b53cda0659b7524c2152409<>res://.godot/imported/test_nano_carrot.png-aad09dfff028d9aa606fba4a9ef0fa30.ctex::
@@ -314,7 +315,7 @@ farm_loading.png::CompressedTexture2D::941226673034977168::1772874692::177364121
 level2_background.jpg::CompressedTexture2D::243158320006307829::1773665510::1773665784::1::::<><><>0<>0<>2165a206d830d71dfc9130d4777de67d<>res://.godot/imported/level2_background.jpg-a0ce42280778a266bd5f9cdc0b5df08c.ctex::
 level3_background.png::CompressedTexture2D::5705849783215826283::1773676918::1773677224::0::::<><><>0<>0<>e41b26f04ffd9e27586d2ac1b4cb972e<>::
 ::res://assets/props/::1772928181
-::res://assets/ui/::1773725921
+::res://assets/ui/::1773725963
 agent_system_diagram.png::CompressedTexture2D::824692422392932260::1772801907::1773641209::1::::<><><>0<>0<>7472f5b03357b0eb4109251bd4432bf0<>res://.godot/imported/agent_system_diagram.png-7434d9a321240a6142994e4f317941bc.ctex::
 button_backpack.png::CompressedTexture2D::6525040734835933652::1772869123::1773641209::1::::<><><>0<>0<>afec4ad91f14f4e4f1df26eb9a7d7cf2<>res://.godot/imported/button_backpack.png-8e4285c3500c47eaff6771d9d451038a.ctex::
 button_hoe.png::CompressedTexture2D::1696869569601324851::1772869123::1773641209::1::::<><><>0<>0<>240fb1abd5864f29572deaf5a58378d2<>res://.godot/imported/button_hoe.png-11c1e8db82645873d93690fd7542a47c.ctex::
@@ -435,7 +436,7 @@ content_to_simulation.json::JSON::-1::1772804054::0::1::::<><><>0<>0<><>::
 qa_to_orchestrator.json::JSON::-1::1772807294::0::1::::<><><>0<>0<><>::
 simulation_to_ui.json::JSON::-1::1772804498::0::1::::<><><>0<>0<><>::
 ui_to_qa.json::JSON::-1::1772804482::0::1::::<><><>0<>0<><>::
-::res://scenes/::1773689477
+::res://scenes/::1773730392
 loading_screen.tscn::PackedScene::2696172754372380728::1773641289::0::1::::<><><>0<>0<><>::res://scripts/loading_screen.gd<>res://assets/environment/farm_loading.png
 main.tscn::PackedScene::842776023628496448::1773676181::0::1::::<><><>0<>0<><>::res://scripts/main.gd<>uid://farmscene001::::res://scenes/world/farm.tscn<>uid://hudscene001::::res://scenes/ui/hud.tscn<>uid://invpanel001::::res://scenes/ui/inventory_panel.tscn<>uid://buigvpf8hmujg::::res://scenes/ui/seed_toolbar.tscn
 start_menu.tscn::PackedScene::1302653737989337536::1773641289::0::1::::<><><>0<>0<><>::res://scripts/ui/start_menu.gd<>uid://bgfarmnew001::::res://assets/environment/farm_background.png<>res://assets/characters/cow/cow_idle.png
@@ -443,8 +444,8 @@ start_menu.tscn::PackedScene::1302653737989337536::1773641289::0::1::::<><><>0<>
 alpaca.tscn::PackedScene::600931620272::1773670504::0::1::::<><><>0<>0<><>::res://scripts/ui/interactive_animal.gd
 ::res://scenes/demo/::1773017393
 animal_demo.tscn::PackedScene::-1::1773017393::0::1::::<><><>0<>0<><>::res://assets/characters/cow/cow_idle.png<>res://assets/characters/cow/cow_walk.png<>res://assets/characters/cow/cow_happy.png<>res://assets/characters/cow/cow_sleep.png<>res://assets/characters/cow/cow_carried.png<>res://assets/characters/sheep/sheep_idle.png<>res://assets/characters/sheep/sheep_walk.png<>res://assets/characters/sheep/sheep_happy.png<>res://assets/characters/sheep/sheep_sleep.png<>res://assets/characters/sheep/sheep_carried.png<>res://scripts/demo/animal_demo.gd
-::res://scenes/ui/::1773693803
-hud.tscn::PackedScene::15671290224674880::1773725954::0::1::::<><><>0<>0<><>::res://scripts/ui/hud_controller.gd
+::res://scenes/ui/::1773727710
+hud.tscn::PackedScene::15671290224674880::1773730716::0::1::::<><><>0<>0<><>::res://scripts/ui/hud_controller.gd<>res://assets/ui/button_backpack.png<>res://assets/ui/button_sickle.png<>res://assets/ui/button_water.png<>res://assets/ui/button_shop.png<>res://assets/ui/button_seed.png
 inventory_panel.tscn::PackedScene::-1::1773675410::0::1::::<><><>0<>0<><>::
 planting_menu.tscn::PackedScene::-1::1773650833::0::1::::<><><>0<>0<><>::
 planting_menu_new.tscn::PackedScene::-1::1773678017::0::1::::<><><>0<>0<><>::
@@ -482,7 +483,7 @@ economy_manager.gd::GDScript::7631160812215007844::1773641289::0::1::::<>Node<><
 player_progress.gd::GDScript::6468008426754205805::1773548502::0::1::::<>Node<><>0<>0<><>::
 save_manager.gd::GDScript::3872420973756149669::1772840337::0::1::::<>Node<><>0<>0<><>::
 user_data_manager.gd::GDScript::3686963699611921557::1773601070::0::1::::<>Node<><>0<>0<><>::
-::res://scripts/ui/::1773724608
+::res://scripts/ui/::1773727710
 ambient_audio_manager.gd::GDScript::3204381110954429004::1773594274::0::1::::AmbientAudioManager<>Node<><>0<>0<><>::
 ambient_particles.gd::GDScript::1020191726506912591::1773595272::0::1::::AmbientParticles<>Node2D<><>0<>0<><>::
 animated_light.gd::GDScript::63602521311234375::1773596216::0::1::::AnimatedLight<>Node2D<><>0<>0<><>::
@@ -490,7 +491,7 @@ background_animal.gd::GDScript::9167586725061410813::1773550510::0::1::::<>Node2
 draggable_camera.gd::GDScript::3838063003728511712::1773651332::0::1::::DraggableCamera<>Camera2D<><>0<>0<><>::
 dynamic_background.gd::GDScript::4131130134834181413::1773677042::0::1::::<>Node2D<><>0<>0<><>::
 farm_controller.gd::GDScript::4428520479176883368::1773692302::0::1::::FarmController<>Node2D<><>0<>0<><>::
-hud_controller.gd::GDScript::9081744454399963342::1773682200::0::1::::HUDController<>CanvasLayer<><>0<>0<><>::
+hud_controller.gd::GDScript::9081744454399963342::1773729799::0::1::::HUDController<>CanvasLayer<><>0<>0<><>::
 interactive_animal.gd::GDScript::2517276577378463575::1773725476::0::1::::<>Node2D<><>0<>0<><>::
 inventory_controller.gd::GDScript::3011258356131126342::1773686953::0::1::::InventoryController<>CanvasLayer<><>0<>0<><>::
 level2_music.gd::GDScript::3879853963590655221::1773666817::0::1::::<>AudioStreamPlayer<><>0<>0<><>::

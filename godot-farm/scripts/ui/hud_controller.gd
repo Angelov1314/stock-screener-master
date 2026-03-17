@@ -8,6 +8,7 @@ signal shop_requested
 signal planting_menu_requested
 signal sickle_mode_toggled(active: bool)
 signal water_mode_toggled(active: bool)
+signal login_requested
 
 # UI References
 @onready var gold_label: Label = %GoldLabel
@@ -21,6 +22,7 @@ signal water_mode_toggled(active: bool)
 @onready var plant_button: TextureButton = %PlantButton
 @onready var inventory_button: TextureButton = %InventoryButton
 @onready var shop_button: TextureButton = %ShopButton
+@onready var login_button: TextureButton = %LoginButton
 @onready var toast_container: VBoxContainer = %ToastContainer
 
 # Player Info UI References
@@ -47,6 +49,7 @@ func _ready():
 	plant_button.pressed.connect(_on_plant_pressed)
 	inventory_button.pressed.connect(_on_inventory_pressed)
 	shop_button.pressed.connect(_on_shop_pressed)
+	login_button.pressed.connect(_on_login_pressed)
 	
 	# Connect name edit signal
 	if name_edit:
@@ -100,6 +103,11 @@ func _on_inventory_pressed():
 func _on_shop_pressed():
 	_animate_button(shop_button)
 	shop_requested.emit()
+
+func _on_login_pressed():
+	_animate_button(login_button)
+	login_requested.emit()
+	print("[HUD] Login button pressed")
 
 func _update_button_states():
 	# Highlight active button
