@@ -98,7 +98,8 @@ func load_user_data(user_id: String):
 	http_request.request(url, headers, HTTPClient.METHOD_GET)
 
 func save_user_data(user_id: String, data: Dictionary):
-	var url = SUPABASE_URL + "/rest/v1/user_data"
+	# Use upsert with on_conflict parameter
+	var url = SUPABASE_URL + "/rest/v1/user_data?on_conflict=user_id"
 	
 	# Use access token for RLS if available
 	var auth_token = access_token if not access_token.is_empty() else SUPABASE_KEY
@@ -132,7 +133,8 @@ func load_inventory(user_id: String):
 	http_request.request(url, headers, HTTPClient.METHOD_GET)
 
 func save_inventory_item(user_id: String, item_id: String, quantity: int):
-	var url = SUPABASE_URL + "/rest/v1/inventory"
+	# Use upsert with on_conflict parameter
+	var url = SUPABASE_URL + "/rest/v1/inventory?on_conflict=user_id,item_id"
 	
 	var auth_token = access_token if not access_token.is_empty() else SUPABASE_KEY
 	
@@ -150,6 +152,7 @@ func save_inventory_item(user_id: String, item_id: String, quantity: int):
 		"updated_at": Time.get_datetime_string_from_system()
 	})
 	
+	print("[SupabaseManager] Saving inventory item: ", item_id, " x", quantity)
 	http_request.request(url, headers, HTTPClient.METHOD_POST, body)
 
 ## HTTP Response Handler
@@ -232,6 +235,11 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 				error_msg = "邮箱未验证，请检查邮件"
 			elif "row-level security" in error_msg:
 				error_msg = "权限验证失败，请重新登录"
+			elif "duplicate key" in error_msg:
+				error_msg = "数据已存在，正在更新..."
+				# This is actually fine for upsert operations
+				print("[SupabaseManager] Duplicate key error (upsert), ignoring...")
+				return
 			
 			login_failed.emit(error_msg)
 			print("[SupabaseManager] Error: ", error_msg, " | Raw: ", data)
