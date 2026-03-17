@@ -66,7 +66,57 @@ func _ready():
 	if farm and farm.has_method("set_selected_crop"):
 		farm.set_selected_crop(planting_menu.get_selected_crop())
 	
+	# Connect auto-save on state changes
+	state.state_changed.connect(_on_state_changed)
+	print("[Main] Auto-save enabled")
+	
 	print("[Main] Game initialized - Level %d loaded" % selected_level)
+
+func _on_state_changed(action: Dictionary):
+	"""Auto-save to Supabase when game state changes"""
+	# Only save if user is logged in
+	if current_user_id.is_empty() or not supabase_manager:
+		return
+	
+	match action.type:
+		"add_gold", "remove_gold":
+			_save_user_data()
+		"add_experience", "harvest_crop":
+			_save_user_data()
+		"add_item", "remove_item":
+			_save_inventory()
+		"set_player_name":
+			_save_user_data()
+
+func _save_user_data():
+	"""Save user data to Supabase"""
+	var state = get_node_or_null("/root/StateManager")
+	if not state:
+		return
+	
+	var data = {
+		"user_id": current_user_id,
+		"username": state.get_player_name(),
+		"gold": state.get_gold(),
+		"level": state.get_player_level(),
+		"xp": state.get_experience()
+	}
+	
+	print("[Main] Auto-saving user data...")
+	supabase_manager.save_user_data(current_user_id, data)
+
+func _save_inventory():
+	"""Save inventory to Supabase"""
+	var state = get_node_or_null("/root/StateManager")
+	if not state:
+		return
+	
+	var inventory = state.get_inventory()
+	print("[Main] Auto-saving inventory...")
+	
+	for item_id in inventory.keys():
+		var quantity = inventory[item_id]
+		supabase_manager.save_inventory_item(current_user_id, item_id, quantity)
 
 func _on_user_data_loaded(user_data: Dictionary):
 	print("[Main] User data loaded from Supabase: %s" % user_data)
