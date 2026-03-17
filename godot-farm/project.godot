@@ -34,6 +34,7 @@ AudioManager="*res://scripts/systems/audio_manager.gd"
 SaveManager="*res://scripts/systems/save_manager.gd"
 SupabaseManager="*res://scripts/core/supabase_manager.gd"
 SettingsManager="*res://scripts/systems/settings_manager.gd"
+AnimalPlacementManager="*res://scripts/core/animal_placement_manager.gd"
 
 [debug]
 

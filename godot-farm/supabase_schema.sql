@@ -64,14 +64,15 @@ BEGIN
     END IF;
 END $$;
 
--- 动物数据表
+-- 动物数据表 (placed animal instances with positions)
 CREATE TABLE IF NOT EXISTS farm_animals (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
     animal_type TEXT NOT NULL,
     position_x FLOAT DEFAULT 0,
     position_y FLOAT DEFAULT 0,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- 启用 RLS (Row Level Security)
@@ -102,7 +103,8 @@ CREATE POLICY "Users can only access their own crops" ON farm_crops
     WITH CHECK (auth.uid() = user_id);
 
 CREATE POLICY "Users can only access their own animals" ON farm_animals
-    FOR ALL USING (auth.uid() = user_id);
+    FOR ALL USING (auth.uid() = user_id)
+    WITH CHECK (auth.uid() = user_id);
 
 -- 创建索引提高查询性能
 CREATE INDEX IF NOT EXISTS idx_user_data_user_id ON user_data(user_id);

@@ -151,6 +151,15 @@ func _save_farm_crops():
 	print("[Main] Auto-saving farm crops: %d crops" % crops_data.size())
 	supabase_manager.save_farm_crops(current_user_id, crops_data)
 
+func _save_farm_animals():
+	"""Save placed animals to Supabase"""
+	var placement_mgr = get_node_or_null("/root/AnimalPlacementManager")
+	if not placement_mgr or not supabase_manager:
+		return
+	var animals_data = placement_mgr.get_animals_for_save()
+	print("[Main] Auto-saving farm animals: %d animals" % animals_data.size())
+	supabase_manager.save_farm_animals(current_user_id, animals_data)
+
 func _save_inventory():
 	"""Save inventory to Supabase"""
 	var state = get_node_or_null("/root/StateManager")
@@ -246,6 +255,12 @@ func _on_user_data_loaded(user_data: Dictionary):
 			supabase_manager.farm_crops_loaded.connect(_on_farm_crops_loaded)
 		supabase_manager.load_farm_crops(current_user_id)
 
+	# Load placed animals from Supabase
+	if supabase_manager:
+		if not supabase_manager.farm_animals_loaded.is_connected(_on_farm_animals_loaded):
+			supabase_manager.farm_animals_loaded.connect(_on_farm_animals_loaded)
+		supabase_manager.load_farm_animals(current_user_id)
+
 func _on_inventory_loaded(inventory_data):
 	print("[Main] Inventory loaded from Supabase: %s" % [str(inventory_data)])
 	
@@ -274,6 +289,12 @@ func _on_farm_crops_loaded(crops_data: Array):
 	var crop_mgr = get_node_or_null("/root/CropManager")
 	if crop_mgr and crop_mgr.has_method("restore_crops_from_data"):
 		crop_mgr.restore_crops_from_data(crops_data)
+
+func _on_farm_animals_loaded(animals_data: Array):
+	print("[Main] Farm animals loaded from Supabase: %d animals" % animals_data.size())
+	var placement_mgr = get_node_or_null("/root/AnimalPlacementManager")
+	if placement_mgr:
+		placement_mgr.restore_animals(animals_data)
 
 func _load_level(level_id: int):
 	# Stop all current music before switching
@@ -361,8 +382,9 @@ func _on_item_purchased(item_id: String, item_type: String):
 	print("[Main] Item purchased: %s (%s)" % [item_id, item_type])
 
 func _on_animal_purchased(animal_id: String):
-	print("[Main] Animal purchased, adding to farm: %s" % animal_id)
-	_add_animal_to_farm(animal_id)
+	print("[Main] Animal purchased: %s (added to inventory, use backpack to place)" % animal_id)
+	# Animal is already added to inventory by shop_ui.gd via add_item
+	# Do NOT spawn on farm directly - user places from inventory
 
 func _add_animal_to_farm(animal_id: String):
 	if not farm:
@@ -415,9 +437,10 @@ func _on_inventory_closed():
 
 func _on_home_requested():
 	print("[Main] Returning to start menu...")
-	# Save farm crops before leaving
+	# Save farm crops and animals before leaving
 	if not current_user_id.is_empty() and supabase_manager:
 		_save_farm_crops()
+		_save_farm_animals()
 	# Return to level select screen
 	get_tree().change_scene_to_file("res://scenes/start_menu.tscn")
 

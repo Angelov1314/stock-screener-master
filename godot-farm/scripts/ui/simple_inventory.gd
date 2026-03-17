@@ -107,21 +107,14 @@ func _create_item_card(item_id: String, count: int):
 	var hs = _make_card_style(COL_PAPER_HOVER, COL_BORDER)
 	hs.border_width_bottom = 3
 
-	var card = Button.new()
-	card.custom_minimum_size = Vector2(100, 110)
+	var card = PanelContainer.new()
+	card.custom_minimum_size = Vector2(100, 130)
 	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	card.add_theme_stylebox_override("normal", ns)
-	card.add_theme_stylebox_override("hover", hs)
-	var ps = hs.duplicate()
-	ps.bg_color.a = min(ps.bg_color.a + 0.08, 1.0)
-	card.add_theme_stylebox_override("pressed", ps)
+	card.add_theme_stylebox_override("panel", ns)
 
 	var vbox = VBoxContainer.new()
 	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
 	vbox.add_theme_constant_override("separation", 3)
-	vbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	vbox.offset_left = 4; vbox.offset_right = -4
-	vbox.offset_top = 6; vbox.offset_bottom = -6
 	card.add_child(vbox)
 
 	# Icon
@@ -152,7 +145,39 @@ func _create_item_card(item_id: String, count: int):
 	count_lbl.add_theme_font_size_override("font_size", 12)
 	vbox.add_child(count_lbl)
 
+	# Place button for animals
+	var placement_mgr = get_node_or_null("/root/AnimalPlacementManager")
+	if placement_mgr and placement_mgr.is_animal_item(item_id):
+		var place_btn = Button.new()
+		place_btn.text = "🐾 放置"
+		place_btn.custom_minimum_size = Vector2(70, 28)
+		place_btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		place_btn.add_theme_font_size_override("font_size", 12)
+		place_btn.add_theme_color_override("font_color", Color(0.96, 0.93, 0.88))
+		var btn_style = StyleBoxFlat.new()
+		btn_style.bg_color = Color(0.42, 0.56, 0.36, 0.85)
+		btn_style.set_corner_radius_all(10)
+		btn_style.content_margin_left = 8
+		btn_style.content_margin_right = 8
+		btn_style.content_margin_top = 3
+		btn_style.content_margin_bottom = 3
+		place_btn.add_theme_stylebox_override("normal", btn_style)
+		var btn_hover = btn_style.duplicate()
+		btn_hover.bg_color = Color(0.48, 0.62, 0.42, 0.90)
+		place_btn.add_theme_stylebox_override("hover", btn_hover)
+		place_btn.pressed.connect(_on_place_animal.bind(item_id))
+		vbox.add_child(place_btn)
+
 	item_grid.add_child(card)
+
+func _on_place_animal(animal_id: String):
+	var placement_mgr = get_node_or_null("/root/AnimalPlacementManager")
+	if not placement_mgr:
+		return
+	var success = placement_mgr.start_placement(animal_id)
+	if success:
+		# Close inventory panel to let user click on the map
+		_on_close()
 
 func _resolve_icon(item_id: String) -> String:
 	# Try crop icons

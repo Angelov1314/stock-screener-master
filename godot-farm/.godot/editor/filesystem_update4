@@ -12,3 +12,4 @@ res://scripts/simulation/crop_manager.gd
 res://scripts/core/state/state_manager.gd
 res://scripts/ui/shop_ui.gd
 res://scripts/ui/planting_menu_new.gd
+res://scripts/ui/interactive_animal.gd

@@ -569,19 +569,13 @@ func _give_seed(plant_id: String):
 
 func _place_animal(item: Dictionary):
 	_play_ui_click()
-	var state = get_node_or_null("/root/StateManager")
-	if not state:
+	var placement_mgr = get_node_or_null("/root/AnimalPlacementManager")
+	if not placement_mgr:
 		return
-	var inventory = state.get_inventory()
-	if inventory.get(item.id, 0) <= 0:
-		return
-	var success = state.apply_action({"type": "remove_item", "item_id": item.id, "amount": 1})
-	if not success:
-		return
-	var farm = get_node_or_null("/root/Main/Farm")
-	if farm and farm.has_method("spawn_animal"):
-		farm.spawn_animal(item.id)
-		_populate_inventory()
+	var success = placement_mgr.start_placement(item.id)
+	if success:
+		# Close shop to let user click on the map
+		_on_close_pressed()
 
 func _sell_item_direct(item: Dictionary):
 	_play_ui_click()

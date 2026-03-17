@@ -191,6 +191,10 @@ func _on_input_event(viewport: Node, event: InputEvent, shape_idx: int):
 					# Play collect sound
 					_play_animal_sound("happy")
 					return
+			# If this is a placed animal, show recall menu instead of pickup
+			if has_meta("is_placed") and get_meta("is_placed"):
+				_show_recall_menu()
+				return
 			# Otherwise pick up the animal
 			_try_pickup()
 
@@ -585,3 +589,94 @@ func _show_drop_hint():
 func _hide_drop_hint():
 	if _drop_hint:
 		_drop_hint.visible = false
+
+## Recall menu for placed animals
+var _recall_menu: PanelContainer = null
+
+func _show_recall_menu():
+	if _recall_menu and is_instance_valid(_recall_menu):
+		_recall_menu.queue_free()
+		_recall_menu = null
+		return
+
+	_recall_menu = PanelContainer.new()
+	_recall_menu.z_index = 200
+
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0.26, 0.22, 0.17, 0.92)
+	style.border_color = Color(0.50, 0.42, 0.32, 0.65)
+	style.set_border_width_all(2)
+	style.set_corner_radius_all(14)
+	style.content_margin_left = 12
+	style.content_margin_right = 12
+	style.content_margin_top = 8
+	style.content_margin_bottom = 8
+	_recall_menu.add_theme_stylebox_override("panel", style)
+
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 6)
+	_recall_menu.add_child(vbox)
+
+	# Animal name label
+	var name_lbl = Label.new()
+	name_lbl.text = animal_name.capitalize()
+	name_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	name_lbl.add_theme_color_override("font_color", Color(0.94, 0.90, 0.82))
+	name_lbl.add_theme_font_size_override("font_size", 18)
+	vbox.add_child(name_lbl)
+
+	# Recall button
+	var recall_btn = Button.new()
+	recall_btn.text = "📦 收回仓库"
+	recall_btn.add_theme_font_size_override("font_size", 16)
+	recall_btn.add_theme_color_override("font_color", Color(0.96, 0.93, 0.88))
+	var btn_style = StyleBoxFlat.new()
+	btn_style.bg_color = Color(0.58, 0.48, 0.36, 0.72)
+	btn_style.set_corner_radius_all(10)
+	btn_style.content_margin_left = 10
+	btn_style.content_margin_right = 10
+	btn_style.content_margin_top = 6
+	btn_style.content_margin_bottom = 6
+	recall_btn.add_theme_stylebox_override("normal", btn_style)
+	var btn_hover = btn_style.duplicate()
+	btn_hover.bg_color = Color(0.64, 0.54, 0.42, 0.82)
+	recall_btn.add_theme_stylebox_override("hover", btn_hover)
+	recall_btn.pressed.connect(_on_recall_pressed)
+	vbox.add_child(recall_btn)
+
+	# Close button
+	var close_btn = Button.new()
+	close_btn.text = "✕ 关闭"
+	close_btn.add_theme_font_size_override("font_size", 14)
+	close_btn.add_theme_color_override("font_color", Color(0.78, 0.72, 0.62))
+	var close_style = btn_style.duplicate()
+	close_style.bg_color = Color(0.42, 0.36, 0.28, 0.60)
+	close_btn.add_theme_stylebox_override("normal", close_style)
+	close_btn.pressed.connect(func(): _recall_menu.queue_free(); _recall_menu = null)
+	vbox.add_child(close_btn)
+
+	_recall_menu.position = Vector2(-60, -180)
+	add_child(_recall_menu)
+
+	# Auto-close after 5 seconds
+	await get_tree().create_timer(5.0).timeout
+	if _recall_menu and is_instance_valid(_recall_menu):
+		_recall_menu.queue_free()
+		_recall_menu = null
+
+func _on_recall_pressed():
+	if _recall_menu and is_instance_valid(_recall_menu):
+		_recall_menu.queue_free()
+		_recall_menu = null
+
+	var instance_id = get_meta("instance_id") if has_meta("instance_id") else ""
+	if instance_id.is_empty():
+		print("[InteractiveAnimal] No instance_id, cannot recall")
+		return
+
+	var placement_mgr = get_node_or_null("/root/AnimalPlacementManager")
+	if placement_mgr:
+		_play_animal_sound("idle")
+		placement_mgr.recall_animal(instance_id)
+	else:
+		print("[InteractiveAnimal] AnimalPlacementManager not found")

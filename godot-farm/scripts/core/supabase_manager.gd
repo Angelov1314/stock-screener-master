@@ -312,6 +312,94 @@ func save_farm_crops(user_id: String, crops: Array):
 	del_req.request(delete_url, headers, HTTPClient.METHOD_DELETE)
 
 ## =============================================
+## Farm Animals Operations
+## =============================================
+
+signal farm_animals_loaded(animals_data: Array)
+signal farm_animals_saved(success: bool)
+
+func load_farm_animals(user_id: String):
+	"""Load all placed animals for this user"""
+	var url = SUPABASE_URL + "/rest/v1/farm_animals?user_id=eq." + user_id
+	var auth_token = access_token if not access_token.is_empty() else SUPABASE_KEY
+	var headers = [
+		"apikey: " + SUPABASE_KEY,
+		"Authorization: Bearer " + auth_token
+	]
+
+	var req = HTTPRequest.new()
+	add_child(req)
+	req.request_completed.connect(func(result, code, hdrs, body):
+		var body_str = body.get_string_from_utf8()
+		if result == HTTPRequest.RESULT_SUCCESS and (code == 200 or code == 201):
+			var json = JSON.new()
+			if json.parse(body_str) == OK and json.data is Array:
+				print("[SupabaseManager] Farm animals loaded: %d animals" % json.data.size())
+				farm_animals_loaded.emit(json.data)
+			else:
+				farm_animals_loaded.emit([])
+		else:
+			print("[SupabaseManager] Farm animals load failed: %d" % code)
+			farm_animals_loaded.emit([])
+		req.queue_free()
+	)
+	req.request(url, headers, HTTPClient.METHOD_GET)
+
+func save_farm_animals(user_id: String, animals: Array):
+	"""Delete all then insert fresh (same pattern as farm_crops)"""
+	if access_token.is_empty():
+		print("[SupabaseManager] ERROR: No access token for saving farm animals!")
+		farm_animals_saved.emit(false)
+		return
+
+	var delete_url = SUPABASE_URL + "/rest/v1/farm_animals?user_id=eq." + user_id
+	var headers = [
+		"apikey: " + SUPABASE_KEY,
+		"Authorization: Bearer " + access_token,
+		"Content-Type: application/json"
+	]
+
+	var del_req = HTTPRequest.new()
+	add_child(del_req)
+	del_req.request_completed.connect(func(result, code, hdrs, body):
+		del_req.queue_free()
+		if animals.size() == 0:
+			print("[SupabaseManager] No animals to save (all cleared)")
+			farm_animals_saved.emit(true)
+			return
+
+		var insert_url = SUPABASE_URL + "/rest/v1/farm_animals"
+		var insert_headers = [
+			"apikey: " + SUPABASE_KEY,
+			"Authorization: Bearer " + access_token,
+			"Content-Type: application/json"
+		]
+
+		var items = []
+		for animal in animals:
+			items.append({
+				"user_id": user_id,
+				"animal_type": animal.get("animal_type", ""),
+				"position_x": animal.get("position_x", 0),
+				"position_y": animal.get("position_y", 0),
+			})
+
+		var ins_req = HTTPRequest.new()
+		add_child(ins_req)
+		ins_req.request_completed.connect(func(r2, c2, h2, b2):
+			if r2 == HTTPRequest.RESULT_SUCCESS and (c2 == 200 or c2 == 201):
+				print("[SupabaseManager] Farm animals saved: %d" % items.size())
+				farm_animals_saved.emit(true)
+			else:
+				print("[SupabaseManager] Farm animals insert failed: %d" % c2)
+				farm_animals_saved.emit(false)
+			ins_req.queue_free()
+		)
+		ins_req.request(insert_url, insert_headers, HTTPClient.METHOD_POST, JSON.stringify(items))
+	)
+	del_req.request(delete_url, headers, HTTPClient.METHOD_DELETE)
+
+## =============================================
 ## Friends & Community API
 ## =============================================
 
