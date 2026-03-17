@@ -13,6 +13,7 @@ var current_user_id: String = ""
 
 # Signals
 signal user_data_loaded(user_data: Dictionary)
+signal inventory_loaded(inventory_data)
 signal user_data_saved(success: bool)
 signal login_success(user_id: String)
 signal login_failed(error: String)
@@ -176,17 +177,22 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 		200, 201:
 			if data is Array:
 				if data.size() > 0:
-					user_data_loaded.emit(data[0] if data.size() == 1 else data)
+					# Check if this is inventory data (has item_id) or user data (has gold)
+					var first_item = data[0]
+					if first_item is Dictionary and first_item.has("item_id"):
+						# This is inventory data
+						print("[SupabaseManager] Inventory data loaded: ", data.size(), " items")
+						inventory_loaded.emit(data)
+					elif first_item is Dictionary and first_item.has("gold"):
+						# This is user data
+						print("[SupabaseManager] User data loaded from array")
+						user_data_loaded.emit(data[0])
+					else:
+						# Unknown data type, assume user data
+						user_data_loaded.emit(data[0])
 				else:
-					# Empty array - no user data found, create default
-					print("[SupabaseManager] No user data found, creating default...")
-					user_data_loaded.emit({
-						"user_id": "",
-						"username": "农场主",
-						"gold": 300,
-						"level": 1,
-						"xp": 0
-					})
+					# Empty array - no data found
+					print("[SupabaseManager] No data found in array")
 			elif data is Dictionary:
 				if data.has("access_token"):
 					# Login/signup success - has access token
@@ -200,6 +206,13 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 					print("[SupabaseManager] Login successful: ", current_user_id, " username: ", username)
 					
 					load_user_data(current_user_id)
+				elif data.has("id") and data.has("gold"):
+					# User data object with gold
+					user_data_loaded.emit(data)
+				elif data.has("id") and data.has("item_id"):
+					# Single inventory item
+					print("[SupabaseManager] Single inventory item loaded")
+					inventory_loaded.emit(data)
 				elif data.has("id"):
 					# User object directly (may not have access_token in some cases)
 					current_user_id = data["id"]

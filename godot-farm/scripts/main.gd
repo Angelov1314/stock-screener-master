@@ -127,18 +127,32 @@ func _save_inventory():
 		supabase_manager.save_inventory_item(current_user_id, item_id, quantity)
 
 func _on_user_data_loaded(user_data: Dictionary):
-	print("[Main] User data loaded from Supabase: %s" % user_data)
+	print("[Main] Data loaded from Supabase: %s" % user_data)
 	
-	# Update local StateManager with remote data
+	# Check if this is inventory data (has item_id) or user data (has gold)
+	if user_data.has("item_id"):
+		# This is inventory data - add to StateManager
+		print("[Main] Processing inventory data: %s x%d" % [user_data.get("item_id"), user_data.get("quantity", 0)])
+		var state = get_node_or_null("/root/StateManager")
+		if state:
+			state.apply_action({
+				"type": "add_item",
+				"item_id": user_data.get("item_id"),
+				"amount": int(user_data.get("quantity", 0))
+			})
+		return
+	
+	# This is user data (gold, level, xp)
 	var state = get_node_or_null("/root/StateManager")
 	if state:
-		# IMPORTANT: First set the correct values directly to avoid default initialization
 		var username = user_data.get("username", "农场主")
 		var remote_gold = user_data.get("gold", 300)
 		var remote_level = user_data.get("level", 1)
 		var remote_xp = user_data.get("xp", 0)
 		
-		# Use apply_action to properly update state
+		print("[Main] Processing user data - Gold: %d, Level: %d, XP: %d" % [remote_gold, remote_level, remote_xp])
+		
+		# Update state
 		state.apply_action({"type": "set_player_name", "name": username})
 		
 		# Reset and set gold
@@ -147,11 +161,11 @@ func _on_user_data_loaded(user_data: Dictionary):
 			state.apply_action({"type": "remove_gold", "amount": current_gold})
 		state.apply_action({"type": "add_gold", "amount": remote_gold})
 		
-		print("[Main] Updated local state - Gold: %d, Level: %d, XP: %d" % [remote_gold, remote_level, remote_xp])
-		
-		# Store for reference
+		# Store level/xp for reference
 		StateManager.set_data("remote_level", remote_level)
 		StateManager.set_data("remote_xp", remote_xp)
+		
+		print("[Main] Updated local state - Gold: %d, Level: %d, XP: %d" % [remote_gold, remote_level, remote_xp])
 	
 	# Now initialize the game with loaded data
 	_initialize_game()
@@ -163,9 +177,32 @@ func _on_user_data_loaded(user_data: Dictionary):
 		var xp_progress = state.get_xp_progress()
 		hud._update_player_info(state.get_player_name(), state.get_player_level(), state.get_experience(), state.get_xp_for_next_level(), xp_progress)
 	
-	# Load inventory from Supabase
+	# Load inventory from Supabase after user data is loaded
 	if supabase_manager:
+		supabase_manager.inventory_loaded.connect(_on_inventory_loaded)
 		supabase_manager.load_inventory(current_user_id)
+
+func _on_inventory_loaded(inventory_data):
+	"""Handle inventory data loaded from Supabase"""
+	print("[Main] Inventory loaded from Supabase: %s" % inventory_data)
+	
+	var state = get_node_or_null("/root/StateManager")
+	if not state:
+		return
+	
+	# inventory_data could be an array or a single item
+	var items = inventory_data if inventory_data is Array else [inventory_data]
+	
+	for item in items:
+		if item.has("item_id") and item.has("quantity"):
+			var item_id = item["item_id"]
+			var quantity = int(item["quantity"])
+			print("[Main] Adding to inventory: %s x%d" % [item_id, quantity])
+			state.apply_action({
+				"type": "add_item",
+				"item_id": item_id,
+				"amount": quantity
+			})
 
 func _load_level(level_id: int):
 	# Stop all current music before switching
