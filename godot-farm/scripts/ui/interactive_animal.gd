@@ -419,22 +419,26 @@ func _play_animal_sound(sound_type: String = "idle"):
 	
 	print("[InteractiveAnimal] Trying to play: %s" % sound_path)
 	
-	# Try to load the sound file
-	var stream = load(sound_path)
-	if not stream:
-		# Fallback to generic animal sound if specific sound not found
-		print("[InteractiveAnimal] Failed to load sound: %s, trying fallback" % sound_path)
+	# Check if file exists
+	if not FileAccess.file_exists(sound_path):
+		print("[InteractiveAnimal] File does not exist: %s" % sound_path)
+		# Fallback to generic animal sound
 		if sound_type == "idle":
 			sound_path = "res://assets/audio/sfx/cow/cow.mp3"
 		else:
 			sound_path = "res://assets/audio/sfx/cow/cow_walk.mp3"
-		stream = load(sound_path)
+		print("[InteractiveAnimal] Using fallback: %s" % sound_path)
 	
+	# Try to load the sound file
+	var stream = load(sound_path)
 	if stream:
 		_audio_player.stream = stream
 		_audio_player.volume_db = 0.0
+		_audio_player.bus = "Master"
 		_audio_player.play()
-		print("[InteractiveAnimal] Playing sound: %s" % sound_path)
+		print("[InteractiveAnimal] Playing sound: %s (volume: %f, bus: %s)" % [sound_path, _audio_player.volume_db, _audio_player.bus])
+	else:
+		print("[InteractiveAnimal] Failed to load stream: %s" % sound_path)
 
 func _play_footstep():
 	if current_state != State.WALKING:
