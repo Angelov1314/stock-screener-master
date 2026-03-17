@@ -156,51 +156,55 @@ layout_mode = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="ButtonsSection" type="HBoxContainer" parent="MarginContainer/VBoxContainer/TopBar"]
+[node name="Spacer" type="Control" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="BottomBar" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 8
 alignment = 1
 theme_override_constants/separation = 10
 
-[node name="SickleButton" type="TextureButton" parent="MarginContainer/VBoxContainer/TopBar/ButtonsSection"]
+[node name="SickleButton" type="TextureButton" parent="MarginContainer/VBoxContainer/BottomBar"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(60, 60)
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
 tooltip_text = "镰刀模式 - 拖动收割"
 texture_normal = ExtResource("3_sickle")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="WaterButton" type="TextureButton" parent="MarginContainer/VBoxContainer/TopBar/ButtonsSection"]
+[node name="WaterButton" type="TextureButton" parent="MarginContainer/VBoxContainer/BottomBar"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(60, 60)
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
 tooltip_text = "浇水模式"
 texture_normal = ExtResource("4_water")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="PlantButton" type="TextureButton" parent="MarginContainer/VBoxContainer/TopBar/ButtonsSection"]
+[node name="PlantButton" type="TextureButton" parent="MarginContainer/VBoxContainer/BottomBar"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(60, 60)
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
 tooltip_text = "种植"
 texture_normal = ExtResource("6_seed")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="InventoryButton" type="TextureButton" parent="MarginContainer/VBoxContainer/TopBar/ButtonsSection"]
+[node name="InventoryButton" type="TextureButton" parent="MarginContainer/VBoxContainer/BottomBar"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(60, 60)
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
 tooltip_text = "背包"
 texture_normal = ExtResource("2_backpack")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="ShopButton" type="TextureButton" parent="MarginContainer/VBoxContainer/TopBar/ButtonsSection"]
+[node name="ShopButton" type="TextureButton" parent="MarginContainer/VBoxContainer/BottomBar"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(60, 60)
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
 tooltip_text = "商店"
 texture_normal = ExtResource("5_shop")
