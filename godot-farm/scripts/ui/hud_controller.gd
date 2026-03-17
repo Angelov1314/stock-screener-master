@@ -33,6 +33,10 @@ signal water_mode_toggled(active: bool)
 var _sickle_active: bool = false
 var _water_active: bool = false
 
+# Debug mode for gold frame positioning
+var _gold_frame_debug_mode: bool = false
+var _gold_frame_offset: Vector2 = Vector2.ZERO
+
 func _ready():
 	print("[HUDController] Initializing...")
 	
@@ -189,3 +193,57 @@ func _on_state_changed(action: Dictionary):
 			_update_player_info(state.get_player_name(), state.get_player_level(), state.get_experience(), state.get_xp_for_next_level(), state.get_xp_progress())
 		"set_player_name":
 			_update_player_name(state.get_player_name())
+
+## Debug Functions for Gold Frame Positioning
+func _input(event):
+	# Toggle debug mode with F12
+	if event is InputEventKey and event.pressed and event.keycode == KEY_F12:
+		_gold_frame_debug_mode = !_gold_frame_debug_mode
+		print("[HUD] Gold frame debug mode: %s" % _gold_frame_debug_mode)
+		if _gold_frame_debug_mode:
+			show_toast("Gold Frame Debug: ON (WASD/Arrows to move, +/- to scale)")
+		return
+	
+	if not _gold_frame_debug_mode or not gold_frame:
+		return
+	
+	var move_speed = 1.0
+	var scale_speed = 0.05
+	var changed = false
+	
+	if event is InputEventKey and event.pressed:
+		match event.keycode:
+			KEY_W, KEY_UP:
+				_gold_frame_offset.y -= move_speed
+				changed = true
+			KEY_S, KEY_DOWN:
+				_gold_frame_offset.y += move_speed
+				changed = true
+			KEY_A, KEY_LEFT:
+				_gold_frame_offset.x -= move_speed
+				changed = true
+			KEY_D, KEY_RIGHT:
+				_gold_frame_offset.x += move_speed
+				changed = true
+			KEY_EQUAL, KEY_KP_ADD:
+				gold_frame.scale += Vector2(scale_speed, scale_speed)
+				changed = true
+			KEY_MINUS, KEY_KP_SUBTRACT:
+				gold_frame.scale -= Vector2(scale_speed, scale_speed)
+				changed = true
+			KEY_R:
+				_gold_frame_offset = Vector2.ZERO
+				gold_frame.scale = Vector2.ONE
+				changed = true
+	
+	if changed:
+		_update_gold_frame_position()
+
+func _update_gold_frame_position():
+	if not gold_frame:
+		return
+	
+	# Apply offset to the gold frame
+	gold_frame.position = _gold_frame_offset
+	
+	print("[HUD Debug] Gold frame offset: %s, scale: %s" % [_gold_frame_offset, gold_frame.scale])
