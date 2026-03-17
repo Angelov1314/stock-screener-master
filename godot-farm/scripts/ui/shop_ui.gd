@@ -236,6 +236,20 @@ func _place_animal(item: Dictionary):
 	else:
 		print("[ShopUI] ERROR: Cannot spawn animal, farm not found")
 
+func _sell_item_direct(item: Dictionary):
+	"""Sell item directly from inventory card"""
+	var crop_mgr = get_node_or_null("/root/CropManager")
+	if not crop_mgr:
+		return
+	
+	var gold_earned = crop_mgr.sell_crop(item.id, 1)
+	if gold_earned > 0:
+		print("[ShopUI] Sold %s for %d gold" % [item.id, gold_earned])
+		_update_gold_display()
+		_populate_inventory()  # Refresh display
+	else:
+		print("[ShopUI] Failed to sell %s" % item.id)
+
 func _on_inventory_card_clicked(item: Dictionary):
 	selected_item = item.duplicate()
 	sell_mode = true
