@@ -177,15 +177,24 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 		print("[SupabaseManager] Request failed: ", result)
 		return
 	
+	var body_string = body.get_string_from_utf8()
+	print("[SupabaseManager] Raw response body: ", body_string if body_string.length() < 500 else body_string.substr(0, 500) + "...")
+	
 	var json = JSON.new()
-	var error = json.parse(body.get_string_from_utf8())
+	var error = json.parse(body_string)
 	
 	if error != OK:
-		print("[SupabaseManager] JSON parse error: ", body.get_string_from_utf8())
+		# Empty response is OK for successful POST/PUT operations
+		if body_string.is_empty() and (response_code == 200 or response_code == 201):
+			print("[SupabaseManager] Empty response with success code, treating as success")
+			user_data_saved.emit(true)
+		else:
+			print("[SupabaseManager] JSON parse error, body: ", body_string)
+			user_data_saved.emit(false)
 		return
 	
 	var data = json.get_data()
-	print("[SupabaseManager] Response: ", data)
+	print("[SupabaseManager] Parsed response: ", data)
 	
 	match response_code:
 		200, 201:
