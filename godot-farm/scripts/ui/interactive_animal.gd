@@ -191,11 +191,7 @@ func _on_input_event(viewport: Node, event: InputEvent, shape_idx: int):
 					# Play collect sound
 					_play_animal_sound("happy")
 					return
-			# If this is a placed animal, show recall menu instead of pickup
-			if has_meta("is_placed") and get_meta("is_placed"):
-				_show_recall_menu()
-				return
-			# Otherwise pick up the animal
+			# Pick up the animal (placed or not)
 			_try_pickup()
 
 func _try_pickup():

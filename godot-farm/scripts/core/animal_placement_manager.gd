@@ -116,6 +116,25 @@ func recall_animal(instance_id: String):
 	# Save to Supabase
 	_save_placed_animals()
 
+## Count placed animals by type
+func get_placed_count_by_type(animal_id: String) -> int:
+	var count := 0
+	for instance_id in placed_animals.keys():
+		if placed_animals[instance_id].animal_id == animal_id:
+			count += 1
+	return count
+
+## Recall one placed instance of a given animal type (most recently added)
+func recall_one_by_type(animal_id: String) -> bool:
+	# Find last instance of this type (iterate in reverse for most recent)
+	var keys = placed_animals.keys()
+	for i in range(keys.size() - 1, -1, -1):
+		var instance_id = keys[i]
+		if placed_animals[instance_id].animal_id == animal_id:
+			recall_animal(instance_id)
+			return true
+	return false
+
 ## Restore placed animals from Supabase data (called on login)
 func restore_animals(animals_data: Array):
 	# Clear any existing placed animals first

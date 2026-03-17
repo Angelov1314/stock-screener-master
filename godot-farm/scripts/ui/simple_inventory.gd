@@ -87,7 +87,11 @@ func _refresh_items():
 		return
 
 	var inventory = state.get_inventory()
-	if inventory.is_empty():
+	var placement_mgr_check = get_node_or_null("/root/AnimalPlacementManager")
+	var has_farm_animals = false
+	if placement_mgr_check and not placement_mgr_check.placed_animals.is_empty():
+		has_farm_animals = true
+	if inventory.is_empty() and not has_farm_animals:
 		var label = Label.new()
 		label.text = "🎒 背包是空的"
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -96,9 +100,21 @@ func _refresh_items():
 		item_grid.add_child(label)
 		return
 
+	# Collect all item IDs to show (inventory + animals on farm)
+	var all_item_ids = {}
 	for item_id in inventory.keys():
-		var count = inventory[item_id]
-		if count <= 0:
+		all_item_ids[item_id] = true
+	var placement_mgr = get_node_or_null("/root/AnimalPlacementManager")
+	if placement_mgr:
+		for instance_id in placement_mgr.placed_animals.keys():
+			var animal_id = placement_mgr.placed_animals[instance_id].animal_id
+			all_item_ids[animal_id] = true
+
+	for item_id in all_item_ids.keys():
+		var count = inventory.get(item_id, 0)
+		var is_animal = placement_mgr and placement_mgr.is_animal_item(item_id)
+		var farm_count = placement_mgr.get_placed_count_by_type(item_id) if is_animal else 0
+		if count <= 0 and farm_count <= 0:
 			continue
 		_create_item_card(item_id, count)
 
@@ -145,30 +161,78 @@ func _create_item_card(item_id: String, count: int):
 	count_lbl.add_theme_font_size_override("font_size", 12)
 	vbox.add_child(count_lbl)
 
-	# Place button for animals
+	# Animal management buttons
 	var placement_mgr = get_node_or_null("/root/AnimalPlacementManager")
 	if placement_mgr and placement_mgr.is_animal_item(item_id):
-		var place_btn = Button.new()
-		place_btn.text = "🐾 放置"
-		place_btn.custom_minimum_size = Vector2(70, 28)
-		place_btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-		place_btn.add_theme_font_size_override("font_size", 12)
-		place_btn.add_theme_color_override("font_color", Color(0.96, 0.93, 0.88))
-		var btn_style = StyleBoxFlat.new()
-		btn_style.bg_color = Color(0.42, 0.56, 0.36, 0.85)
-		btn_style.set_corner_radius_all(10)
-		btn_style.content_margin_left = 8
-		btn_style.content_margin_right = 8
-		btn_style.content_margin_top = 3
-		btn_style.content_margin_bottom = 3
-		place_btn.add_theme_stylebox_override("normal", btn_style)
-		var btn_hover = btn_style.duplicate()
-		btn_hover.bg_color = Color(0.48, 0.62, 0.42, 0.90)
-		place_btn.add_theme_stylebox_override("hover", btn_hover)
-		place_btn.pressed.connect(_on_place_animal.bind(item_id))
-		vbox.add_child(place_btn)
+		var farm_count = placement_mgr.get_placed_count_by_type(item_id)
+
+		# Show farm count info
+		var info_lbl = Label.new()
+		info_lbl.text = "🏠%d  🌾%d" % [count, farm_count]
+		info_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		info_lbl.add_theme_color_override("font_color", COL_TEXT_MUTED)
+		info_lbl.add_theme_font_size_override("font_size", 11)
+		info_lbl.tooltip_text = "仓库: %d / 农场: %d" % [count, farm_count]
+		vbox.add_child(info_lbl)
+
+		# Button row
+		var btn_row = HBoxContainer.new()
+		btn_row.alignment = BoxContainer.ALIGNMENT_CENTER
+		btn_row.add_theme_constant_override("separation", 4)
+		vbox.add_child(btn_row)
+
+		# Place button (if inventory > 0)
+		if count > 0:
+			var place_btn = Button.new()
+			place_btn.text = "农场"
+			place_btn.custom_minimum_size = Vector2(48, 26)
+			place_btn.add_theme_font_size_override("font_size", 11)
+			place_btn.add_theme_color_override("font_color", Color(0.96, 0.93, 0.88))
+			var place_style = StyleBoxFlat.new()
+			place_style.bg_color = Color(0.42, 0.56, 0.36, 0.85)
+			place_style.set_corner_radius_all(8)
+			place_style.content_margin_left = 6
+			place_style.content_margin_right = 6
+			place_style.content_margin_top = 2
+			place_style.content_margin_bottom = 2
+			place_btn.add_theme_stylebox_override("normal", place_style)
+			var place_hover = place_style.duplicate()
+			place_hover.bg_color = Color(0.48, 0.62, 0.42, 0.90)
+			place_btn.add_theme_stylebox_override("hover", place_hover)
+			place_btn.pressed.connect(_on_place_animal.bind(item_id))
+			btn_row.add_child(place_btn)
+
+		# Recall button (if farm_count > 0)
+		if farm_count > 0:
+			var recall_btn = Button.new()
+			recall_btn.text = "收回"
+			recall_btn.custom_minimum_size = Vector2(48, 26)
+			recall_btn.add_theme_font_size_override("font_size", 11)
+			recall_btn.add_theme_color_override("font_color", Color(0.96, 0.93, 0.88))
+			var recall_style = StyleBoxFlat.new()
+			recall_style.bg_color = Color(0.58, 0.48, 0.36, 0.72)
+			recall_style.set_corner_radius_all(8)
+			recall_style.content_margin_left = 6
+			recall_style.content_margin_right = 6
+			recall_style.content_margin_top = 2
+			recall_style.content_margin_bottom = 2
+			recall_btn.add_theme_stylebox_override("normal", recall_style)
+			var recall_hover = recall_style.duplicate()
+			recall_hover.bg_color = Color(0.64, 0.54, 0.42, 0.82)
+			recall_btn.add_theme_stylebox_override("hover", recall_hover)
+			recall_btn.pressed.connect(_on_recall_animal.bind(item_id))
+			btn_row.add_child(recall_btn)
 
 	item_grid.add_child(card)
+
+func _on_recall_animal(animal_id: String):
+	var placement_mgr = get_node_or_null("/root/AnimalPlacementManager")
+	if not placement_mgr:
+		return
+	var success = placement_mgr.recall_one_by_type(animal_id)
+	if success:
+		# Refresh the inventory display to update counts
+		_refresh_items()
 
 func _on_place_animal(animal_id: String):
 	var placement_mgr = get_node_or_null("/root/AnimalPlacementManager")
