@@ -10,11 +10,31 @@ extends Node
 
 var farm: Node2D = null
 
+var supabase_manager: Node = null
+var current_user_id: String = ""
+
 func _ready():
 	# Set fullscreen on start
 	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN)
 	
 	print("[Main] Initializing game...")
+	
+	# Get SupabaseManager
+	supabase_manager = get_node_or_null("/root/SupabaseManager")
+	
+	# Check if user is logged in (from start menu)
+	current_user_id = StateManager.get_data("current_user_id", "")
+	var current_username = StateManager.get_data("current_username", "农场主")
+	
+	if current_user_id.is_empty():
+		print("[Main] No user logged in, using local data")
+	else:
+		print("[Main] User logged in: %s (%s)" % [current_username, current_user_id])
+		# Load user data from Supabase
+		if supabase_manager:
+			supabase_manager.user_data_loaded.connect(_on_user_data_loaded)
+			supabase_manager.load_user_data(current_user_id)
+			print("[Main] Loading user data from Supabase...")
 	
 	# Get selected level from StateManager (set by start menu)
 	var selected_level = StateManager.get_data("selected_level", 1)
@@ -47,6 +67,42 @@ func _ready():
 		farm.set_selected_crop(planting_menu.get_selected_crop())
 	
 	print("[Main] Game initialized - Level %d loaded" % selected_level)
+
+func _on_user_data_loaded(user_data: Dictionary):
+	print("[Main] User data loaded from Supabase: %s" % user_data)
+	
+	# Update local StateManager with remote data
+	var state = get_node_or_null("/root/StateManager")
+	if state:
+		# Set player name
+		var username = user_data.get("username", "农场主")
+		state.apply_action({"type": "set_player_name", "name": username})
+		
+		# Set gold (replace current gold)
+		var remote_gold = user_data.get("gold", 300)
+		var current_gold = state.get_gold()
+		if remote_gold != current_gold:
+			state.apply_action({"type": "remove_gold", "amount": current_gold})  # Reset to 0
+			state.apply_action({"type": "add_gold", "amount": remote_gold})      # Add remote gold
+		
+		# Set level and XP
+		var remote_level = user_data.get("level", 1)
+		var remote_xp = user_data.get("xp", 0)
+		# Store in StateManager for reference
+		StateManager.set_data("remote_level", remote_level)
+		StateManager.set_data("remote_xp", remote_xp)
+		
+		print("[Main] Updated local state - Gold: %d, Level: %d, XP: %d" % [remote_gold, remote_level, remote_xp])
+		
+		# Update HUD
+		if hud:
+			hud._update_gold_display(remote_gold)
+			hud._update_player_name(username)
+			hud._update_player_info(username, remote_level, remote_xp, 100, float(remote_xp) / 100.0)
+	
+	# Load inventory from Supabase
+	if supabase_manager:
+		supabase_manager.load_inventory(current_user_id)
 
 func _load_level(level_id: int):
 	# Stop all current music before switching

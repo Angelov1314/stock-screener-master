@@ -69,8 +69,13 @@ func _on_login_pressed():
 		login_panel.login_successful.connect(_on_login_successful)
 		login_panel.panel_closed.connect(func(): login_panel.queue_free())
 
-func _on_login_successful(username: String):
-	print("[StartMenu] Login successful: %s" % username)
+func _on_login_successful(username: String, user_id: String = ""):
+	print("[StartMenu] Login successful: %s (ID: %s)" % [username, user_id])
+	
+	# Save user info to StateManager for game to load
+	StateManager.set_data("current_user_id", user_id)
+	StateManager.set_data("current_username", username)
+	
 	# Update UI or show logged-in state
 	$CenterContainer/VBoxContainer/LoginButton.text = "已登录: %s" % username
 

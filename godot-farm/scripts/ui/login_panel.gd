@@ -98,7 +98,12 @@ func _on_user_data_loaded(user_data: Dictionary):
 	var state = get_node_or_null("/root/StateManager")
 	if state:
 		state.apply_action({"type": "set_player_name", "name": username})
-		state.apply_action({"type": "add_gold", "amount": user_data.get("gold", 300) - state.get_gold()})
+		# Reset gold to remote value
+		var remote_gold = user_data.get("gold", 300)
+		var current_gold = state.get_gold()
+		if remote_gold != current_gold:
+			state.apply_action({"type": "remove_gold", "amount": current_gold})
+			state.apply_action({"type": "add_gold", "amount": remote_gold})
 	
 	login_successful.emit(username, user_id)
 	_close_panel()
