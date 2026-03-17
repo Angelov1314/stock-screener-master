@@ -188,10 +188,22 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 			else:
 				print("[SupabaseManager] Unknown data type: ", typeof(data))
 		_:
-			if data.has("error"):
-				login_failed.emit(data["error_description"])
-				print("[SupabaseManager] Error: ", data["error_description"])
-			else:
-				login_failed.emit("Unknown error")
-				print("[SupabaseManager] Unknown error: ", data)
+			var error_msg = "未知错误"
+			if data.has("msg"):
+				error_msg = data["msg"]
+			elif data.has("error_description"):
+				error_msg = data["error_description"]
+			elif data.has("error"):
+				error_msg = data["error"]
+			
+			# 友好的错误提示
+			if "validation_failed" in str(data):
+				error_msg = "邮箱格式无效，请使用正确的邮箱地址"
+			elif "Invalid login credentials" in error_msg:
+				error_msg = "邮箱或密码错误"
+			elif "Email not confirmed" in error_msg:
+				error_msg = "邮箱未验证，请检查邮件"
+			
+			login_failed.emit(error_msg)
+			print("[SupabaseManager] Error: ", error_msg, " | Raw: ", data)
 			user_data_saved.emit(false)

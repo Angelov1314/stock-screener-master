@@ -50,6 +50,11 @@ func _on_login_pressed():
 		_show_status("请输入邮箱和密码")
 		return
 	
+	# Validate email format
+	if not _is_valid_email(email):
+		_show_status("请输入有效的邮箱地址\n例如: user@example.com")
+		return
+	
 	_show_status("登录中...")
 	
 	if supabase_manager:
@@ -57,6 +62,16 @@ func _on_login_pressed():
 	else:
 		# Fallback to local auth if Supabase not available
 		_local_login()
+
+func _is_valid_email(email: String) -> bool:
+	# Basic email validation
+	if not email.contains("@"):
+		return false
+	if not email.contains("."):
+		return false
+	if email.length() < 5:
+		return false
+	return true
 
 func _on_signup_pressed():
 	var email = email_edit.text.strip_edges()
