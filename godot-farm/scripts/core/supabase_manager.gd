@@ -311,6 +311,169 @@ func save_farm_crops(user_id: String, crops: Array):
 	)
 	del_req.request(delete_url, headers, HTTPClient.METHOD_DELETE)
 
+## =============================================
+## Friends & Community API
+## =============================================
+
+signal search_results_received(results: Array)
+signal friend_requests_loaded(requests: Array)
+signal friends_list_loaded(friends: Array)
+signal friend_request_sent(success: bool)
+signal friend_request_responded(success: bool)
+signal community_posts_loaded(posts: Array)
+signal community_post_created(success: bool)
+signal community_like_toggled(success: bool)
+signal community_comments_loaded(comments: Array)
+signal community_comment_created(success: bool)
+
+func _make_authed_request(url: String, method: int, body_str: String, callback: Callable, extra_headers: Array = []):
+	"""Helper: fire-and-forget authed request with callback(result, code, body_str)"""
+	if access_token.is_empty():
+		print("[SupabaseManager] ERROR: not authenticated")
+		return
+	var headers = [
+		"apikey: " + SUPABASE_KEY,
+		"Authorization: Bearer " + access_token,
+		"Content-Type: application/json"
+	] + extra_headers
+	var req = HTTPRequest.new()
+	add_child(req)
+	req.request_completed.connect(func(result, code, hdrs, body):
+		callback.call(result, code, body.get_string_from_utf8())
+		req.queue_free()
+	)
+	if body_str.is_empty():
+		req.request(url, headers, method)
+	else:
+		req.request(url, headers, method, body_str)
+
+## User Search (calls RPC)
+func search_users(query: String):
+	var url = SUPABASE_URL + "/rest/v1/rpc/search_users"
+	var body = JSON.stringify({"query_text": query, "max_results": 20})
+	_make_authed_request(url, HTTPClient.METHOD_POST, body, func(result, code, body_str):
+		var json = JSON.new()
+		if result == HTTPRequest.RESULT_SUCCESS and code == 200 and json.parse(body_str) == OK and json.data is Array:
+			search_results_received.emit(json.data)
+		else:
+			print("[SupabaseManager] search_users failed: ", code, " ", body_str)
+			search_results_received.emit([])
+	)
+
+## Friend Requests
+func send_friend_request(to_user_id: String):
+	var url = SUPABASE_URL + "/rest/v1/friend_requests"
+	var body = JSON.stringify({"from_user_id": current_user_id, "to_user_id": to_user_id})
+	_make_authed_request(url, HTTPClient.METHOD_POST, body, func(result, code, body_str):
+		friend_request_sent.emit(result == HTTPRequest.RESULT_SUCCESS and (code == 200 or code == 201))
+	)
+
+func load_friend_requests():
+	"""Load pending requests TO current user"""
+	var url = SUPABASE_URL + "/rest/v1/friend_requests?to_user_id=eq." + current_user_id + "&status=eq.pending&order=created_at.desc"
+	_make_authed_request(url, HTTPClient.METHOD_GET, "", func(result, code, body_str):
+		var json = JSON.new()
+		if result == HTTPRequest.RESULT_SUCCESS and code == 200 and json.parse(body_str) == OK and json.data is Array:
+			friend_requests_loaded.emit(json.data)
+		else:
+			friend_requests_loaded.emit([])
+	)
+
+func respond_friend_request(request_id: String, accept: bool):
+	if accept:
+		# Use RPC to accept (creates bidirectional rows)
+		var url = SUPABASE_URL + "/rest/v1/rpc/accept_friend_request"
+		var body = JSON.stringify({"request_id": request_id})
+		_make_authed_request(url, HTTPClient.METHOD_POST, body, func(result, code, body_str):
+			friend_request_responded.emit(result == HTTPRequest.RESULT_SUCCESS and code == 200)
+		)
+	else:
+		# Reject: just update status
+		var url = SUPABASE_URL + "/rest/v1/friend_requests?id=eq." + request_id
+		var body = JSON.stringify({"status": "rejected", "updated_at": Time.get_datetime_string_from_system()})
+		_make_authed_request(url, HTTPClient.METHOD_PATCH, body, func(result, code, body_str):
+			friend_request_responded.emit(result == HTTPRequest.RESULT_SUCCESS and (code == 200 or code == 204))
+		)
+
+func load_friends_list():
+	"""Load friends with profile info via friends table"""
+	# TODO: join with user_data for profile info; for now just load friend IDs
+	var url = SUPABASE_URL + "/rest/v1/friends?user_id=eq." + current_user_id + "&order=created_at.desc"
+	_make_authed_request(url, HTTPClient.METHOD_GET, "", func(result, code, body_str):
+		var json = JSON.new()
+		if result == HTTPRequest.RESULT_SUCCESS and code == 200 and json.parse(body_str) == OK and json.data is Array:
+			friends_list_loaded.emit(json.data)
+		else:
+			friends_list_loaded.emit([])
+	)
+
+func remove_friend(friend_user_id: String):
+	"""Remove both directions of friendship"""
+	# Delete my row
+	var url1 = SUPABASE_URL + "/rest/v1/friends?user_id=eq." + current_user_id + "&friend_id=eq." + friend_user_id
+	_make_authed_request(url1, HTTPClient.METHOD_DELETE, "", func(_r, _c, _b): pass)
+	# The other direction is owned by the friend, so RLS won't let us delete it.
+	# TODO: Use an RPC or service-role function for full cleanup.
+
+## Community Posts
+func load_community_posts(friends_only: bool = false, limit: int = 50):
+	var url = SUPABASE_URL + "/rest/v1/community_posts?order=created_at.desc&limit=" + str(limit)
+	# TODO: friends_only filter requires a join or RPC; for now load all
+	_make_authed_request(url, HTTPClient.METHOD_GET, "", func(result, code, body_str):
+		var json = JSON.new()
+		if result == HTTPRequest.RESULT_SUCCESS and code == 200 and json.parse(body_str) == OK and json.data is Array:
+			community_posts_loaded.emit(json.data)
+		else:
+			community_posts_loaded.emit([])
+	)
+
+func create_community_post(content: String):
+	var url = SUPABASE_URL + "/rest/v1/community_posts"
+	var body = JSON.stringify({"author_id": current_user_id, "content": content})
+	_make_authed_request(url, HTTPClient.METHOD_POST, body, func(result, code, body_str):
+		community_post_created.emit(result == HTTPRequest.RESULT_SUCCESS and (code == 200 or code == 201))
+	)
+
+func toggle_like(post_id: String):
+	# Try to insert; if conflict, delete
+	var url = SUPABASE_URL + "/rest/v1/community_likes"
+	var body = JSON.stringify({"post_id": post_id, "user_id": current_user_id})
+	_make_authed_request(url, HTTPClient.METHOD_POST, body, func(result, code, body_str):
+		if code == 409:
+			# Already liked, delete
+			var del_url = SUPABASE_URL + "/rest/v1/community_likes?post_id=eq." + post_id + "&user_id=eq." + current_user_id
+			_make_authed_request(del_url, HTTPClient.METHOD_DELETE, "", func(_r, _c, _b):
+				community_like_toggled.emit(true)
+			)
+		else:
+			community_like_toggled.emit(result == HTTPRequest.RESULT_SUCCESS and (code == 200 or code == 201))
+	)
+
+func load_comments(post_id: String):
+	var url = SUPABASE_URL + "/rest/v1/community_comments?post_id=eq." + post_id + "&order=created_at.asc"
+	_make_authed_request(url, HTTPClient.METHOD_GET, "", func(result, code, body_str):
+		var json = JSON.new()
+		if result == HTTPRequest.RESULT_SUCCESS and code == 200 and json.parse(body_str) == OK and json.data is Array:
+			community_comments_loaded.emit(json.data)
+		else:
+			community_comments_loaded.emit([])
+	)
+
+func create_comment(post_id: String, content: String):
+	var url = SUPABASE_URL + "/rest/v1/community_comments"
+	var body = JSON.stringify({"post_id": post_id, "author_id": current_user_id, "content": content})
+	_make_authed_request(url, HTTPClient.METHOD_POST, body, func(result, code, body_str):
+		community_comment_created.emit(result == HTTPRequest.RESULT_SUCCESS and (code == 200 or code == 201))
+	)
+
+func update_last_online():
+	"""Heartbeat: update last_online_at for presence"""
+	if current_user_id.is_empty() or access_token.is_empty():
+		return
+	var url = SUPABASE_URL + "/rest/v1/user_data?user_id=eq." + current_user_id
+	var body = JSON.stringify({"last_online_at": Time.get_datetime_string_from_system()})
+	_make_authed_request(url, HTTPClient.METHOD_PATCH, body, func(_r, _c, _b): pass)
+
 ## HTTP Response Handler
 
 func _on_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray):

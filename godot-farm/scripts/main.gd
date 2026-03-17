@@ -77,6 +77,8 @@ func _initialize_game():
 	hud.home_requested.connect(_on_home_requested)
 	hud.iap_requested.connect(_on_iap_requested)
 	hud.settings_requested.connect(_on_settings_requested)
+	hud.friends_requested.connect(_on_friends_requested)
+	hud.community_requested.connect(_on_community_requested)
 	
 	# Connect inventory panel close
 	inventory_panel.panel_closed.connect(_on_inventory_closed)
@@ -435,6 +437,22 @@ func _on_iap_requested():
 		add_child(iap_shop)
 		iap_shop.shop_closed.connect(func(): iap_shop.queue_free())
 		iap_shop.gold_purchased.connect(_on_gold_purchased)
+
+func _on_friends_requested():
+	print("[Main] Opening friends panel...")
+	var scene = load("res://scenes/ui/friends_panel.tscn")
+	if scene:
+		var panel = scene.instantiate()
+		add_child(panel)
+		panel.panel_closed.connect(func(): pass)
+
+func _on_community_requested():
+	print("[Main] Opening community panel...")
+	var scene = load("res://scenes/ui/community_panel.tscn")
+	if scene:
+		var panel = scene.instantiate()
+		add_child(panel)
+		panel.panel_closed.connect(func(): pass)
 
 func _on_gold_purchased(amount: int):
 	print("[Main] Gold purchased: %d" % amount)

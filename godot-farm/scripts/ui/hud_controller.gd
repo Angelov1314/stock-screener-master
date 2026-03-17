@@ -11,6 +11,8 @@ signal water_mode_toggled(active: bool)
 signal home_requested
 signal iap_requested
 signal settings_requested
+signal friends_requested
+signal community_requested
 
 # UI References
 @onready var gold_label: Label = %GoldLabel
@@ -25,6 +27,8 @@ signal settings_requested
 @onready var iap_button: TextureButton = %IAPButton
 @onready var home_button: TextureButton = %HomeButton
 @onready var settings_button: TextureButton = %SettingsButton
+@onready var friends_button: Button = %FriendsButton
+@onready var community_button: Button = %CommunityButton
 @onready var toast_container: VBoxContainer = %ToastContainer
 
 # Player Info UI References
@@ -54,6 +58,8 @@ func _ready():
 	iap_button.pressed.connect(_on_iap_pressed)
 	home_button.pressed.connect(_on_home_pressed)
 	settings_button.pressed.connect(_on_settings_pressed)
+	friends_button.pressed.connect(_on_friends_pressed)
+	community_button.pressed.connect(_on_community_pressed)
 	
 	# Initial UI update
 	var state = get_node_or_null("/root/StateManager")
@@ -130,6 +136,14 @@ func _on_settings_pressed():
 	_animate_button(settings_button)
 	settings_requested.emit()
 	print("[HUD] Settings button pressed")
+
+func _on_friends_pressed():
+	friends_requested.emit()
+	print("[HUD] Friends button pressed")
+
+func _on_community_pressed():
+	community_requested.emit()
+	print("[HUD] Community button pressed")
 
 func _update_button_states():
 	# Highlight active button

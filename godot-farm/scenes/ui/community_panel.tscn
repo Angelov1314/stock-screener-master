@@ -1,0 +1,97 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/community_panel.gd" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.15, 0.2, 0.15, 0.95)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[node name="CommunityPanel" type="CanvasLayer"]
+layer = 10
+script = ExtResource("1_script")
+
+[node name="DimOverlay" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.5)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(700, 550)
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/Panel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Header" type="HBoxContainer" parent="CenterContainer/Panel/MarginContainer/VBox"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="CenterContainer/Panel/MarginContainer/VBox/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "社区"
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(1, 1, 0.85, 1)
+
+[node name="CloseButton" type="Button" parent="CenterContainer/Panel/MarginContainer/VBox/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "✕"
+flat = true
+
+[node name="CommunityStatus" type="Label" parent="CenterContainer/Panel/MarginContainer/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = ""
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.7, 0.8, 0.7, 1)
+
+[node name="CommunityTabBar" type="TabBar" parent="CenterContainer/Panel/MarginContainer/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Composer" type="HBoxContainer" parent="CenterContainer/Panel/MarginContainer/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 60)
+
+[node name="ComposeInput" type="TextEdit" parent="CenterContainer/Panel/MarginContainer/VBox/Composer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "分享你的农场生活..."
+
+[node name="PostButton" type="Button" parent="CenterContainer/Panel/MarginContainer/VBox/Composer"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(80, 0)
+text = "发布"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CenterContainer/Panel/MarginContainer/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="FeedList" type="VBoxContainer" parent="CenterContainer/Panel/MarginContainer/VBox/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
