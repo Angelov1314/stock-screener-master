@@ -171,10 +171,70 @@ func _create_inventory_card(item: Dictionary):
 	price_label.add_theme_color_override("font_color", Color(0.2, 0.6, 0.2))
 	vbox.add_child(price_label)
 	
-	# Click to sell
+	# Buttons container
+	var btn_hbox = HBoxContainer.new()
+	btn_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	vbox.add_child(btn_hbox)
+	
+	# Place button (for animals)
+	if item.id in ["cow", "pig", "sheep", "zebra", "shiba", "koala", "cat", "capybara", "alpaca"]:
+		var place_btn = Button.new()
+		place_btn.text = "放置"
+		place_btn.custom_minimum_size = Vector2(60, 30)
+		var place_style = StyleBoxFlat.new()
+		place_style.bg_color = Color(0.3, 0.6, 0.9)
+		place_style.corner_radius_top_left = 5
+		place_style.corner_radius_top_right = 5
+		place_style.corner_radius_bottom_left = 5
+		place_style.corner_radius_bottom_right = 5
+		place_btn.add_theme_stylebox_override("normal", place_style)
+		place_btn.pressed.connect(_place_animal.bind(item))
+		btn_hbox.add_child(place_btn)
+	
+	# Sell button
+	var sell_btn = Button.new()
+	sell_btn.text = "出售"
+	sell_btn.custom_minimum_size = Vector2(60, 30)
+	var sell_style = StyleBoxFlat.new()
+	sell_style.bg_color = Color(0.3, 0.7, 0.3)
+	sell_style.corner_radius_top_left = 5
+	sell_style.corner_radius_top_right = 5
+	sell_style.corner_radius_bottom_left = 5
+	sell_style.corner_radius_bottom_right = 5
+	sell_btn.add_theme_stylebox_override("normal", sell_style)
+	sell_btn.pressed.connect(_sell_item_direct.bind(item))
+	btn_hbox.add_child(sell_btn)
+	
+	# Click card for details
 	card.pressed.connect(_on_inventory_card_clicked.bind(item))
 	
 	inventory_grid.add_child(card)
+
+func _place_animal(item: Dictionary):
+	"""Place animal from inventory onto the farm map"""
+	var state = get_node_or_null("/root/StateManager")
+	if not state:
+		return
+	
+	# Check if we have the animal
+	var inventory = state.get_inventory()
+	if inventory.get(item.id, 0) <= 0:
+		print("[ShopUI] No %s to place" % item.id)
+		return
+	
+	# Remove from inventory
+	var success = state.apply_action({"type": "remove_item", "item_id": item.id, "amount": 1})
+	if not success:
+		return
+	
+	# Spawn animal on farm
+	var farm = get_node_or_null("/root/Main/Farm")
+	if farm and farm.has_method("spawn_animal"):
+		farm.spawn_animal(item.id)
+		print("[ShopUI] Placed %s on farm" % item.id)
+		_populate_inventory()  # Refresh display
+	else:
+		print("[ShopUI] ERROR: Cannot spawn animal, farm not found")
 
 func _on_inventory_card_clicked(item: Dictionary):
 	selected_item = item.duplicate()
@@ -308,27 +368,31 @@ func _on_buy_pressed():
 	else:
 		# Buy from shop
 		var price = selected_item.price
-		var gold = _get_current_gold()
+		var state = get_node_or_null("/root/StateManager")
 		
+		if not state:
+			return
+		
+		var gold = state.get_gold()
 		if gold < price:
 			return
 		
-		var eco_mgr = get_node_or_null("/root/EconomyManager")
-		if eco_mgr:
-			eco_mgr.remove_gold(price, "shop_purchase")
+		# Deduct gold via StateManager
+		var success = state.apply_action({"type": "remove_gold", "amount": price})
+		if not success:
+			print("[ShopUI] Failed to deduct gold")
+			return
 		
+		print("[ShopUI] Bought %s for %d gold" % [selected_item.id, price])
 		item_purchased.emit(selected_item.id, selected_item.type)
 		
 		if selected_item.type == "animal":
 			animal_purchased.emit(selected_item.id)
-			# Add animal to inventory instead of spawning
-			var state = get_node_or_null("/root/StateManager")
-			if state:
-				state.apply_action({"type": "add_item", "item_id": selected_item.id, "amount": 1})
-				# Add experience for purchasing animal
-				var xp_amount = 25  # XP for buying an animal
-				state.apply_action({"type": "add_experience", "amount": xp_amount})
-				print("[ShopUI] Added animal to inventory: %s, gained %d XP" % [selected_item.id, xp_amount])
+			# Add animal to inventory
+			state.apply_action({"type": "add_item", "item_id": selected_item.id, "amount": 1})
+			# Add experience for purchasing animal
+			state.apply_action({"type": "add_experience", "amount": 25})
+			print("[ShopUI] Added animal to inventory: %s" % selected_item.id)
 		elif selected_item.type == "plant":
 			_give_seed(selected_item.id)
 	
