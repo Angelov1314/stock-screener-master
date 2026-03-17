@@ -9,6 +9,7 @@ signal planting_menu_requested
 signal sickle_mode_toggled(active: bool)
 signal water_mode_toggled(active: bool)
 signal home_requested
+signal iap_requested
 
 # UI References
 @onready var gold_label: Label = %GoldLabel
@@ -20,6 +21,7 @@ signal home_requested
 @onready var plant_button: TextureButton = %PlantButton
 @onready var inventory_button: TextureButton = %InventoryButton
 @onready var shop_button: TextureButton = %ShopButton
+@onready var iap_button: TextureButton = %IAPButton
 @onready var home_button: TextureButton = %HomeButton
 @onready var toast_container: VBoxContainer = %ToastContainer
 
@@ -47,6 +49,7 @@ func _ready():
 	plant_button.pressed.connect(_on_plant_pressed)
 	inventory_button.pressed.connect(_on_inventory_pressed)
 	shop_button.pressed.connect(_on_shop_pressed)
+	iap_button.pressed.connect(_on_iap_pressed)
 	home_button.pressed.connect(_on_home_pressed)
 	
 	# Initial UI update
@@ -102,6 +105,11 @@ func _on_home_pressed():
 	_animate_button(home_button)
 	home_requested.emit()
 	print("[HUD] Home button pressed")
+
+func _on_iap_pressed():
+	_animate_button(iap_button)
+	iap_requested.emit()
+	print("[HUD] IAP button pressed")
 
 func _update_button_states():
 	# Highlight active button

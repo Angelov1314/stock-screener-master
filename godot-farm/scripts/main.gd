@@ -30,6 +30,7 @@ func _ready():
 	hud.sickle_mode_toggled.connect(_on_sickle_mode_toggled)
 	hud.water_mode_toggled.connect(_on_water_mode_toggled)
 	hud.home_requested.connect(_on_home_requested)
+	hud.iap_requested.connect(_on_iap_requested)
 	
 	# Connect inventory panel close
 	inventory_panel.panel_closed.connect(_on_inventory_closed)
@@ -183,6 +184,21 @@ func _on_home_requested():
 	print("[Main] Returning to start menu...")
 	# Return to level select screen
 	get_tree().change_scene_to_file("res://scenes/start_menu.tscn")
+
+func _on_iap_requested():
+	print("[Main] Opening IAP shop...")
+	var iap_scene = load("res://scenes/ui/iap_shop.tscn")
+	if iap_scene:
+		var iap_shop = iap_scene.instantiate()
+		add_child(iap_shop)
+		iap_shop.shop_closed.connect(func(): iap_shop.queue_free())
+		iap_shop.gold_purchased.connect(_on_gold_purchased)
+
+func _on_gold_purchased(amount: int):
+	print("[Main] Gold purchased: %d" % amount)
+	# Update HUD gold display
+	if hud:
+		hud.update_gold(StateManager.get_gold())
 
 func _on_seed_selected(seed_id: String):
 	print("[Main] Seed selected: %s" % seed_id)
