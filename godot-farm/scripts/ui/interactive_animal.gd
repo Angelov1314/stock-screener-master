@@ -149,13 +149,19 @@ func _setup_animation_from_frames(sprite_frames: SpriteFrames, anim_name: String
 func _setup_animation_from_spritesheet(sprite_frames: SpriteFrames, anim_name: String, texture: Texture2D, frames: int, speed: int):
 	if not texture:
 		return
-		
-	var frame_width = texture.get_width() / frames
-	var frame_height = texture.get_height()
 	
 	sprite_frames.add_animation(anim_name)
 	sprite_frames.set_animation_speed(anim_name, speed)
 	sprite_frames.set_animation_loop(anim_name, true)
+	
+	# If only 1 frame, use the whole texture
+	if frames <= 1:
+		sprite_frames.add_frame(anim_name, texture)
+		return
+	
+	# Multiple frames - use atlas
+	var frame_width = texture.get_width() / frames
+	var frame_height = texture.get_height()
 	
 	for i in range(frames):
 		var atlas = AtlasTexture.new()
