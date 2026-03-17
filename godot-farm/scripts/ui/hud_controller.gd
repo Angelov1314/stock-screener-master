@@ -64,18 +64,12 @@ func _ready():
 		_update_player_name("农场主")
 		_update_player_info("农场主", 1, 0, 100, 0.0)
 	
-	# Load gold frame texture and apply tuned position (deferred to avoid container override)
+	# Load gold frame texture and apply scale
+	# GoldFrame is now a direct child of CanvasLayer with absolute position in scene
 	if gold_frame:
 		gold_frame.texture = load("res://assets/ui/gold_frame.png")
 		gold_frame.scale = _gold_frame_scale
-		# Use deferred call to set position after container layout is done
-		call_deferred("_apply_gold_frame_position")
-		print("[HUDController] Gold frame scale: %s, position will be applied deferred" % [_gold_frame_scale])
-
-func _apply_gold_frame_position():
-	if gold_frame:
-		gold_frame.position = _gold_frame_offset
-		print("[HUDController] Gold frame position applied: %s" % [_gold_frame_offset])
+		print("[HUDController] Gold frame scale applied: %s" % [_gold_frame_scale])
 	
 	print("[HUDController] Initialized")
 
