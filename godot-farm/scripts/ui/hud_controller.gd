@@ -10,6 +10,7 @@ signal sickle_mode_toggled(active: bool)
 signal water_mode_toggled(active: bool)
 signal home_requested
 signal iap_requested
+signal settings_requested
 
 # UI References
 @onready var gold_label: Label = %GoldLabel
@@ -23,6 +24,7 @@ signal iap_requested
 @onready var shop_button: TextureButton = %ShopButton
 @onready var iap_button: TextureButton = %IAPButton
 @onready var home_button: TextureButton = %HomeButton
+@onready var settings_button: TextureButton = %SettingsButton
 @onready var toast_container: VBoxContainer = %ToastContainer
 
 # Player Info UI References
@@ -51,6 +53,7 @@ func _ready():
 	shop_button.pressed.connect(_on_shop_pressed)
 	iap_button.pressed.connect(_on_iap_pressed)
 	home_button.pressed.connect(_on_home_pressed)
+	settings_button.pressed.connect(_on_settings_pressed)
 	
 	# Initial UI update
 	var state = get_node_or_null("/root/StateManager")
@@ -122,6 +125,11 @@ func _on_iap_pressed():
 	_animate_button(iap_button)
 	iap_requested.emit()
 	print("[HUD] IAP button pressed")
+
+func _on_settings_pressed():
+	_animate_button(settings_button)
+	settings_requested.emit()
+	print("[HUD] Settings button pressed")
 
 func _update_button_states():
 	# Highlight active button

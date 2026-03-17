@@ -76,6 +76,7 @@ func _initialize_game():
 	hud.water_mode_toggled.connect(_on_water_mode_toggled)
 	hud.home_requested.connect(_on_home_requested)
 	hud.iap_requested.connect(_on_iap_requested)
+	hud.settings_requested.connect(_on_settings_requested)
 	
 	# Connect inventory panel close
 	inventory_panel.panel_closed.connect(_on_inventory_closed)
@@ -122,12 +123,18 @@ func _save_user_data():
 	if not state:
 		return
 	
+	var settings_mgr = get_node_or_null("/root/SettingsManager")
+	var settings_str = ""
+	if settings_mgr:
+		settings_str = JSON.stringify(settings_mgr.to_dict())
+	
 	var data = {
 		"user_id": current_user_id,
 		"username": state.get_player_name(),
 		"gold": state.get_gold(),
 		"level": state.get_player_level(),
-		"xp": state.get_experience()
+		"xp": state.get_experience(),
+		"settings": settings_str
 	}
 	
 	print("[Main] Auto-saving user data...")
@@ -199,6 +206,16 @@ func _on_user_data_loaded(user_data: Dictionary):
 		state.experience = remote_xp
 		
 		print("[Main] Updated local state - Gold: %d, Level: %d, XP: %d" % [remote_gold, remote_level, remote_xp])
+		
+		# Load settings if present
+		var settings_json = user_data.get("settings", "")
+		if settings_json is String and not settings_json.is_empty():
+			var json = JSON.new()
+			if json.parse(settings_json) == OK and json.data is Dictionary:
+				var settings_mgr = get_node_or_null("/root/SettingsManager")
+				if settings_mgr:
+					settings_mgr.from_dict(json.data)
+					print("[Main] Settings loaded from Supabase")
 	
 	# Now initialize the game with loaded data
 	_initialize_game()
@@ -401,6 +418,14 @@ func _on_home_requested():
 		_save_farm_crops()
 	# Return to level select screen
 	get_tree().change_scene_to_file("res://scenes/start_menu.tscn")
+
+func _on_settings_requested():
+	print("[Main] Opening settings panel...")
+	var settings_scene = load("res://scenes/ui/settings_panel.tscn")
+	if settings_scene:
+		var panel = settings_scene.instantiate()
+		add_child(panel)
+		panel.panel_closed.connect(func(): pass)
 
 func _on_iap_requested():
 	print("[Main] Opening IAP shop...")

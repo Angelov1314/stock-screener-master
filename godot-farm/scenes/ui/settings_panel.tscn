@@ -1,0 +1,196 @@
+[gd_scene format=3 uid="uid://er6um3xcldsa"]
+
+[ext_resource type="Script" path="res://scripts/ui/settings_panel.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/ui/ui_crops_named_processed/btn_settings_top.png" id="2_close_icon"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.15, 0.2, 0.15, 0.95)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[node name="SettingsPanel" type="CanvasLayer"]
+layer = 10
+script = ExtResource("1_script")
+
+[node name="DimOverlay" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.5)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelBG" type="Panel" parent="CenterContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(500, 700)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelBG"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 30
+theme_override_constants/margin_bottom = 30
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/PanelBG/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="TitleBar" type="HBoxContainer" parent="CenterContainer/PanelBG/MarginContainer/VBox"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="CenterContainer/PanelBG/MarginContainer/VBox/TitleBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 32
+theme_override_colors/font_color = Color(0.9, 0.85, 0.7, 1)
+text = "⚙ 设置"
+
+[node name="CloseButton" type="TextureButton" parent="CenterContainer/PanelBG/MarginContainer/VBox/TitleBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+texture_normal = ExtResource("2_close_icon")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Sep1" type="HSeparator" parent="CenterContainer/PanelBG/MarginContainer/VBox"]
+layout_mode = 2
+
+[node name="MasterRow" type="HBoxContainer" parent="CenterContainer/PanelBG/MarginContainer/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CenterContainer/PanelBG/MarginContainer/VBox/MasterRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "主音量"
+
+[node name="MasterSlider" type="HSlider" parent="CenterContainer/PanelBG/MarginContainer/VBox/MasterRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 1.0
+step = 0.05
+value = 1.0
+
+[node name="MasterValueLabel" type="Label" parent="CenterContainer/PanelBG/MarginContainer/VBox/MasterRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "100%"
+horizontal_alignment = 2
+
+[node name="BGMRow" type="HBoxContainer" parent="CenterContainer/PanelBG/MarginContainer/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CenterContainer/PanelBG/MarginContainer/VBox/BGMRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "音乐"
+
+[node name="BGMSlider" type="HSlider" parent="CenterContainer/PanelBG/MarginContainer/VBox/BGMRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 1.0
+step = 0.05
+value = 0.8
+
+[node name="BGMValueLabel" type="Label" parent="CenterContainer/PanelBG/MarginContainer/VBox/BGMRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "80%"
+horizontal_alignment = 2
+
+[node name="SFXRow" type="HBoxContainer" parent="CenterContainer/PanelBG/MarginContainer/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CenterContainer/PanelBG/MarginContainer/VBox/SFXRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "音效"
+
+[node name="SFXSlider" type="HSlider" parent="CenterContainer/PanelBG/MarginContainer/VBox/SFXRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 1.0
+step = 0.05
+value = 1.0
+
+[node name="SFXValueLabel" type="Label" parent="CenterContainer/PanelBG/MarginContainer/VBox/SFXRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "100%"
+horizontal_alignment = 2
+
+[node name="Sep2" type="HSeparator" parent="CenterContainer/PanelBG/MarginContainer/VBox"]
+layout_mode = 2
+
+[node name="ShakeRow" type="HBoxContainer" parent="CenterContainer/PanelBG/MarginContainer/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CenterContainer/PanelBG/MarginContainer/VBox/ShakeRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+text = "屏幕震动"
+
+[node name="ShakeToggle" type="CheckButton" parent="CenterContainer/PanelBG/MarginContainer/VBox/ShakeRow"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+
+[node name="LangRow" type="HBoxContainer" parent="CenterContainer/PanelBG/MarginContainer/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CenterContainer/PanelBG/MarginContainer/VBox/LangRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+text = "语言"
+
+[node name="LangButton" type="Button" parent="CenterContainer/PanelBG/MarginContainer/VBox/LangRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(140, 44)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "English"
+
+[node name="Sep3" type="HSeparator" parent="CenterContainer/PanelBG/MarginContainer/VBox"]
+layout_mode = 2
+
+[node name="MainMenuButton" type="Button" parent="CenterContainer/PanelBG/MarginContainer/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "返回主菜单"

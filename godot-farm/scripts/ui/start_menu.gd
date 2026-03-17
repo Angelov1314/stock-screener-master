@@ -32,6 +32,9 @@ func _ready():
 	# Connect login button
 	$CenterContainer/VBoxContainer/LoginButton.pressed.connect(_on_login_pressed)
 	
+	# Connect settings button
+	%SettingsButton.pressed.connect(_on_settings_pressed)
+	
 	# Animate cow icon
 	var anim_timer = Timer.new()
 	anim_timer.wait_time = 0.125
@@ -78,6 +81,14 @@ func _on_login_successful(username: String, user_id: String = ""):
 	
 	# Update UI or show logged-in state
 	$CenterContainer/VBoxContainer/LoginButton.text = "已登录: %s" % username
+
+func _on_settings_pressed():
+	print("[StartMenu] Opening settings...")
+	var settings_scene = load("res://scenes/ui/settings_panel.tscn")
+	if settings_scene:
+		var panel = settings_scene.instantiate()
+		add_child(panel)
+		panel.panel_closed.connect(func(): pass)  # already queue_free'd
 
 func _on_cow_anim():
 	cow_icon.frame = (cow_icon.frame + 1) % cow_icon.hframes

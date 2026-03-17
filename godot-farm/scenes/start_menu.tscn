@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://scripts/ui/start_menu.gd" id="start_script"]
 [ext_resource type="Texture2D" uid="uid://bgfarmnew001" path="res://assets/environment/farm_background.png" id="bg_texture"]
 [ext_resource type="Texture2D" path="res://assets/characters/cow/cow_idle.png" id="cow_icon"]
+[ext_resource type="Texture2D" path="res://assets/ui/ui_crops_named_processed/btn_settings_top.png" id="settings_icon"]
 
 [node name="StartMenu" type="Control"]
 layout_mode = 3
@@ -109,6 +110,16 @@ custom_minimum_size = Vector2(200, 60)
 layout_mode = 2
 theme_override_font_sizes/font_size = 28
 text = "用户登录"
+
+[node name="SettingsButton" type="TextureButton" parent="CenterContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+tooltip_text = "设置"
+texture_normal = ExtResource("settings_icon")
+ignore_texture_size = true
+stretch_mode = 5
 
 [node name="StartButton" type="Button" parent="CenterContainer/VBoxContainer"]
 custom_minimum_size = Vector2(200, 60)

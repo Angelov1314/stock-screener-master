@@ -42,6 +42,14 @@ CREATE TABLE IF NOT EXISTS farm_crops (
     UNIQUE(user_id, plot_x, plot_y)
 );
 
+-- Migration: add settings column to user_data
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='user_data' AND column_name='settings') THEN
+        ALTER TABLE user_data ADD COLUMN settings JSONB DEFAULT '{}'::jsonb;
+    END IF;
+END $$;
+
 -- Migration: add columns if table already exists
 DO $$
 BEGIN
