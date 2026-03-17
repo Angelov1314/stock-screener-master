@@ -28,13 +28,21 @@ func _ready():
 	
 	if current_user_id.is_empty():
 		print("[Main] No user logged in, using local data")
+		# Initialize game immediately for local play
+		_initialize_game()
 	else:
 		print("[Main] User logged in: %s (%s)" % [current_username, current_user_id])
-		# Load user data from Supabase
+		# Load user data from Supabase first, then initialize
 		if supabase_manager:
 			supabase_manager.user_data_loaded.connect(_on_user_data_loaded)
 			supabase_manager.load_user_data(current_user_id)
 			print("[Main] Loading user data from Supabase...")
+		else:
+			print("[Main] SupabaseManager not found, using local data")
+			_initialize_game()
+
+func _initialize_game():
+	"""Initialize game after user data is loaded (or for local play)"""
 	
 	# Get selected level from StateManager (set by start menu)
 	var selected_level = StateManager.get_data("selected_level", 1)
@@ -70,7 +78,7 @@ func _ready():
 	StateManager.state_changed.connect(_on_state_changed)
 	print("[Main] Auto-save enabled")
 	
-	print("[Main] Game initialized - Level %d loaded" % selected_level)
+	print("[Main] Game initialized")
 
 func _on_state_changed(action: Dictionary):
 	"""Auto-save to Supabase when game state changes"""
@@ -124,31 +132,36 @@ func _on_user_data_loaded(user_data: Dictionary):
 	# Update local StateManager with remote data
 	var state = get_node_or_null("/root/StateManager")
 	if state:
-		# Set player name
+		# IMPORTANT: First set the correct values directly to avoid default initialization
 		var username = user_data.get("username", "农场主")
-		state.apply_action({"type": "set_player_name", "name": username})
-		
-		# Set gold (replace current gold)
 		var remote_gold = user_data.get("gold", 300)
-		var current_gold = state.get_gold()
-		if remote_gold != current_gold:
-			state.apply_action({"type": "remove_gold", "amount": current_gold})  # Reset to 0
-			state.apply_action({"type": "add_gold", "amount": remote_gold})      # Add remote gold
-		
-		# Set level and XP
 		var remote_level = user_data.get("level", 1)
 		var remote_xp = user_data.get("xp", 0)
-		# Store in StateManager for reference
-		StateManager.set_data("remote_level", remote_level)
-		StateManager.set_data("remote_xp", remote_xp)
+		
+		# Use apply_action to properly update state
+		state.apply_action({"type": "set_player_name", "name": username})
+		
+		# Reset and set gold
+		var current_gold = state.get_gold()
+		if current_gold > 0:
+			state.apply_action({"type": "remove_gold", "amount": current_gold})
+		state.apply_action({"type": "add_gold", "amount": remote_gold})
 		
 		print("[Main] Updated local state - Gold: %d, Level: %d, XP: %d" % [remote_gold, remote_level, remote_xp])
 		
-		# Update HUD
-		if hud:
-			hud._update_gold_display(remote_gold)
-			hud._update_player_name(username)
-			hud._update_player_info(username, remote_level, remote_xp, 100, float(remote_xp) / 100.0)
+		# Store for reference
+		StateManager.set_data("remote_level", remote_level)
+		StateManager.set_data("remote_xp", remote_xp)
+	
+	# Now initialize the game with loaded data
+	_initialize_game()
+	
+	# After game is initialized, update HUD with correct values
+	if state and hud:
+		hud._update_gold_display(state.get_gold())
+		hud._update_player_name(state.get_player_name())
+		var xp_progress = state.get_xp_progress()
+		hud._update_player_info(state.get_player_name(), state.get_player_level(), state.get_experience(), state.get_xp_for_next_level(), xp_progress)
 	
 	# Load inventory from Supabase
 	if supabase_manager:
