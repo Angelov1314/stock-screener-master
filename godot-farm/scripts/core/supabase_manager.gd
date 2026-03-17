@@ -7,6 +7,10 @@ const SUPABASE_KEY := "sb_publishable_u3rMLiZvBYti2cDBVoGBOg_Z-mh3OMG"  # Publis
 
 var http_request: HTTPRequest
 
+# Store access token after login
+var access_token: String = ""
+var current_user_id: String = ""
+
 # Signals
 signal user_data_loaded(user_data: Dictionary)
 signal user_data_saved(success: bool)
@@ -87,19 +91,28 @@ func show_toast(message: String):
 
 func load_user_data(user_id: String):
 	var url = SUPABASE_URL + "/rest/v1/user_data?user_id=eq." + user_id + "&limit=1"
+	
+	# Use access token for RLS if available, otherwise use anon key
+	var auth_token = access_token if not access_token.is_empty() else SUPABASE_KEY
+	
 	var headers = [
 		"apikey: " + SUPABASE_KEY,
-		"Authorization: Bearer " + SUPABASE_KEY,
-		"Content-Type: " + "application/json"
+		"Authorization: Bearer " + auth_token,
+		"Content-Type: application/json"
 	]
 	
+	print("[SupabaseManager] Loading user data with auth token: ", "access_token" if not access_token.is_empty() else "anon_key")
 	http_request.request(url, headers, HTTPClient.METHOD_GET)
 
 func save_user_data(user_id: String, data: Dictionary):
 	var url = SUPABASE_URL + "/rest/v1/user_data"
+	
+	# Use access token for RLS if available, otherwise use anon key
+	var auth_token = access_token if not access_token.is_empty() else SUPABASE_KEY
+	
 	var headers = [
 		"apikey: " + SUPABASE_KEY,
-		"Authorization: Bearer " + SUPABASE_KEY,
+		"Authorization: Bearer " + auth_token,
 		"Content-Type: application/json",
 		"Prefer: resolution=merge-duplicates"
 	]
@@ -108,24 +121,33 @@ func save_user_data(user_id: String, data: Dictionary):
 	save_data["user_id"] = user_id
 	save_data["updated_at"] = Time.get_datetime_string_from_system()
 	
+	print("[SupabaseManager] Saving user data with auth token: ", "access_token" if not access_token.is_empty() else "anon_key")
 	http_request.request(url, headers, HTTPClient.METHOD_POST, JSON.stringify(save_data))
 
 ## Inventory Operations
 
 func load_inventory(user_id: String):
 	var url = SUPABASE_URL + "/rest/v1/inventory?user_id=eq." + user_id
+	
+	# Use access token for RLS if available, otherwise use anon key
+	var auth_token = access_token if not access_token.is_empty() else SUPABASE_KEY
+	
 	var headers = [
 		"apikey: " + SUPABASE_KEY,
-		"Authorization: Bearer " + SUPABASE_KEY
+		"Authorization: Bearer " + auth_token
 	]
 	
 	http_request.request(url, headers, HTTPClient.METHOD_GET)
 
 func save_inventory_item(user_id: String, item_id: String, quantity: int):
 	var url = SUPABASE_URL + "/rest/v1/inventory"
+	
+	# Use access token for RLS if available, otherwise use anon key
+	var auth_token = access_token if not access_token.is_empty() else SUPABASE_KEY
+	
 	var headers = [
 		"apikey: " + SUPABASE_KEY,
-		"Authorization: Bearer " + SUPABASE_KEY,
+		"Authorization: Bearer " + auth_token,
 		"Content-Type: application/json",
 		"Prefer: resolution=merge-duplicates"
 	]
@@ -174,25 +196,26 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 			elif data is Dictionary:
 				if data.has("id"):
 					# Login/signup success - data contains user object directly
-					var user_id = data["id"]
+					current_user_id = data["id"]
+				
 					var username = "农场主"
 					if data.has("user_metadata") and data["user_metadata"].has("username"):
 						username = data["user_metadata"]["username"]
 					
-					login_success.emit(user_id)
-					print("[SupabaseManager] Login successful: ", user_id, " username: ", username)
+					login_success.emit(current_user_id)
+					print("[SupabaseManager] Login successful: ", current_user_id, " username: ", username)
 					
 					# Auto-create user_data if not exists (trigger should handle this, but backup here)
-					load_user_data(user_id)
+					load_user_data(current_user_id)
 				elif data.has("access_token"):
 					# Alternative format with access_token
 					var user_id = data["user"]["id"]
 					var username = data["user"]["user_metadata"].get("username", "农场主") if data["user"].has("user_metadata") else "农场主"
 					
-					login_success.emit(user_id)
-					print("[SupabaseManager] Login successful: ", user_id)
+					login_success.emit(current_user_id)
+					print("[SupabaseManager] Login successful: ", current_user_id)
 					
-					load_user_data(user_id)
+					load_user_data(current_user_id)
 				else:
 					user_data_saved.emit(true)
 					print("[SupabaseManager] Data saved successfully")
