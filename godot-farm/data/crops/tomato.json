@@ -4,22 +4,46 @@
   "name": "Tomato",
   "name_key": "CROP_TOMATO_NAME",
   "description_key": "CROP_TOMATO_DESC",
-  "growth_time": 240,
+  "growth_time": 480,
   "sell_price": 30,
   "seed_cost": 12,
   "unlock_level": 3,
   "sprite_prefix": "tomato",
   "stages": [
-    {"stage": 0, "name": "seed", "duration": 0},
-    {"stage": 1, "name": "sprout", "duration": 30},
-    {"stage": 2, "name": "growing", "duration": 30},
-    {"stage": 3, "name": "mature", "duration": 0, "harvestable": true}
+    {
+      "stage": 0,
+      "name": "seed",
+      "duration": 0
+    },
+    {
+      "stage": 1,
+      "name": "sprout",
+      "duration": 30
+    },
+    {
+      "stage": 2,
+      "name": "growing",
+      "duration": 30
+    },
+    {
+      "stage": 3,
+      "name": "mature",
+      "duration": 0,
+      "harvestable": true
+    }
   ],
-  "seasons": ["summer"],
+  "seasons": [
+    "summer"
+  ],
   "water_needs": "medium",
   "quality_factors": {
     "water_bonus": 1.25,
     "fertilizer_bonus": 1.5
   },
-  "tags": ["fruit", "summer_crop", "high_value", "regrowable"]
+  "tags": [
+    "fruit",
+    "summer_crop",
+    "high_value",
+    "regrowable"
+  ]
 }

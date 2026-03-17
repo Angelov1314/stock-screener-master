@@ -10,16 +10,41 @@
   "unlock_level": 4,
   "sprite_prefix": "corn",
   "stages": [
-    {"stage": 0, "name": "seed", "duration": 0},
-    {"stage": 1, "name": "sprout", "duration": 30},
-    {"stage": 2, "name": "growing", "duration": 30},
-    {"stage": 3, "name": "mature", "duration": 0, "harvestable": true}
+    {
+      "stage": 0,
+      "name": "seed",
+      "duration": 0
+    },
+    {
+      "stage": 1,
+      "name": "sprout",
+      "duration": 30
+    },
+    {
+      "stage": 2,
+      "name": "growing",
+      "duration": 30
+    },
+    {
+      "stage": 3,
+      "name": "mature",
+      "duration": 0,
+      "harvestable": true
+    }
   ],
-  "seasons": ["summer", "autumn"],
+  "seasons": [
+    "summer",
+    "autumn"
+  ],
   "water_needs": "medium",
   "quality_factors": {
     "water_bonus": 1.2,
     "fertilizer_bonus": 1.4
   },
-  "tags": ["grain", "late_game", "high_value", "long_grow"]
+  "tags": [
+    "grain",
+    "late_game",
+    "high_value",
+    "long_grow"
+  ]
 }

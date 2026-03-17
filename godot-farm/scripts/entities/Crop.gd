@@ -9,6 +9,9 @@ var sell_price: int = 0
 var seed_cost: int = 0
 var current_stage: int = 0  # 0-3
 var is_watered: bool = false
+var total_growth_time: float = 120.0
+var stage_duration: float = 30.0
+var planted_at_unix: float = 0.0
 
 var crop_container: Node2D = null
 var sprites: Array[Sprite2D] = []
@@ -38,7 +41,7 @@ func _ready():
 	# Create timer
 	timer = Timer.new()
 	timer.name = "GrowthTimer"
-	timer.wait_time = 10.0
+	timer.wait_time = 30.0
 	timer.one_shot = false
 	timer.timeout.connect(_on_timer_timeout)
 	add_child(timer)
@@ -70,11 +73,15 @@ func initialize(data: Dictionary, plot_w: float = 600, plot_h: float = 400) -> v
 	crop_name = data.get("name", "")
 	sell_price = data.get("sell_price", 10)
 	seed_cost = data.get("seed_cost", 5)
+	total_growth_time = float(data.get("growth_time", 120))
+	stage_duration = max(total_growth_time / 4.0, 1.0)
 	plot_width = plot_w
 	plot_height = plot_h
 	current_stage = 0
 
 func start_growth():
+	planted_at_unix = Time.get_unix_time_from_system()
+	timer.wait_time = stage_duration
 	update_visual()
 	_plant_animation()
 	timer.start()
@@ -137,3 +144,19 @@ func harvest() -> Dictionary:
 
 func water() -> void:
 	is_watered = true
+
+func get_remaining_time() -> float:
+	if can_harvest():
+		return 0.0
+	if planted_at_unix <= 0.0:
+		return total_growth_time
+	var elapsed = Time.get_unix_time_from_system() - planted_at_unix
+	return max(total_growth_time - elapsed, 0.0)
+
+func get_countdown_text() -> String:
+	var remaining = int(ceil(get_remaining_time()))
+	if remaining <= 0:
+		return "已成熟"
+	var minutes = remaining / 60
+	var seconds = remaining % 60
+	return "%02d:%02d" % [minutes, seconds]

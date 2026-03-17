@@ -182,6 +182,10 @@ var _debug_plot_offsets: Dictionary = {}  # plot_id -> {offset_x, offset_y}
 var _debug_move_speed: float = 2.0  # 上下左右移动速度
 var _debug_scale_speed: float = 0.005  # 放大缩小速度
 var _last_key_check: Dictionary = {}  # For tracking key press state
+var _plot_timer_bubble: Node2D = null
+var _plot_timer_label: Label = null
+var _plot_timer_target: Node = null
+var _plot_timer_ui_timer: Timer = null
 # =====================================
 
 func _ready():
@@ -202,6 +206,7 @@ func _ready():
 	
 	# Build custom farm plots
 	_build_custom_plots()
+	_create_plot_timer_bubble()
 	
 	# Load existing crops from state
 	_load_existing_crops()
@@ -607,16 +612,19 @@ func _handle_plot_tap(plot_id: String):
 	var crop_entity = _get_crop_at_plot(plot_id)
 	
 	if crop_entity == null:
+		_hide_plot_timer_bubble()
 		_try_plant_crop(plot_id)
 	else:
 		if crop_entity.can_harvest():
+			_hide_plot_timer_bubble()
 			_try_harvest_crop(plot_id)
 		else:
-			_try_water_crop(plot_id)
+			_show_plot_timer_bubble(plot_id, crop_entity)
 
 func _handle_plot_secondary(plot_id: String):
 	var crop_entity = _get_crop_at_plot(plot_id)
 	if crop_entity != null:
+		_show_plot_timer_bubble(plot_id, crop_entity)
 		_show_crop_info(plot_id, crop_entity)
 
 ## Get crop entity at a specific plot
@@ -637,6 +645,66 @@ func _get_crop_at_plot(plot_id: String) -> Node:
 			return crop
 	
 	return null
+
+func _create_plot_timer_bubble():
+	_plot_timer_bubble = Node2D.new()
+	_plot_timer_bubble.name = "PlotTimerBubble"
+	_plot_timer_bubble.visible = false
+	_plot_timer_bubble.z_index = 5000
+	add_child(_plot_timer_bubble)
+	
+	var bg = ColorRect.new()
+	bg.name = "Background"
+	bg.position = Vector2(-42, -54)
+	bg.size = Vector2(84, 32)
+	bg.color = Color(0.36, 0.24, 0.12, 0.88)
+	_plot_timer_bubble.add_child(bg)
+	
+	_plot_timer_label = Label.new()
+	_plot_timer_label.name = "TimerLabel"
+	_plot_timer_label.position = Vector2(-34, -50)
+	_plot_timer_label.size = Vector2(68, 24)
+	_plot_timer_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_plot_timer_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_plot_timer_label.add_theme_color_override("font_color", Color(0.97, 0.91, 0.78))
+	_plot_timer_label.add_theme_color_override("font_outline_color", Color(0.24, 0.14, 0.06))
+	_plot_timer_label.add_theme_constant_override("outline_size", 2)
+	_plot_timer_label.text = "00:00"
+	_plot_timer_bubble.add_child(_plot_timer_label)
+	
+	_plot_timer_ui_timer = Timer.new()
+	_plot_timer_ui_timer.wait_time = 0.25
+	_plot_timer_ui_timer.one_shot = false
+	_plot_timer_ui_timer.timeout.connect(_update_plot_timer_bubble)
+	add_child(_plot_timer_ui_timer)
+
+func _show_plot_timer_bubble(plot_id: String, crop_entity: Node):
+	if crop_entity == null or not is_instance_valid(crop_entity):
+		return
+	var rect = _plot_rects.get(plot_id, Rect2())
+	var center_pos = Vector2(rect.position.x + rect.size.x / 2.0, rect.position.y - 18.0)
+	_plot_timer_bubble.global_position = center_pos
+	_plot_timer_target = crop_entity
+	_plot_timer_bubble.visible = true
+	_update_plot_timer_bubble()
+	if _plot_timer_ui_timer and _plot_timer_ui_timer.is_stopped():
+		_plot_timer_ui_timer.start()
+
+func _hide_plot_timer_bubble():
+	if _plot_timer_bubble:
+		_plot_timer_bubble.visible = false
+	_plot_timer_target = null
+	if _plot_timer_ui_timer:
+		_plot_timer_ui_timer.stop()
+
+func _update_plot_timer_bubble():
+	if _plot_timer_target == null or not is_instance_valid(_plot_timer_target):
+		_hide_plot_timer_bubble()
+		return
+	if _plot_timer_target.has_method("get_countdown_text"):
+		_plot_timer_label.text = _plot_timer_target.get_countdown_text()
+	if _plot_timer_target.has_method("can_harvest") and _plot_timer_target.can_harvest():
+		_plot_timer_label.text = "已成熟"
 
 ## Action Handlers
 func _try_plant_crop(plot_id: String):
