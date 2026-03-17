@@ -21,6 +21,14 @@ func _ready():
 	signup_button.pressed.connect(_on_signup_pressed)
 	close_button.pressed.connect(_on_close_pressed)
 	
+	# Connect social login buttons
+	var google_btn = get_node_or_null("CenterContainer/Panel/VBoxContainer/SocialButtons/GoogleButton")
+	var facebook_btn = get_node_or_null("CenterContainer/Panel/VBoxContainer/SocialButtons/FacebookButton")
+	if google_btn:
+		google_btn.pressed.connect(_on_google_login)
+	if facebook_btn:
+		facebook_btn.pressed.connect(_on_facebook_login)
+	
 	# Get SupabaseManager
 	supabase_manager = get_node_or_null("/root/SupabaseManager")
 	if supabase_manager:
@@ -108,6 +116,20 @@ func _local_login():
 func _show_status(message: String):
 	if status_label:
 		status_label.text = message
+
+func _on_google_login():
+	_show_status("正在打开 Google 登录...")
+	if supabase_manager:
+		supabase_manager.sign_in_with_google()
+	else:
+		_show_status("社交登录暂不可用")
+
+func _on_facebook_login():
+	_show_status("正在打开 Facebook 登录...")
+	if supabase_manager:
+		supabase_manager.sign_in_with_facebook()
+	else:
+		_show_status("社交登录暂不可用")
 
 func _on_close_pressed():
 	_close_panel()

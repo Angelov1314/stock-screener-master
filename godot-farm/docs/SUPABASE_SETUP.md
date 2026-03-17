@@ -140,3 +140,47 @@ $SupabaseManager.save_user_data(user_id, data)
 5. 测试登录和保存功能
 
 需要我帮你继续集成到现有的登录系统中吗？
+
+## 7. 配置社交登录（可选）
+
+### 启用 Google 登录
+
+1. 在 Supabase Dashboard 中：
+   - 点击 `Authentication` → `Providers`
+   - 找到 `Google`，点击展开
+   - 开启 `Enabled`
+   - 填入 Google OAuth 凭据（需要从 Google Cloud Console 获取）
+   - 保存
+
+2. 获取 Google OAuth 凭据：
+   - 访问 https://console.cloud.google.com
+   - 创建项目或选择现有项目
+   - APIs & Services → Credentials
+   - Create Credentials → OAuth client ID
+   - Application type: Web application
+   - Authorized redirect URIs: `https://你的项目ID.supabase.co/auth/v1/callback`
+   - 复制 Client ID 和 Client Secret 到 Supabase
+
+### 启用 Facebook 登录
+
+1. 在 Supabase Dashboard 中：
+   - `Authentication` → `Providers`
+   - 找到 `Facebook`，点击展开
+   - 开启 `Enabled`
+   - 填入 Facebook App ID 和 Secret
+
+2. 获取 Facebook 凭据：
+   - 访问 https://developers.facebook.com
+   - 创建应用
+   - 添加 Facebook Login 产品
+   - 设置有效 OAuth 跳转 URI: `https://你的项目ID.supabase.co/auth/v1/callback`
+   - 复制 App ID 和 App Secret 到 Supabase
+
+### 移动端/桌面端特殊配置
+
+对于 iOS/Android/桌面应用，需要额外配置：
+- 设置自定义 URL Scheme 用于回调
+- 配置 Deep Linking
+- 或使用本地服务器接收回调
+
+详见 Supabase 文档：https://supabase.com/docs/guides/auth/social-login

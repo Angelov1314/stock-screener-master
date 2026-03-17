@@ -102,6 +102,32 @@ custom_minimum_size = Vector2(100, 40)
 layout_mode = 2
 text = "注册"
 
+[node name="Spacer3" type="Control" parent="CenterContainer/Panel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 15)
+layout_mode = 2
+
+[node name="SocialLabel" type="Label" parent="CenterContainer/Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "或使用社交账号登录"
+horizontal_alignment = 1
+
+[node name="SocialButtons" type="HBoxContainer" parent="CenterContainer/Panel/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="GoogleButton" type="Button" parent="CenterContainer/Panel/VBoxContainer/SocialButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 40)
+layout_mode = 2
+text = "Google"
+
+[node name="FacebookButton" type="Button" parent="CenterContainer/Panel/VBoxContainer/SocialButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 40)
+layout_mode = 2
+text = "Facebook"
+
 [node name="CloseButton" type="Button" parent="CenterContainer/Panel/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2

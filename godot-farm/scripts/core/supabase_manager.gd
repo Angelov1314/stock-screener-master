@@ -55,6 +55,34 @@ func signup(email: String, password: String, username: String):
 	
 	http_request.request(url, headers, HTTPClient.METHOD_POST, body)
 
+## Social Login (OAuth)
+# Note: For mobile/desktop games, you need to configure OAuth providers in Supabase Dashboard
+# and set up deep linking or a local redirect URL
+
+func sign_in_with_google():
+	# For web builds, this redirects to Google OAuth
+	# For mobile/desktop, you need to configure deep linking
+	var redirect_to = "http://localhost:8080/auth/callback"  # Change to your game URL
+	var url = SUPABASE_URL + "/auth/v1/authorize?provider=google&redirect_to=" + redirect_to.uri_encode()
+	
+	print("[SupabaseManager] Opening Google OAuth: " + url)
+	OS.shell_open(url)
+	
+	# Show instructions to user
+	show_toast("请在浏览器中完成登录")
+
+func sign_in_with_facebook():
+	var redirect_to = "http://localhost:8080/auth/callback"
+	var url = SUPABASE_URL + "/auth/v1/authorize?provider=facebook&redirect_to=" + redirect_to.uri_encode()
+	
+	print("[SupabaseManager] Opening Facebook OAuth: " + url)
+	OS.shell_open(url)
+	
+	show_toast("请在浏览器中完成登录")
+
+func show_toast(message: String):
+	print("[SupabaseManager] Toast: " + message)
+
 ## User Data Operations
 
 func load_user_data(user_id: String):
