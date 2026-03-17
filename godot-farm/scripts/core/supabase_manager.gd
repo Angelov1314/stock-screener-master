@@ -150,21 +150,38 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 	var error = json.parse(body.get_string_from_utf8())
 	
 	if error != OK:
-		print("[SupabaseManager] JSON parse error")
+		print("[SupabaseManager] JSON parse error: ", body.get_string_from_utf8())
 		return
 	
 	var data = json.get_data()
+	print("[SupabaseManager] Response: ", data)
 	
 	match response_code:
 		200, 201:
-			if data is Array and data.size() > 0:
-				user_data_loaded.emit(data[0] if data.size() == 1 else data)
+			if data is Array:
+				if data.size() > 0:
+					user_data_loaded.emit(data[0] if data.size() == 1 else data)
+				else:
+					# Empty array - no user data found, create default
+					print("[SupabaseManager] No user data found, creating default...")
+					user_data_loaded.emit({
+						"user_id": "",
+						"username": "农场主",
+						"gold": 300,
+						"level": 1,
+						"xp": 0
+					})
 			elif data is Dictionary:
 				if data.has("access_token"):
-					# Login success
-					login_success.emit(data["user"]["id"])
-					# Save token for future requests
-					print("[SupabaseManager] Login successful: ", data["user"]["id"])
+					# Login/signup success
+					var user_id = data["user"]["id"]
+					var username = data["user"]["user_metadata"].get("username", "农场主") if data["user"].has("user_metadata") else "农场主"
+					
+					login_success.emit(user_id)
+					print("[SupabaseManager] Login successful: ", user_id)
+					
+					# Auto-create user_data if not exists (trigger should handle this, but backup here)
+					load_user_data(user_id)
 				else:
 					user_data_saved.emit(true)
 					print("[SupabaseManager] Data saved successfully")
@@ -172,4 +189,7 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 			if data.has("error"):
 				login_failed.emit(data["error_description"])
 				print("[SupabaseManager] Error: ", data["error_description"])
+			else:
+				login_failed.emit("Unknown error")
+				print("[SupabaseManager] Unknown error: ", data)
 			user_data_saved.emit(false)

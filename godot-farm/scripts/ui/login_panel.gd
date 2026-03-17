@@ -80,6 +80,8 @@ func _on_signup_pressed():
 
 func _on_supabase_login_success(user_id: String):
 	print("[LoginPanel] Supabase login success: %s" % user_id)
+	# Store user_id temporarily in case user_data is empty
+	StateManager.set_data("temp_user_id", user_id)
 	# Load user data from database
 	if supabase_manager:
 		supabase_manager.load_user_data(user_id)
@@ -94,6 +96,13 @@ func _on_user_data_loaded(user_data: Dictionary):
 	var username = user_data.get("username", "农场主")
 	var user_id = user_data.get("user_id", "")
 	
+	# If user_id is empty, we need to get it from the login response
+	# This can happen if the database trigger didn't create the user_data record
+	if user_id.is_empty():
+		print("[LoginPanel] Warning: user_id is empty from user_data")
+		# Try to use the last known user_id from login
+		user_id = StateManager.get_data("temp_user_id", "")
+	
 	# Save to local state
 	var state = get_node_or_null("/root/StateManager")
 	if state:
@@ -105,6 +114,7 @@ func _on_user_data_loaded(user_data: Dictionary):
 			state.apply_action({"type": "remove_gold", "amount": current_gold})
 			state.apply_action({"type": "add_gold", "amount": remote_gold})
 	
+	print("[LoginPanel] Emitting login_successful with username: %s, user_id: %s" % [username, user_id])
 	login_successful.emit(username, user_id)
 	_close_panel()
 
