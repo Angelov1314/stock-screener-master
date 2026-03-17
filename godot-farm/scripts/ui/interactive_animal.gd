@@ -31,6 +31,13 @@ var original_parent: Node = null
 var bounce_velocity: Vector2 = Vector2.ZERO
 var gravity: float = 1000.0
 
+# Production system
+var _production_timer: Timer = null
+var _production_ready: bool = false
+var _production_gold: int = 0
+var _production_xp: int = 0
+var _collectible_indicator: Node2D = null
+
 func _ready():
 	# Set the Node2D scale (affects all children)
 	self.scale = Vector2(scale_factor, scale_factor)
@@ -54,6 +61,9 @@ func _ready():
 	
 	# Setup audio
 	_init_audio()
+	
+	# Setup production system
+	_init_production()
 	
 	# Start idle
 	_start_idle()
@@ -164,9 +174,18 @@ func _input(event):
 				_drop()
 
 func _on_input_event(viewport: Node, event: InputEvent, shape_idx: int):
-	# Click on animal to pick up
+	# Click on animal
 	if not is_being_carried and event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			# Check if there's production to collect first
+			if _production_ready:
+				var collected = collect_production()
+				if not collected.is_empty():
+					print("[InteractiveAnimal] Collected %d gold and %d XP from %s" % [collected.gold, collected.xp, animal_name])
+					# Play collect sound
+					_play_animal_sound("happy")
+					return
+			# Otherwise pick up the animal
 			_try_pickup()
 
 func _try_pickup():
@@ -384,6 +403,116 @@ func _init_audio():
 	_footstep_timer.name = "FootstepTimer"
 	_footstep_timer.timeout.connect(_play_footstep)
 	add_child(_footstep_timer)
+
+func _init_production():
+	# Create production timer (1-5 minutes)
+	_production_timer = Timer.new()
+	_production_timer.name = "ProductionTimer"
+	_production_timer.one_shot = true
+	_production_timer.timeout.connect(_on_production_ready)
+	add_child(_production_timer)
+	
+	# Start first production cycle
+	_start_production_timer()
+
+func _start_production_timer():
+	if not _production_timer:
+		return
+	
+	# Random time between 1-5 minutes (60-300 seconds)
+	var wait_time = randf_range(60.0, 300.0)
+	_production_timer.start(wait_time)
+
+func _on_production_ready():
+	if current_state == State.CARRIED:
+		# Don't produce while being carried
+		_start_production_timer()
+		return
+	
+	# Calculate production based on animal type
+	var base_gold = 5
+	var base_xp = 3
+	
+	# Different animals give different rewards
+	match animal_name:
+		"cow": 
+			_production_gold = base_gold * 3
+			_production_xp = base_xp * 3
+		"pig", "sheep":
+			_production_gold = base_gold * 2
+			_production_xp = base_xp * 2
+		"zebra", "alpaca":
+			_production_gold = base_gold * 4
+			_production_xp = base_xp * 4
+		_:
+			_production_gold = base_gold
+			_production_xp = base_xp
+	
+	_production_ready = true
+	_show_collectible_indicator()
+
+func _show_collectible_indicator():
+	if _collectible_indicator:
+		return
+	
+	# Create a floating coin/exclamation indicator
+	_collectible_indicator = Node2D.new()
+	_collectible_indicator.name = "CollectibleIndicator"
+	_collectible_indicator.position = Vector2(0, -60)
+	add_child(_collectible_indicator)
+	
+	# Add a sprite or shape to indicate collectibility
+	var indicator = ColorRect.new()
+	indicator.size = Vector2(30, 30)
+	indicator.position = Vector2(-15, -15)
+	indicator.color = Color(1, 0.85, 0, 0.9)
+	_collectible_indicator.add_child(indicator)
+	
+	# Add label
+	var label = Label.new()
+	label.text = "💰"
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.position = Vector2(-15, -15)
+	label.size = Vector2(30, 30)
+	_collectible_indicator.add_child(label)
+	
+	# Animate floating
+	var tween = create_tween()
+	tween.set_loops()
+	tween.tween_property(_collectible_indicator, "position:y", -70, 0.5)
+	tween.tween_property(_collectible_indicator, "position:y", -60, 0.5)
+
+func _hide_collectible_indicator():
+	if _collectible_indicator:
+		_collectible_indicator.queue_free()
+		_collectible_indicator = null
+
+func collect_production() -> Dictionary:
+	"""Collect produced resources. Returns dictionary with gold and xp, or empty if not ready."""
+	if not _production_ready:
+		return {}
+	
+	var result = {
+		"gold": _production_gold,
+		"xp": _production_xp
+	}
+	
+	# Add to player via StateManager
+	var state = get_node_or_null("/root/StateManager")
+	if state:
+		state.apply_action({"type": "add_gold", "amount": _production_gold})
+		state.apply_action({"type": "add_experience", "amount": _production_xp})
+	
+	_production_ready = false
+	_production_gold = 0
+	_production_xp = 0
+	_hide_collectible_indicator()
+	
+	# Start next production cycle
+	_start_production_timer()
+	
+	return result
 
 func _play_animal_sound(sound_type: String = "idle"):
 	if not _audio_player:
