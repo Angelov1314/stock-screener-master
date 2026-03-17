@@ -2,8 +2,8 @@ extends Node
 
 ## Supabase Database Manager - Handles user data persistence
 
-const SUPABASE_URL := "https://your-project.supabase.co"
-const SUPABASE_KEY := "your-anon-key"  # Use anon key for client-side
+const SUPABASE_URL := "https://aegjluwadbvxlggzkyxw.supabase.co"
+const SUPABASE_KEY := "sb_publishable_u3rMLiZvBYti2cDBVoGBOg_Z-mh3OMG"  # Publishable/Anon key
 
 var http_request: HTTPRequest
 
