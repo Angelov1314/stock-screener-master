@@ -21,6 +21,12 @@ var selected_item: Dictionary = {}
 var sell_mode: bool = false  # true when viewing inventory to sell
 
 const REFRESH_COST: int = 50
+const UI_WOOD := Color(0.34, 0.28, 0.22, 0.82)
+const UI_PAPER := Color(0.87, 0.81, 0.71, 0.52)
+const UI_PAPER_HOVER := Color(0.92, 0.87, 0.78, 0.62)
+const UI_BORDER := Color(0.53, 0.43, 0.33, 0.55)
+const UI_TEXT := Color(0.28, 0.22, 0.18)
+const UI_ACCENT := Color(0.63, 0.52, 0.39)
 
 func _ready():
 	# Get nodes
@@ -51,9 +57,82 @@ func _ready():
 				buy_button.pressed.connect(_on_buy_pressed)
 		item_panel.visible = false
 	
+	_apply_cozy_theme()
 	_load_shop_data()
 	_populate_shop()
 	_update_gold_display()
+
+func _apply_cozy_theme():
+	var main_container = get_node_or_null("MainContainer") as Panel
+	if main_container:
+		var panel_style = StyleBoxFlat.new()
+		panel_style.bg_color = UI_WOOD
+		panel_style.border_color = Color(0.46, 0.37, 0.28, 0.72)
+		panel_style.border_width_left = 2
+		panel_style.border_width_top = 2
+		panel_style.border_width_right = 2
+		panel_style.border_width_bottom = 3
+		panel_style.corner_radius_top_left = 22
+		panel_style.corner_radius_top_right = 22
+		panel_style.corner_radius_bottom_left = 22
+		panel_style.corner_radius_bottom_right = 22
+		panel_style.shadow_color = Color(0.18, 0.12, 0.08, 0.18)
+		panel_style.shadow_size = 12
+		main_container.add_theme_stylebox_override("panel", panel_style)
+	
+	var item_panel_node = get_node_or_null("MainContainer/ItemPanel") as Panel
+	if item_panel_node:
+		var item_style = StyleBoxFlat.new()
+		item_style.bg_color = Color(0.84, 0.78, 0.68, 0.72)
+		item_style.border_color = UI_BORDER
+		item_style.border_width_left = 1
+		item_style.border_width_top = 1
+		item_style.border_width_right = 1
+		item_style.border_width_bottom = 2
+		item_style.corner_radius_top_left = 18
+		item_style.corner_radius_top_right = 18
+		item_style.corner_radius_bottom_left = 18
+		item_style.corner_radius_bottom_right = 18
+		item_panel_node.add_theme_stylebox_override("panel", item_style)
+	
+	for path in [
+		"MainContainer/VBoxContainer/TitleLabel",
+		"MainContainer/VBoxContainer/GoldDisplay/GoldLabel",
+		"MainContainer/ItemPanel/ItemVBox/ItemName",
+		"MainContainer/ItemPanel/ItemVBox/ItemDesc",
+		"MainContainer/ItemPanel/ItemVBox/ItemPrice"
+	]:
+		var label = get_node_or_null(path)
+		if label and label is Label:
+			label.add_theme_color_override("font_color", UI_TEXT)
+	
+	for btn_path in [
+		"MainContainer/VBoxContainer/BottomBar/RefreshButton",
+		"MainContainer/VBoxContainer/BottomBar/CloseButton",
+		"MainContainer/ItemPanel/ItemVBox/BuyButton"
+	]:
+		var btn = get_node_or_null(btn_path) as Button
+		if btn:
+			_apply_soft_button_theme(btn)
+
+func _apply_soft_button_theme(btn: Button, base_color: Color = Color(0.63, 0.52, 0.39, 0.72)):
+	var normal = StyleBoxFlat.new()
+	normal.bg_color = base_color
+	normal.border_color = Color(0.42, 0.33, 0.25, 0.42)
+	normal.border_width_bottom = 2
+	normal.corner_radius_top_left = 14
+	normal.corner_radius_top_right = 14
+	normal.corner_radius_bottom_left = 14
+	normal.corner_radius_bottom_right = 14
+	var hover = normal.duplicate()
+	hover.bg_color = Color(base_color.r + 0.05, base_color.g + 0.05, base_color.b + 0.05, base_color.a)
+	var pressed = normal.duplicate()
+	pressed.bg_color = Color(base_color.r - 0.04, base_color.g - 0.04, base_color.b - 0.04, base_color.a)
+	btn.add_theme_stylebox_override("normal", normal)
+	btn.add_theme_stylebox_override("hover", hover)
+	btn.add_theme_stylebox_override("pressed", pressed)
+	btn.add_theme_color_override("font_color", Color(0.98, 0.96, 0.92))
+	btn.add_theme_color_override("font_hover_color", Color(1, 1, 1))
 
 func _load_shop_data():
 	var file_path = "res://data/shop_items.json"
@@ -121,18 +200,21 @@ func _create_inventory_card(item: Dictionary):
 	
 	# Style
 	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0.9, 0.95, 0.9)
-	style.border_color = Color(0.4, 0.7, 0.4)
-	style.border_width_bottom = 3
-	style.corner_radius_top_left = 8
-	style.corner_radius_top_right = 8
-	style.corner_radius_bottom_left = 8
-	style.corner_radius_bottom_right = 8
+	style.bg_color = UI_PAPER
+	style.border_color = UI_BORDER
+	style.border_width_left = 1
+	style.border_width_top = 1
+	style.border_width_right = 1
+	style.border_width_bottom = 2
+	style.corner_radius_top_left = 18
+	style.corner_radius_top_right = 18
+	style.corner_radius_bottom_left = 18
+	style.corner_radius_bottom_right = 18
 	card.add_theme_stylebox_override("normal", style)
 	
 	var hover_style = style.duplicate()
-	hover_style.bg_color = Color(0.95, 1, 0.95)
-	hover_style.border_width_bottom = 5
+	hover_style.bg_color = UI_PAPER_HOVER
+	hover_style.border_width_bottom = 3
 	card.add_theme_stylebox_override("hover", hover_style)
 	
 	# Container
@@ -181,13 +263,7 @@ func _create_inventory_card(item: Dictionary):
 		var place_btn = Button.new()
 		place_btn.text = "放置"
 		place_btn.custom_minimum_size = Vector2(60, 30)
-		var place_style = StyleBoxFlat.new()
-		place_style.bg_color = Color(0.3, 0.6, 0.9)
-		place_style.corner_radius_top_left = 5
-		place_style.corner_radius_top_right = 5
-		place_style.corner_radius_bottom_left = 5
-		place_style.corner_radius_bottom_right = 5
-		place_btn.add_theme_stylebox_override("normal", place_style)
+		_apply_soft_button_theme(place_btn, Color(0.56, 0.52, 0.44, 0.74))
 		place_btn.pressed.connect(_place_animal.bind(item))
 		btn_hbox.add_child(place_btn)
 	
@@ -195,13 +271,7 @@ func _create_inventory_card(item: Dictionary):
 	var sell_btn = Button.new()
 	sell_btn.text = "出售"
 	sell_btn.custom_minimum_size = Vector2(60, 30)
-	var sell_style = StyleBoxFlat.new()
-	sell_style.bg_color = Color(0.3, 0.7, 0.3)
-	sell_style.corner_radius_top_left = 5
-	sell_style.corner_radius_top_right = 5
-	sell_style.corner_radius_bottom_left = 5
-	sell_style.corner_radius_bottom_right = 5
-	sell_btn.add_theme_stylebox_override("normal", sell_style)
+	_apply_soft_button_theme(sell_btn, Color(0.55, 0.47, 0.36, 0.78))
 	sell_btn.pressed.connect(_sell_item_direct.bind(item))
 	btn_hbox.add_child(sell_btn)
 	
@@ -291,18 +361,21 @@ func _create_card(parent: GridContainer, item: Dictionary, item_type: String):
 	
 	# Style
 	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0.95, 0.95, 0.9)
-	style.border_color = Color(0.7, 0.6, 0.4)
-	style.border_width_bottom = 3
-	style.corner_radius_top_left = 8
-	style.corner_radius_top_right = 8
-	style.corner_radius_bottom_left = 8
-	style.corner_radius_bottom_right = 8
+	style.bg_color = UI_PAPER
+	style.border_color = UI_BORDER
+	style.border_width_left = 1
+	style.border_width_top = 1
+	style.border_width_right = 1
+	style.border_width_bottom = 2
+	style.corner_radius_top_left = 18
+	style.corner_radius_top_right = 18
+	style.corner_radius_bottom_left = 18
+	style.corner_radius_bottom_right = 18
 	card.add_theme_stylebox_override("normal", style)
 	
 	var hover_style = style.duplicate()
-	hover_style.bg_color = Color(1, 1, 0.95)
-	hover_style.border_width_bottom = 5
+	hover_style.bg_color = UI_PAPER_HOVER
+	hover_style.border_width_bottom = 3
 	card.add_theme_stylebox_override("hover", hover_style)
 	
 	# Container
@@ -352,9 +425,15 @@ func _get_icon_path(id: String, item_type: String) -> String:
 			if ResourceLoader.exists(path):
 				return path
 	else:
-		var path = "res://assets/crops/%s/%s_seed.png" % [id, id]
-		if ResourceLoader.exists(path):
-			return path
+		var paths = [
+			"res://assets/crops/%s/%s_seed.png" % [id, id],
+			"res://assets/crops/%s/%s_seeds.png" % [id, id],
+			"res://assets/crops/%s/seed.png" % [id],
+			"res://assets/crops/%s/%s_mature.png" % [id, id]
+		]
+		for path in paths:
+			if ResourceLoader.exists(path):
+				return path
 	return ""
 
 func _on_card_clicked(item: Dictionary, item_type: String):
@@ -419,7 +498,6 @@ func _on_buy_pressed():
 			state.apply_action({"type": "add_item", "item_id": selected_item.id, "amount": 1})
 			# Add experience for purchasing animal
 			state.apply_action({"type": "add_experience", "amount": 25})
-			var audio_mgr = get_node_or_null("/root/AudioManager")
 			if audio_mgr:
 				audio_mgr.play_sfx_path("res://assets/audio/sfx/ui/xp_gain.mp3", 0.9)
 			print("[ShopUI] Added animal to inventory: %s" % selected_item.id)
