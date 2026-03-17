@@ -2,3 +2,4 @@ res://scripts/ui/hud_controller.gd
 res://scripts/main.gd
 res://scripts/ui/start_menu.gd
 res://scripts/ui/login_panel.gd
+res://scripts/ui/iap_shop.gd
