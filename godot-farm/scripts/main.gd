@@ -67,7 +67,7 @@ func _ready():
 		farm.set_selected_crop(planting_menu.get_selected_crop())
 	
 	# Connect auto-save on state changes
-	state.state_changed.connect(_on_state_changed)
+	StateManager.state_changed.connect(_on_state_changed)
 	print("[Main] Auto-save enabled")
 	
 	print("[Main] Game initialized - Level %d loaded" % selected_level)
