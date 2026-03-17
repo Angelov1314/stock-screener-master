@@ -108,10 +108,13 @@ func _on_state_changed(action: Dictionary):
 			_save_user_data()
 		"add_experience", "harvest_crop":
 			_save_user_data()
+			_save_farm_crops()
 		"add_item", "remove_item":
 			_save_inventory()
 		"set_player_name":
 			_save_user_data()
+		"plant_crop":
+			_save_farm_crops()
 
 func _save_user_data():
 	"""Save user data to Supabase"""
@@ -129,6 +132,15 @@ func _save_user_data():
 	
 	print("[Main] Auto-saving user data...")
 	supabase_manager.save_user_data(current_user_id, data)
+
+func _save_farm_crops():
+	"""Save all active crops to Supabase"""
+	var crop_mgr = get_node_or_null("/root/CropManager")
+	if not crop_mgr or not supabase_manager:
+		return
+	var crops_data = crop_mgr.serialize_crops_for_save()
+	print("[Main] Auto-saving farm crops: %d crops" % crops_data.size())
+	supabase_manager.save_farm_crops(current_user_id, crops_data)
 
 func _save_inventory():
 	"""Save inventory to Supabase"""
@@ -209,6 +221,12 @@ func _on_user_data_loaded(user_data: Dictionary):
 			supabase_manager.inventory_loaded.connect(_on_inventory_loaded)
 		supabase_manager.load_inventory(current_user_id)
 
+	# Load farm crops from Supabase
+	if supabase_manager:
+		if not supabase_manager.farm_crops_loaded.is_connected(_on_farm_crops_loaded):
+			supabase_manager.farm_crops_loaded.connect(_on_farm_crops_loaded)
+		supabase_manager.load_farm_crops(current_user_id)
+
 func _on_inventory_loaded(inventory_data):
 	print("[Main] Inventory loaded from Supabase: %s" % [str(inventory_data)])
 	
@@ -229,6 +247,14 @@ func _on_inventory_loaded(inventory_data):
 				"item_id": item_id,
 				"amount": quantity
 			})
+
+func _on_farm_crops_loaded(crops_data: Array):
+	print("[Main] Farm crops loaded from Supabase: %d crops" % crops_data.size())
+	if crops_data.size() == 0:
+		return
+	var crop_mgr = get_node_or_null("/root/CropManager")
+	if crop_mgr and crop_mgr.has_method("restore_crops_from_data"):
+		crop_mgr.restore_crops_from_data(crops_data)
 
 func _load_level(level_id: int):
 	# Stop all current music before switching
@@ -370,6 +396,9 @@ func _on_inventory_closed():
 
 func _on_home_requested():
 	print("[Main] Returning to start menu...")
+	# Save farm crops before leaving
+	if not current_user_id.is_empty() and supabase_manager:
+		_save_farm_crops()
 	# Return to level select screen
 	get_tree().change_scene_to_file("res://scenes/start_menu.tscn")
 

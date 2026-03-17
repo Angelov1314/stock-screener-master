@@ -105,10 +105,16 @@ func _plant_animation():
 		tween.tween_property(sprite, "scale", Vector2(0.455, 0.455), 0.4)
 
 func _on_timer_timeout():
+	var old_stage = current_stage
 	_sync_stage_from_time()
-	if current_stage < 3:
-		current_stage += 1
+	if current_stage != old_stage:
 		_growth_animation()
+	elif current_stage < 3:
+		# Timer fired but time hasn't crossed threshold yet; recalculate next wait
+		var elapsed = Time.get_unix_time_from_system() - planted_at_unix
+		var next_stage_time = (current_stage + 1) * stage_duration
+		timer.wait_time = max(next_stage_time - elapsed, 1.0)
+		timer.start()
 
 func _growth_animation():
 	# Update texture first

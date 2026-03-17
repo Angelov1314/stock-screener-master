@@ -124,6 +124,109 @@ func sell_crop(crop_id: String, amount: int = 1) -> int:
 	print("[CropManager] Sold %d %s for %d gold" % [amount, crop_id, total_gold])
 	return total_gold
 
+## Persistence: serialize all active crops for Supabase save
+func serialize_crops_for_save() -> Array:
+	var result = []
+	for crop_id in active_crops.keys():
+		var crop = active_crops[crop_id]
+		# Find the coord for this crop
+		var coord = Vector2i.ZERO
+		for pos in crop_positions.keys():
+			if crop_positions[pos] == crop_id:
+				coord = pos
+				break
+		result.append({
+			"crop_id": crop.crop_id,
+			"plot_x": coord.x,
+			"plot_y": coord.y,
+			"growth_stage": crop.current_stage,
+			"planted_at": Time.get_datetime_string_from_datetime_dict(
+				Time.get_datetime_dict_from_unix_time(int(crop.planted_at_unix)), true
+			),
+			"growth_time": crop.total_growth_time,
+			"water_count": crop.water_count,
+		})
+	return result
+
+## Persistence: restore crops from Supabase data using real timestamps
+func restore_crops_from_data(crops_data: Array) -> void:
+	print("[CropManager] Restoring %d crops from cloud..." % crops_data.size())
+	for data in crops_data:
+		var crop_type = data.get("crop_id", "")
+		if crop_type.is_empty() or not crop_database.has(crop_type):
+			print("[CropManager] Skipping unknown crop type: %s" % crop_type)
+			continue
+
+		var coord = Vector2i(int(data.get("plot_x", 0)), int(data.get("plot_y", 0)))
+
+		# Skip if already occupied
+		if crop_positions.has(coord):
+			print("[CropManager] Coord %s already occupied, skipping" % str(coord))
+			continue
+
+		# Calculate world position from coord (same logic as ActionSystem)
+		var farm_ctrl = get_node_or_null("/root/Main/LevelContainer/Farm")
+		if not farm_ctrl:
+			farm_ctrl = get_node_or_null("/root/Main/Farm")
+		var world_pos = Vector2.ZERO
+		var plot_w = 600.0
+		var plot_h = 400.0
+		if farm_ctrl and farm_ctrl.has_method("get_plot_position_by_coord"):
+			world_pos = farm_ctrl.get_plot_position_by_coord(coord)
+		else:
+			world_pos = Vector2(coord.x * 640 + 500, coord.y * 640 + 500)
+
+		# Parse planted_at timestamp to unix
+		var planted_at_str = str(data.get("planted_at", ""))
+		var planted_unix = 0.0
+		if not planted_at_str.is_empty():
+			# Try ISO format from Supabase (e.g. "2026-03-18T01:00:00+00:00")
+			# Godot's Time.get_unix_time_from_datetime_string handles ISO 8601
+			planted_unix = Time.get_unix_time_from_datetime_string(planted_at_str)
+
+		var saved_growth_time = float(data.get("growth_time", 120.0))
+		var saved_water_count = int(data.get("water_count", 0))
+
+		# Create crop entity
+		var crop_instance_id = "%s_%d_%d_%d" % [crop_type, coord.x, coord.y, int(planted_unix)]
+		var crop = CropEntityScript.new()
+		crop.name = crop_instance_id
+		crop.position = world_pos
+		crop.initialize(crop_database[crop_type], plot_w, plot_h)
+
+		# Override with saved timing data
+		crop.total_growth_time = saved_growth_time
+		crop.stage_duration = max(saved_growth_time / 4.0, 1.0)
+		crop.water_count = saved_water_count
+		crop.planted_at_unix = planted_unix
+
+		add_child(crop)
+
+		# Compute current stage from real elapsed time
+		crop._sync_stage_from_time()
+		crop.update_visual()
+
+		# If not yet mature, start the timer for remaining growth
+		if crop.current_stage < 3:
+			# Calculate time until next stage
+			var elapsed = Time.get_unix_time_from_system() - planted_unix
+			var next_stage_time = (crop.current_stage + 1) * crop.stage_duration
+			var time_to_next = max(next_stage_time - elapsed, 1.0)
+			crop.timer.wait_time = time_to_next
+			crop.timer.start()
+		else:
+			crop.became_harvestable.emit()
+
+		active_crops[crop_instance_id] = crop
+		crop_positions[coord] = crop_instance_id
+
+		print("[CropManager] Restored %s at %s, stage=%d (planted %.0fs ago)" % [
+			crop_type, str(coord), crop.current_stage,
+			Time.get_unix_time_from_system() - planted_unix
+		])
+
+	print("[CropManager] Restore complete: %d active crops" % active_crops.size())
+
 func get_available_crops() -> Array[String]:
 	var crops: Array[String] = []
 	crops.assign(crop_database.keys())

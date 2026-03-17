@@ -36,8 +36,25 @@ CREATE TABLE IF NOT EXISTS farm_crops (
     plot_y INTEGER NOT NULL,
     growth_stage INTEGER DEFAULT 0,
     planted_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    growth_time FLOAT DEFAULT 120.0,
+    water_count INTEGER DEFAULT 0,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     UNIQUE(user_id, plot_x, plot_y)
 );
+
+-- Migration: add columns if table already exists
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='farm_crops' AND column_name='growth_time') THEN
+        ALTER TABLE farm_crops ADD COLUMN growth_time FLOAT DEFAULT 120.0;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='farm_crops' AND column_name='water_count') THEN
+        ALTER TABLE farm_crops ADD COLUMN water_count INTEGER DEFAULT 0;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='farm_crops' AND column_name='updated_at') THEN
+        ALTER TABLE farm_crops ADD COLUMN updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW();
+    END IF;
+END $$;
 
 -- 动物数据表
 CREATE TABLE IF NOT EXISTS farm_animals (
@@ -73,7 +90,8 @@ CREATE POLICY "Users can only access their own inventory" ON inventory
     WITH CHECK (auth.uid() = user_id);
 
 CREATE POLICY "Users can only access their own crops" ON farm_crops
-    FOR ALL USING (auth.uid() = user_id);
+    FOR ALL USING (auth.uid() = user_id)
+    WITH CHECK (auth.uid() = user_id);
 
 CREATE POLICY "Users can only access their own animals" ON farm_animals
     FOR ALL USING (auth.uid() = user_id);

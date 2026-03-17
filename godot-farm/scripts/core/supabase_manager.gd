@@ -222,6 +222,95 @@ func save_inventory_item(user_id: String, item_id: String, quantity: int):
 	var temp_inventory = {item_id: quantity}
 	save_inventory_batch(user_id, temp_inventory)
 
+## Farm Crops Operations
+
+signal farm_crops_loaded(crops_data: Array)
+signal farm_crops_saved(success: bool)
+
+func load_farm_crops(user_id: String):
+	"""Load all planted crops for this user"""
+	var url = SUPABASE_URL + "/rest/v1/farm_crops?user_id=eq." + user_id
+	var auth_token = access_token if not access_token.is_empty() else SUPABASE_KEY
+	var headers = [
+		"apikey: " + SUPABASE_KEY,
+		"Authorization: Bearer " + auth_token
+	]
+
+	var req = HTTPRequest.new()
+	add_child(req)
+	req.request_completed.connect(func(result, code, hdrs, body):
+		var body_str = body.get_string_from_utf8()
+		if result == HTTPRequest.RESULT_SUCCESS and (code == 200 or code == 201):
+			var json = JSON.new()
+			if json.parse(body_str) == OK and json.data is Array:
+				print("[SupabaseManager] Farm crops loaded: %d crops" % json.data.size())
+				farm_crops_loaded.emit(json.data)
+			else:
+				print("[SupabaseManager] Farm crops parse error, emitting empty")
+				farm_crops_loaded.emit([])
+		else:
+			print("[SupabaseManager] Farm crops load failed: %d, body: %s" % [code, body_str])
+			farm_crops_loaded.emit([])
+		req.queue_free()
+	)
+	req.request(url, headers, HTTPClient.METHOD_GET)
+
+func save_farm_crops(user_id: String, crops: Array):
+	"""Save all farm crops via upsert, then delete stale rows"""
+	if access_token.is_empty():
+		print("[SupabaseManager] ERROR: No access token for saving farm crops!")
+		farm_crops_saved.emit(false)
+		return
+
+	# First delete all crops for this user, then insert fresh
+	# This avoids stale rows from harvested crops
+	var delete_url = SUPABASE_URL + "/rest/v1/farm_crops?user_id=eq." + user_id
+	var headers = [
+		"apikey: " + SUPABASE_KEY,
+		"Authorization: Bearer " + access_token,
+		"Content-Type: application/json"
+	]
+
+	var del_req = HTTPRequest.new()
+	add_child(del_req)
+	del_req.request_completed.connect(func(result, code, hdrs, body):
+		del_req.queue_free()
+		# Now insert all current crops
+		if crops.size() == 0:
+			print("[SupabaseManager] No crops to save (all cleared)")
+			farm_crops_saved.emit(true)
+			return
+
+		var insert_url = SUPABASE_URL + "/rest/v1/farm_crops"
+		var insert_headers = [
+			"apikey: " + SUPABASE_KEY,
+			"Authorization: Bearer " + access_token,
+			"Content-Type: application/json"
+		]
+
+		var items = []
+		for crop in crops:
+			var item = crop.duplicate()
+			item["user_id"] = user_id
+			item["updated_at"] = Time.get_datetime_string_from_system()
+			items.append(item)
+
+		var ins_req = HTTPRequest.new()
+		add_child(ins_req)
+		ins_req.request_completed.connect(func(r2, c2, h2, b2):
+			var b2_str = b2.get_string_from_utf8()
+			if r2 == HTTPRequest.RESULT_SUCCESS and (c2 == 200 or c2 == 201):
+				print("[SupabaseManager] Farm crops saved: %d crops" % items.size())
+				farm_crops_saved.emit(true)
+			else:
+				print("[SupabaseManager] Farm crops insert failed: %d, body: %s" % [c2, b2_str])
+				farm_crops_saved.emit(false)
+			ins_req.queue_free()
+		)
+		ins_req.request(insert_url, insert_headers, HTTPClient.METHOD_POST, JSON.stringify(items))
+	)
+	del_req.request(delete_url, headers, HTTPClient.METHOD_DELETE)
+
 ## HTTP Response Handler
 
 func _on_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray):
