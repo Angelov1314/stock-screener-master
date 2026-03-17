@@ -653,22 +653,29 @@ func _create_plot_timer_bubble():
 	_plot_timer_bubble.z_index = 4000
 	add_child(_plot_timer_bubble)
 	
-	var bg = ColorRect.new()
+	var bg = Panel.new()
 	bg.name = "Background"
-	bg.position = Vector2(-42, -54)
-	bg.size = Vector2(84, 32)
-	bg.color = Color(0.36, 0.24, 0.12, 0.88)
+	bg.position = Vector2(-84, -72)
+	bg.size = Vector2(168, 64)
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0.36, 0.24, 0.12, 1.0)
+	style.corner_radius_top_left = 18
+	style.corner_radius_top_right = 18
+	style.corner_radius_bottom_right = 18
+	style.corner_radius_bottom_left = 18
+	bg.add_theme_stylebox_override("panel", style)
 	_plot_timer_bubble.add_child(bg)
 	
 	_plot_timer_label = Label.new()
 	_plot_timer_label.name = "TimerLabel"
-	_plot_timer_label.position = Vector2(-34, -50)
-	_plot_timer_label.size = Vector2(68, 24)
+	_plot_timer_label.position = Vector2(-68, -64)
+	_plot_timer_label.size = Vector2(136, 48)
 	_plot_timer_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_plot_timer_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_plot_timer_label.add_theme_color_override("font_color", Color(0.97, 0.91, 0.78))
 	_plot_timer_label.add_theme_color_override("font_outline_color", Color(0.24, 0.14, 0.06))
-	_plot_timer_label.add_theme_constant_override("outline_size", 2)
+	_plot_timer_label.add_theme_constant_override("outline_size", 3)
+	_plot_timer_label.add_theme_font_size_override("font_size", 28)
 	_plot_timer_label.text = "00:00"
 	_plot_timer_bubble.add_child(_plot_timer_label)
 	
